@@ -1,0 +1,92 @@
+.sidebar-menu {
+  .dropdown {
+    position: relative;
+
+    > a {
+      display: flex;.sidebar-menu .menu-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.sidebar-menu .menu-link:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.sidebar-menu .menu-link.active {
+  background-color: var(--primary-50);
+  color: var(--primary-600);
+  font-weight: 600;
+}
+
+.menu-icon {
+  font-size: 1.35rem;
+  min-width: 24px;
+}
+
+.arrow-icon {
+  margin-left: auto;
+  font-size: 0.9rem;
+  transition: transform 0.25s;
+}
+
+.dropdown.open > .menu-link .arrow-icon {
+  transform: rotate(-180deg);
+}
+
+.sidebar-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  background: rgba(0, 0, 0, 0.025);
+}
+
+.sidebar-submenu.open {
+  max-height: 2000px; /* enough for deep nesting */
+}
+
+.circle-icon {
+  font-size: 8px;
+  margin: 0 8px 0 4px;
+}
+
+/* Indentation levels */
+.level-1 .menu-link { padding-left: 48px; }
+.level-2 .menu-link { padding-left: 68px; }
+.level-3 .menu-link { padding-left: 88px; }
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      cursor: pointer;
+    }
+
+    .arrow-icon {
+      transition: transform 0.3s;
+    }
+
+    &.open .arrow-icon {
+      transform: rotate(-180deg);
+    }
+  }
+
+  .sidebar-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease-out;
+    padding-left: 12px;
+
+    &.open {
+      max-height: 1500px; /* large enough value */
+      transition: max-height 0.4s ease-in;
+    }
+  }
+
+  /* Visual level indentation */
+  .level-1 > a { padding-left: 36px; }
+  .level-2 > a { padding-left: 52px; }
+  .level-3 > a { padding-left: 68px; }
+}
