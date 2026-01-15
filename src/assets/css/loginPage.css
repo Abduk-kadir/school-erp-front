@@ -1,0 +1,58 @@
+/* LoginPage.css */
+
+
+.login-container {
+  min-height: 100vh;
+  height: 100vh;
+  background: #f8f9fa;
+  
+}
+
+.left-side {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-image {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.carousel-caption {
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 8px;
+  padding: 1.5rem;
+  bottom: 15% !important;
+}
+
+.carousel-indicators {
+  bottom: 20px !important;          /* move them up from the very bottom if needed */
+  z-index: 15;
+  margin-bottom: 0;
+}
+
+.carousel-indicators [data-bs-target] {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: white;
+  border: 1px solid rgba(0,0,0,0.4);
+  opacity: 0.7;
+  margin: 0 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.carousel-indicators .active {
+  opacity: 1;
+  background-color: #0d6efd;        /* bootstrap primary color - or your brand color */
+  transform: scale(1.2);            /* optional: make active dot bigger */
+}
+
+
+.right-side {
+  background: white;
+}
+
+

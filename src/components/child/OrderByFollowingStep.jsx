@@ -15,7 +15,7 @@ const OrderByFollowingStep = () => {
     }
   };
   return (
-    <div className='col-md-6'>
+    <div className='col-md-12'>
       <div className='card'>
         <div className='card-body'>
           <h6 className='mb-4 text-xl'>Order By Following Step</h6>
@@ -26,52 +26,7 @@ const OrderByFollowingStep = () => {
           <div className='form-wizard'>
             <form action='#' method='post'>
               <div className='form-wizard-header overflow-x-auto scroll-sm pb-8 my-32'>
-                <ul className='list-unstyled form-wizard-list style-two'>
-                  <li
-                    className={`form-wizard-list__item
-                      ${[2, 3, 4].includes(currentStep) && "activated"}
-                    ${currentStep === 1 && "active"} `}
-                  >
-                    <div className='form-wizard-list__line'>
-                      <span className='count'>1</span>
-                    </div>
-                    <span className='text text-xs fw-semibold'>
-                      Order Details{" "}
-                    </span>
-                  </li>
-                  <li
-                    className={`form-wizard-list__item
-                      ${[3, 4].includes(currentStep) && "activated"}
-                    ${currentStep === 2 && "active"} `}
-                  >
-                    <div className='form-wizard-list__line'>
-                      <span className='count'>2</span>
-                    </div>
-                    <span className='text text-xs fw-semibold'>
-                      Manufactures
-                    </span>
-                  </li>
-                  <li
-                    className={`form-wizard-list__item
-                      ${[4].includes(currentStep) && "activated"}
-                    ${currentStep === 3 && "active"} `}
-                  >
-                    <div className='form-wizard-list__line'>
-                      <span className='count'>3</span>
-                    </div>
-                    <span className='text text-xs fw-semibold'>Order Plan</span>
-                  </li>
-                  <li
-                    className={`form-wizard-list__item
-
-                    ${currentStep === 4 && "active"} `}
-                  >
-                    <div className='form-wizard-list__line'>
-                      <span className='count'>4</span>
-                    </div>
-                    <span className='text text-xs fw-semibold'>Completed</span>
-                  </li>
-                </ul>
+                
               </div>
               <fieldset
                 className={`wizard-fieldset ${currentStep === 1 && "show"} `}

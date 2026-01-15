@@ -10,15 +10,17 @@ import CastPage from "./pages/CastMasterPage";
 import EmployeePage from './pages/EmployeePage'
 import RolePage from "./pages/RolePage";
 import PhisallyDisablePage from "./pages/PyisallyDisablePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from './pages/RegisterPage'
 
 function App() {
-  let user = false;
+  let user = true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
       <Routes>
         <Route >
-          <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : "nulls"} />
+          <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <RegisterPage/>} />
 
           <Route path="dashboard" element={<MasterLayout />} >
 
