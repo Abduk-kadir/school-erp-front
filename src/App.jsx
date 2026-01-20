@@ -12,6 +12,12 @@ import RolePage from "./pages/RolePage";
 import PhisallyDisablePage from "./pages/PyisallyDisablePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from './pages/RegisterPage'
+import StagePage from "./pages/stagePage";
+import FiledTypePage from "./pages/FieldTypePae";
+import FiledPage from "./pages/FieldPage";
+import AllFiledPage from "./pages/AllFieldPage";
+import OptionValuePage from "./pages/OptionValuePage";
+
 
 function App() {
   let user = true;
@@ -21,11 +27,8 @@ function App() {
       <Routes>
         <Route >
           <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <RegisterPage/>} />
-
           <Route path="dashboard" element={<MasterLayout />} >
-
             <Route index element={<Dashboard />} />
-
             <Route path="my-page" element={<MyPage />} />
             <Route path='employee-master' element={<EmployeePage/>}/>
             <Route path='class-master' element={<ClassPage/>} />
@@ -34,6 +37,12 @@ function App() {
             <Route path='cast-master' element={<CastPage/>}/>
             <Route path='role-master' element={<RolePage/>}/>
             <Route path='phisally-disable' element={<PhisallyDisablePage/>}/>
+            <Route path="admission-form-master/stages" element={<StagePage/>}/>
+            <Route path="admission-form-master/filed-type" element={<FiledTypePage/>}/>
+            <Route path="admission-form-master/stages" element={<StagePage/>}/>
+            <Route path="admission-form-master/Field" element={<AllFiledPage/>}/>
+            <Route path="admission-form-master/field-values" element={<OptionValuePage/>}/>
+           
           
            
 

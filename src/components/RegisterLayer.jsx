@@ -1,6 +1,6 @@
 import OrderByFollowingStep from "./child/OrderByFollowingStep"
 import { useState } from "react"
-import FirstStageRegistration from "./child/FirstStateRegistration";
+import PersonalInformationForm from "./child/PersonalInformationForm";
 const RegisterLayer = () => {
     const [currentStep, setCurrentStep] = useState(1);
 
@@ -16,8 +16,8 @@ const RegisterLayer = () => {
         }
     };
     return (
-        <>
-            <div><div className='form-wizard-header overflow-x-auto scroll-sm pb-8 my-32'>
+        <div>
+            <div className='form-wizard-header overflow-x-auto scroll-sm pb-8 my-32'>
                 <ul className='list-unstyled form-wizard-list style-two'>
                     <li
                         className={`form-wizard-list__item
@@ -45,18 +45,18 @@ const RegisterLayer = () => {
                     </li>
                     <li
                         className={`form-wizard-list__item
-                      ${[4,5,6,7,8,9].includes(currentStep) && "activated"}
+                      ${[4, 5, 6, 7, 8, 9].includes(currentStep) && "activated"}
                     ${currentStep === 3 && "active"} `}
                     >
                         <div className='form-wizard-list__line'>
                             <span className='count'>3</span>
                         </div>
                         <span className='text text-xs fw-semibold'>Education Detail</span>
-                    </li>   
+                    </li>
                     <li
                         className={`form-wizard-list__item
-                      ${[5,6,7,8,9].includes(currentStep) && "activated"}
-                    ${currentStep === 4&& "active"} `}
+                      ${[5, 6, 7, 8, 9].includes(currentStep) && "activated"}
+                    ${currentStep === 4 && "active"} `}
                     >
                         <div className='form-wizard-list__line'>
                             <span className='count'>4</span>
@@ -65,7 +65,7 @@ const RegisterLayer = () => {
                     </li>
                     <li
                         className={`form-wizard-list__item
-                      ${[6,7,8,9].includes(currentStep) && "activated"}
+                      ${[6, 7, 8, 9].includes(currentStep) && "activated"}
                     ${currentStep === 5 && "active"} `}
                     >
                         <div className='form-wizard-list__line'>
@@ -75,8 +75,8 @@ const RegisterLayer = () => {
                     </li>
                     <li
                         className={`form-wizard-list__item
-                      ${[7,8,9].includes(currentStep) && "activated"}
-                    ${currentStep === 6&& "active"} `}
+                      ${[7, 8, 9].includes(currentStep) && "activated"}
+                    ${currentStep === 6 && "active"} `}
                     >
                         <div className='form-wizard-list__line'>
                             <span className='count'>36</span>
@@ -85,25 +85,25 @@ const RegisterLayer = () => {
                     </li>
                     <li
                         className={`form-wizard-list__item
-                      ${[8,9].includes(currentStep) && "activated"}
-                    ${currentStep === 7&& "active"} `}
+                      ${[8, 9].includes(currentStep) && "activated"}
+                    ${currentStep === 7 && "active"} `}
                     >
                         <div className='form-wizard-list__line'>
                             <span className='count'>7</span>
                         </div>
                         <span className='text text-xs fw-semibold'>Declare By Gardian</span>
                     </li>
-                     <li
+                    <li
                         className={`form-wizard-list__item
                       ${[9].includes(currentStep) && "activated"}
-                    ${currentStep === 8&& "active"} `}
+                    ${currentStep === 8 && "active"} `}
                     >
                         <div className='form-wizard-list__line'>
                             <span className='count'>8</span>
                         </div>
                         <span className='text text-xs fw-semibold'>Document</span>
                     </li>
-                   
+
 
 
 
@@ -120,20 +120,11 @@ const RegisterLayer = () => {
 
 
                 </ul>
-            </div></div>
+            </div>
             <div className="row border">
 
-                <div className="col-12 col-md-4 mb-3 mb-md-0-12 col-md-4 min-vh-100">
-                    <img
-                        src="https://images.pexels.com/photos/20853049/pexels-photo-20853049/free-photo-of-university-building-in-india-in-sunlight.jpeg"
-                        // (example from Pixabay — free online learning illustration) :contentReference[oaicite:2]{index=2}
-                        alt="Online School Illustration"
-                        className="img-fluid rounded"
-                        style={{ height: "100vh", width: "100%", objectFit: "cover" }}
-                    />
 
-                </div>
-                <div className="col-12 col-md-8">
+                <div className="col-12">
                     <div className='card'>
                         <div className='card-body'>
                             <h6 className='mb-4 text-xl'>Order By Following Step</h6>
@@ -238,21 +229,21 @@ const RegisterLayer = () => {
                                                 <label className='form-label text-danger'>Note-Messages will be this number</label>
                                             </div>
                                             <div className='col-sm-6'>
-                                                
+
                                                 <div className='position-relative'>
-                                                 <button
-                        
-                                                    type='button'
-                                                    className='btn btn-success'
-                                                >
-                                                    Send Otp
-                                                </button>
+                                                    <button
+
+                                                        type='button'
+                                                        className='btn btn-success'
+                                                    >
+                                                        Send Otp
+                                                    </button>
                                                 </div>
                                                 <label className='form-label text-danger'>Click Here to send otp</label>
-                                                
+
                                             </div>
                                             <div className='form-group text-end'>
-                                                
+
                                                 <button
                                                     onClick={nextStep}
                                                     type='button'
@@ -266,84 +257,11 @@ const RegisterLayer = () => {
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 2 && "show"} `}
                                     >
-                                        <h6 className='text-md text-neutral-500'>
-                                            Personal Information
-                                        </h6>
+
                                         <div className='row gy-3'>
-                                            <div className='col-4'>
-                                                <label className='form-label'>Sir Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter User Name'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-4'>
-                                                <label className='form-label'>Father Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Father Name '
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-4'>
-                                                <label className='form-label'>
-                                                    Mother Name*
-                                                </label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Card Expiration'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-4'>
-                                                <label className='form-label'>Gender</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Gender'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-4'>
-                                                <label className='form-label'>Date Of Birth</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='password'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Password'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-4'>
-                                                <label className='form-label'>Place of birth</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='password'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Password'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
+                                            {
+                                                <PersonalInformationForm />
+                                            }
                                             <div className='form-group d-flex align-items-center justify-content-end gap-8'>
                                                 <button
                                                     onClick={prevStep}
@@ -472,7 +390,7 @@ const RegisterLayer = () => {
 
             </div>
 
-        </>
+        </div>
     )
 }
 export default RegisterLayer

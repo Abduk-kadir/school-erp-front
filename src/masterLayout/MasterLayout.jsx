@@ -149,6 +149,19 @@ const MasterLayout = () => {
       { title: "Division Master", path: "/dashboard/division-master" },
       { title: "Cast Master", path: "/dashboard/cast-master"},
       { title: "Phisally Disable", path: "/dashboard/phisally-disable"},
+      {title:'Admision Form master',
+        children: [
+          { title: "Stages", path: "admission-form-master/stages" },
+          {
+            title: "Field Type",  
+            path: "admission-form-master/filed-type"
+                              
+           
+          },
+          { title: "Field", path: "admission-form-master/Field" },
+          { title: "drop-radio-values", path: "admission-form-master/field-values" }
+        ]
+      }
        
 
     ]
