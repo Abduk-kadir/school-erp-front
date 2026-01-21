@@ -167,6 +167,19 @@ const MasterLayout = () => {
     ]
   },
 
+   {
+    title: "Subject Master",
+    icon: "icon-park-outline:id-card",
+    children: [
+      { title: "Subject", path: "/dashboard/subject" },
+      
+      { title: "Assign Subject", path:"/dashboard/assign-subject" },
+      
+       
+
+    ]
+  },
+
   // ... you can do the same for other sections (Master, Subject, etc.)
 ];
 

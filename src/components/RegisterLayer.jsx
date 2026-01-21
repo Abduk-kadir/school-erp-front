@@ -3,13 +3,11 @@ import { useState } from "react"
 import PersonalInformationForm from "./child/PersonalInformationForm";
 const RegisterLayer = () => {
     const [currentStep, setCurrentStep] = useState(1);
-
     const nextStep = () => {
         if (currentStep < 9) {
             setCurrentStep(currentStep + 1);
         }
     };
-
     const prevStep = () => {
         if (currentStep > 1) {
             setCurrentStep(currentStep - 1);
@@ -127,13 +125,10 @@ const RegisterLayer = () => {
                 <div className="col-12">
                     <div className='card'>
                         <div className='card-body'>
-                            <h6 className='mb-4 text-xl'>Order By Following Step</h6>
-                            <p className='text-neutral-500'>
-                                Fill up your details and proceed next steps.
-                            </p>
+            
                             {/* Form Wizard Start */}
                             <div className='form-wizard'>
-                                <form action='#' method='post'>
+                                <div>
 
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 1 && "show"} `}
@@ -381,7 +376,7 @@ const RegisterLayer = () => {
                                             </button>
                                         </div>
                                     </fieldset>
-                                </form>
+                                </div>
                             </div>
                             {/* Form Wizard End */}
                         </div>

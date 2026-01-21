@@ -17,10 +17,12 @@ import FiledTypePage from "./pages/FieldTypePae";
 import FiledPage from "./pages/FieldPage";
 import AllFiledPage from "./pages/AllFieldPage";
 import OptionValuePage from "./pages/OptionValuePage";
+import PersonalInformationForm from "./components/child/PersonalInformationForm";
+import SubjectPage from "./pages/AdminPages/SubjectMaster/subjectPage";
 
 
 function App() {
-  let user = true;
+  let user = false;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -42,6 +44,7 @@ function App() {
             <Route path="admission-form-master/stages" element={<StagePage/>}/>
             <Route path="admission-form-master/Field" element={<AllFiledPage/>}/>
             <Route path="admission-form-master/field-values" element={<OptionValuePage/>}/>
+            <Route path="subject" element={<SubjectPage/>}/>
            
           
            

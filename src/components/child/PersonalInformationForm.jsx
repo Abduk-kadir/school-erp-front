@@ -1,361 +1,234 @@
-import { getPersonalInformationForm } from "../../redux/slices/dynamicForm/personalInfoFormSlice"
-import { useDispatch, useSelector } from "react-redux"
-import { useEffect } from "react"
+import { getPersonalInformationForm } from "../../redux/slices/dynamicForm/personalInfoFormSlice";
+import { getStage1 } from "../../redux/slices/stage1Sclice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useMemo } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { PenNibStraight } from "@phosphor-icons/react";
+import baseURL from "../../utils/baseUrl";
+import axios from "axios";
 const PersonalInformationForm = () => {
-    let dispatch = useDispatch()
-    let wholeForm = useSelector((state) => state?.personalInfoForms?.personalInfoForm?.data)
-    let personalFormfields = wholeForm ? wholeForm[0]?.fields : []
-    const [formData, setFormData] = useState({});
+    const dispatch = useDispatch();
+    let id=4;
+   
 
-    console.log('form is:', personalFormfields)
+    const wholeForm = useSelector(
+        (state) => state?.personalInfoForms?.personalInfoForm?.data
+    );
+    let stageData= useSelector(
+        (state) => state?.stage1?.stage1Data?.data
+    );
+
+    const personalFormfields = wholeForm ? wholeForm[0]?.fields : [];
+    console.log('user data is:',stageData)
+
+    const initialValues = useMemo(() => {
+        if (stageData) return stageData;
+
+        const values = { first_name: "", last_name: "",father_name:"",class:"",division:"",contact_number:"",
+            email:"",password:"",dob:"",blood_group:""
+         };
+        personalFormfields.forEach((elem) => {
+            values[elem.name] = "";
+        });
+        return values;
+    }, [personalFormfields]);
+    
+
+    const validationSchema = Yup.object(
+        personalFormfields.reduce((schema, field) => {
+
+            schema[field.name] = Yup.string().required(`${field.label} is required`);
+
+
+            return schema;
+        },
+            {
+                first_name: Yup.string().required("First name is required"),
+                last_name: Yup.string().required("Last name is required"),
+                class: Yup.string().required("class is required"),
+                division: Yup.string().required("division is required"),
+                contact_number: Yup.string().required("contact is required"),
+                father_name: Yup.string().required("father name is required"),
+                email: Yup.string().required("email is required"),
+                password: Yup.string().required("password is required"),
+                dob:Yup.string().required("password is required"),
+                blood_group:Yup.string().required("blood group is required"),
+
+            })
+    );
+
     useEffect(() => {
-        dispatch(getPersonalInformationForm({}));
+       dispatch(getPersonalInformationForm({}));
+    dispatch(getStage1({}));
+     
     }, [dispatch]);
 
     return (
-        <>
-            <h6 className='text-md text-neutral-500'>
-                Personal Information
-            </h6>
-            <div className='row gy-3'>
-                <div className='col-4'>
-                    <label className='form-label'>First Name*</label>
-                    <div className='position-relative'>
-                        <input
-                            type='text'
-                            className='form-control wizard-required'
-                            placeholder='Enter User Name'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                {
-                    personalFormfields.map(elem => (
-                        elem.type == 'dropdown' ? (
-                            <div className='col-4'>
-                                <label className='form-label'>{elem.label}*</label>
-                                <div className='position-relative'>
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>{elem.placeholder}</option>
-                                         {elem.options.map(elem2=>(
-                                            <option value={elem2.value}>{elem2.value}</option>
-                                         ))}
-                                      
-                                    </select>
-                                    <div className='wizard-form-error' />
+        <div className="container mt-5">
+            <div className="card p-4 shadow">
+                <h3 className="mb-4">Personal Information Form</h3>
+
+                <Formik
+                    initialValues={initialValues}
+                    enableReinitialize={true}
+                    validationSchema={validationSchema}
+                    onSubmit={async(values, { resetForm }) => {
+                        console.log('selected value:', values);
+                        await axios.post(`${baseURL}/api/personal-information`,values)
+                        alert("Form submitted successfully!");
+                        resetForm();
+                    }}
+                >
+                    {({ isSubmitting }) => (
+                        <Form>
+                            <div className="row">
+                                <div className="col-3 mb-3">
+                                    <label className="form-label">First Name</label>
+                                    <Field name="first_name" type="text" className='form-control' />
+                                    <ErrorMessage
+                                        name="first_name"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
                                 </div>
+                                <div className="col-3 mb-3">
+                                    <label className="form-label">Last Name</label>
+                                    <Field name="last_name" type="text" className='form-control' />
+
+                                 <ErrorMessage
+                                        name="last_name"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                <div className="col-3 mb-3">
+                                    <label className="form-label">Father Name</label>
+                                    <Field name="father_name" type="text" className='form-control' />
+
+                                 <ErrorMessage
+                                        name="father_name"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                <div className="col-3 mb-3">
+                                    <label className="form-label">Class</label>
+                                    <Field name="class" type="text" className='form-control' />
+                                    <ErrorMessage
+                                        name="class"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                <div className="col-3 mb-3">
+                                    <label className="form-label">Division</label>
+                                    <Field name="division" type="text" className='form-control' />
+                                    <ErrorMessage
+                                        name="division"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                 <div className="col-3 mb-3">
+                                    <label className="form-label">Contact Number</label>
+                                    <Field name="contact_number" type="text" className='form-control' />
+                                    <ErrorMessage
+                                        name="contact_number"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                 <div className="col-3 mb-3">
+                                    <label className="form-label">Email</label>
+                                    <Field name="email" type="email" className='form-control' />
+                                    <ErrorMessage
+                                        name="email"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                 <div className="col-3 mb-3">
+                                    <label className="form-label">Password</label>
+                                    <Field name="password" type="password" className='form-control' />
+                                    <ErrorMessage
+                                        name="password"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                 <div className="col-3 mb-3">
+                                    <label className="form-label">Date of birth</label>
+                                    <Field name="dob" type="text" className='form-control' />
+                                    <ErrorMessage
+                                        name="dob"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+                                 <div className="col-3 mb-3">
+                                    <label className="form-label">Blood group</label>
+                                    <Field name="blood_group" type="text" className='form-control' />
+                                    <ErrorMessage
+                                        name="blood_group"
+                                        component="div"
+                                        className="text-danger mt-1"
+                                    />
+
+                                </div>
+
+                                {personalFormfields.map((elem) => (
+                                    <div className="col-3 mb-3" key={elem.name}>
+                                        <label className="form-label">{elem.label}</label>
+
+                                        {elem.type === "dropdown" ? (
+                                            <Field as="select" name={elem.name} className="form-select">
+                                                <option value="">{elem.placeholder}</option>
+                                                {elem.options?.map((opt) => (
+                                                    <option key={opt.value} value={opt.value}>
+                                                        {opt.value}
+                                                    </option>
+                                                ))}
+                                            </Field>
+                                        ) : (
+                                            <Field
+                                                name={elem.name}
+                                                className="form-control"
+                                                placeholder={elem.placeholder}
+                                            />
+                                        )}
+
+                                        <ErrorMessage
+                                            name={elem.name}
+                                            component="div"
+                                            className="text-danger mt-1"
+                                        />
+                                    </div>
+                                ))}
                             </div>
 
-                        ) : 
-                        elem.type=='input'?(
-                            <div className='col-4'>
-                    <label className='form-label'>{elem?.label}</label>
-                    <div className='position-relative'>
-                        <input
-                            type={elem.type}
-                            className='form-control wizard-required'
-                            placeholder={elem?.placeholder}
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                        ):""
-                    ))
-
-                }
-
-                <div className='col-sm-4'>
-                    <label className='form-label'>Last Name*</label>
-                    <div className='position-relative'>
-                        <input
-                            type='text'
-                            className='form-control wizard-required'
-                            placeholder='Father Name '
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-sm-4'>
-                    <label className='form-label'>
-                        Father Name*
-                    </label>
-                    <div className='position-relative'>
-                        <input
-                            type='text'
-                            className='form-control wizard-required'
-                            placeholder='Enter Card Expiration'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-sm-4'>
-                    <label className='form-label'>Mother Name</label>
-                    <div className='position-relative'>
-                        <input
-                            type='text'
-                            className='form-control wizard-required'
-                            placeholder='Gender'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Class</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Division</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Roll Number</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Gr No</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Contact Number</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Email</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Password</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Date of Birth</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Blood Group</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Father Contact Number</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Mother Contact Number</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Photo</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Current Address</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Current City</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Current State</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Current Pin</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-
-                <div className='col-4'>
-                    <label className='form-label'>Permanent Address</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Permanent City</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Permanent State</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-                <div className='col-4'>
-                    <label className='form-label'>Permanent Pin</label>
-                    <div className='position-relative'>
-                        <input
-                            type='password'
-                            className='form-control wizard-required'
-                            placeholder='Enter Password'
-                            required=''
-                        />
-                        <div className='wizard-form-error' />
-                    </div>
-                </div>
-
-
-
-
-
-
-
+                            <button
+                                type="submit"
+                                className="btn btn-primary mt-3"
+                                disabled={isSubmitting}
+                            >
+                                Submit
+                            </button>
+                        </Form>
+                    )}
+                </Formik>
             </div>
-        </>
-    )
+        </div>
+    );
+};
 
-}
-
-export default PersonalInformationForm
+export default PersonalInformationForm;
