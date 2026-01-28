@@ -148,6 +148,12 @@ const MasterLayout = () => {
       { title: "Class Master", path: "/dashboard/class-master" },
       { title: "Division Master", path: "/dashboard/division-master" },
       { title: "Cast Master", path: "/dashboard/cast-master"},
+      { title: "Document Master", 
+        children:[
+          {title:"Add Doucment",path: "/dashboard/document-master/add-document"},
+          {title:"Assign Doucment",path: "/dashboard/document-master/assign-document"}
+        ]
+      },
       { title: "Phisally Disable", path: "/dashboard/phisally-disable"},
       {title:'Admision Form master',
         children: [

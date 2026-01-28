@@ -1,6 +1,7 @@
 import OrderByFollowingStep from "./child/OrderByFollowingStep"
 import { useState } from "react"
 import PersonalInformationForm from "./child/PersonalInformationForm";
+import DocumentStage from "./child/DocumentStage";
 const RegisterLayer = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const nextStep = () => {
@@ -278,56 +279,9 @@ const RegisterLayer = () => {
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 3 && "show"} `}
                                     >
-                                        <h6 className='text-md text-neutral-500'>Bank Information</h6>
+                                        <h6 className='text-md text-neutral-500'>Document Stage</h6>
                                         <div className='row gy-3'>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Bank Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Bank Name'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Branch Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Branch Name'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Account Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Account Name'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Account Number*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='number'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Account Number'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
+                                          <DocumentStage/>
                                             <div className='form-group d-flex align-items-center justify-content-end gap-8'>
                                                 <button
                                                     onClick={prevStep}

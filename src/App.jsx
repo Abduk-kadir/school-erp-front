@@ -19,10 +19,11 @@ import AllFiledPage from "./pages/AllFieldPage";
 import OptionValuePage from "./pages/OptionValuePage";
 import PersonalInformationForm from "./components/child/PersonalInformationForm";
 import SubjectPage from "./pages/AdminPages/SubjectMaster/subjectPage";
-
-
+import AssignSubjectPage from "./pages/AdminPages/SubjectMaster/AssignSubjectPage";
+import AddDocumentPage from "./pages/AdminPages/master/documentMaster/addDocumentPage";
+import AssignDocumentPage from "./pages/AdminPages/master/documentMaster/assignDocumentPage";
 function App() {
-  let user = false;
+  let user = true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -45,10 +46,10 @@ function App() {
             <Route path="admission-form-master/Field" element={<AllFiledPage/>}/>
             <Route path="admission-form-master/field-values" element={<OptionValuePage/>}/>
             <Route path="subject" element={<SubjectPage/>}/>
+            <Route path="assign-subject" element={<AssignSubjectPage/>}/>
+            <Route path="document-master/add-document" element={<AddDocumentPage/>}/>
+            <Route path="document-master/assign-document" element={<AssignDocumentPage/>}/>
            
-          
-           
-
           </Route>
         </Route>
       </Routes>
