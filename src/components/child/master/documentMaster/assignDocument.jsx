@@ -8,7 +8,6 @@ const AssignDocument = () => {
     const [classes, setClasses] = useState([]);
     const [categories, setCategories] = useState([]);
     const [documents, setDocuments] = useState([]);
-
     const initialValues = {
         document_type_id: "",
         class_id: "",

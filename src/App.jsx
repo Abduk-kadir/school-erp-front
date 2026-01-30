@@ -22,8 +22,9 @@ import SubjectPage from "./pages/AdminPages/SubjectMaster/subjectPage";
 import AssignSubjectPage from "./pages/AdminPages/SubjectMaster/AssignSubjectPage";
 import AddDocumentPage from "./pages/AdminPages/master/documentMaster/addDocumentPage";
 import AssignDocumentPage from "./pages/AdminPages/master/documentMaster/assignDocumentPage";
+import ProgramPage from "./pages/AdminPages/SubjectMaster/ProgramPage";
 function App() {
-  let user = true;
+  let user = false;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -47,8 +48,10 @@ function App() {
             <Route path="admission-form-master/field-values" element={<OptionValuePage/>}/>
             <Route path="subject" element={<SubjectPage/>}/>
             <Route path="assign-subject" element={<AssignSubjectPage/>}/>
+            <Route path="program" element={<ProgramPage/>}/>
             <Route path="document-master/add-document" element={<AddDocumentPage/>}/>
             <Route path="document-master/assign-document" element={<AssignDocumentPage/>}/>
+
            
           </Route>
         </Route>

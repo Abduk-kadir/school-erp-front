@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import axios from "axios";
 import baseURL from "../../utils/baseUrl";
 import { Formik, Form, ErrorMessage, useFormikContext } from "formik";
@@ -6,6 +6,13 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 const DocumentStage = () => {
   const [docReq, setDocReq] = useState([]);
+  let [document,setDocuments]=useState({})
+  const [userDocument,setUserDocument]=useState([])
+ 
+  const [uploadedDocs, setUploadedDocs] = useState({})
+
+  let edit=true;
+  let editdocument={}
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,7 +20,11 @@ const DocumentStage = () => {
         const res = await axios.get(`${baseURL}/api/requirement-documents`, {
           params: { class_id: 4 },
         });
+        const res2 = await axios.get(`${baseURL}/api/student-documents/student/${123}`, {
+  
+        });
         setDocReq(res.data.data || []);
+        setUserDocument(res2.data.data || [])
       } catch (err) {
         console.error("API error:", err);
       }
@@ -27,81 +38,97 @@ const DocumentStage = () => {
     new Map(docReq.map((item) => [item.document_type, item])).values()
   );
 
-  // initialValues: { "Aadhaar Card": "", "Pan Card": "", ... }
-  const initialValues = uniqueDocs.reduce((acc, curr) => {
-    acc[curr.document_type] = ""; // or null — doesn't matter much for files
-    return acc;
-  }, {});
+  
 
-  const onSubmit = async (values, { setSubmitting, resetForm }) => {
-    try {
-      const formData = new FormData();
+ // console.log('my uniquie:::',uniqueDocs)
+ // console.log('user document:',userDocument)
+  console.log('document is:',document)
 
-      // Append each file
-      Object.entries(values).forEach(([docType, file]) => {
-        if (file) {
-          formData.append(docType, file); // or use a fixed field name if backend expects it
-        }
-      });
+  if(edit==true)userDocument.map(elem=>editdocument[elem.document_id]=true)
+  console.log('edit document is:',editdocument)
+ 
+ 
+  
+  const handleChange = (docType,file) => {
+  if (!file) return;
 
-      // Optional: also send class_id or other metadata
-      // formData.append("class_id", "4");
+  setDocuments((prev) => ({
+    ...prev,
+   
+    [docType]: file,   // dynamic key
+  }));
+};
 
-      const response = await axios.post(
-        `${baseURL}/api/upload-documents`, // ← change to your real endpoint
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
 
-      console.log("Upload success:", response.data);
-      alert("Documents uploaded successfully!");
-      resetForm();
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert("Upload failed. Check console.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+const handleSubmit = async (document_type, document_id) => {
+  const doc = document[document_type];
 
+  if (!doc) {
+    alert("Please select file first");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("document", doc);
+  formData.append("reg_number", 123);
+  formData.append("document_id", document_id);
+
+  try {
+    const response = await axios.post(
+      `${baseURL}/api/student-documents/upload`,
+      formData
+    );
+
+    console.log("Upload success:", response.data);
+    setUploadedDocs((prev)=>({
+      ...prev,
+      [document_id]:true
+    }))
+  } catch (err) {
+    console.error("Upload error:", err.response?.data || err.message);
+  }
+};
+
+  
+ console.log('uplodded docs***',uploadedDocs)
   return (
-    <div className="container mt-5 card p-4 shadow ">
-      <Formik
-        enableReinitialize
-        initialValues={initialValues}
-        onSubmit={onSubmit}
-      >
-        {({ setFieldValue, isSubmitting, values }) => (
-          <Form>
-            {uniqueDocs.map((elem) => (
+    <div className="container  card p-5 shadow ">
+      <h4 className="mb-10">Document Stage</h4>
+       <label className=" mb-10 text-danger fw-bold">Star mark is  Complusary</label>
+      
+       
+            {uniqueDocs.map((elem) =>{
+              
+               //const isUploaded = uploadedDocs[elem.document_id];
+              const isUploaded = edit==true?editdocument[elem.document_id]:uploadedDocs[elem.document_id];
+              return(
+               
               <div key={elem.id || elem.document_type} className="row mb-5 gap-3">
+                 
 
                 <div className="col-12 col-md-2">
                   <label className="form-label fs-5 fw-semibold mb-0">
                     Upload {elem.document_type}
-                    {elem.is_mandatory && <span className="text-danger"> *</span>}
+                    {elem.is_mandatory === 1 && <span className="text-danger"> *</span>}
                   </label>
                 </div>
 
-                <div className="col-12 col-md-3 ">
+                <div className="col-12 col-md-4">
                   <input
                     type="file"
                     className="form-control"
                     accept=".pdf,.jpg,.jpeg,.png" // ← adjust as needed
 
                     onChange={(e) => {
-                      const file = e.currentTarget.files?.[0];
-                      setFieldValue(elem.document_type, file || null);
-                    }}
+                    const file = e.target.files?.[0];
+                    if (file) handleChange(elem.document_type,file);
+                }}
                   />
+                  {isUploaded&&<label className="form-label text-success">{elem.document_type} is uploaded</label>}
                 </div>
                 <div className="col-12 col-md-3 ">
 
-                  <label
+                  <label onClick={()=>handleSubmit(elem.document_type,elem.document_id)}
                     htmlFor='basic-upload'
                     className='border border-primary-600 fw-medium text-primary-600 px-16 py-10 radius-12 d-inline-flex align-items-center gap-2 bg-hover-primary-50'
                   >
@@ -114,18 +141,12 @@ const DocumentStage = () => {
 
 
               </div>
-            ))}
+            )})}
 
-            <button
-              type="submit"
-              className="btn btn-primary mt-3"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Uploading..." : "Submit Documents"}
-            </button>
-          </Form>
-        )}
-      </Formik>
+           
+         
+       
+     
     </div>
   );
 };

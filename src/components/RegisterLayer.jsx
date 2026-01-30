@@ -279,7 +279,7 @@ const RegisterLayer = () => {
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 3 && "show"} `}
                                     >
-                                        <h6 className='text-md text-neutral-500'>Document Stage</h6>
+                                        
                                         <div className='row gy-3'>
                                           <DocumentStage/>
                                             <div className='form-group d-flex align-items-center justify-content-end gap-8'>

@@ -178,6 +178,7 @@ const MasterLayout = () => {
     icon: "icon-park-outline:id-card",
     children: [
       { title: "Subject", path: "/dashboard/subject" },
+      { title: "Program", path: "/dashboard/program" },
       
       { title: "Assign Subject", path:"/dashboard/assign-subject" },
       

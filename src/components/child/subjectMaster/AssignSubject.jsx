@@ -8,15 +8,17 @@ import axios from "axios";
 const AssignSubject = () => {
     const [classes, setClasses] = useState([]);
     const [sujects, setSubjects] = useState([])
+    const [programs, setPrograms] = useState([])
+    const [semester, setSemester] = useState([1, 2, 3, 4, 5, 6])
 
     const initialValues = {
         batch: "",
         class_id: "",
-        subject_pattern: "",
+        program_id:"",
         semester: "",
-        is_optional:"",
-        is_multiple_choice:"",
-        optional_subject:[{}],
+        is_optional: "",
+        is_multiple_choice: "",
+        optional_subject: [{}],
         compulsory_subject: [{}],
 
     };
@@ -34,58 +36,97 @@ const AssignSubject = () => {
             try {
                 const { data } = await axios.get(`${baseURL}/api/classes`);
                 const res = await axios.get(`${baseURL}/api/subjects`)
+                const res2 = await axios.get(`${baseURL}/api/programs`)
                 setClasses(data?.data || []);
                 setSubjects(res?.data?.data || [])
+                setPrograms(res2?.data?.data || [])
             } catch (err) {
                 console.error("Failed to load classes", err);
             }
         }
         fetchData();
     }, []);
-    console.log('subject is:', sujects)
+    //console.log('subject is:', sujects)
     return (
         <div className="container mt-5 mb-5">
             <h3 className="mb-4">Assign Subject</h3>
 
             <Formik
                 initialValues={initialValues}
-               // validationSchema={validationSchema}
+                // validationSchema={validationSchema}
                 onSubmit={async (values, { resetForm }) => {
+                    let arr=[]
+                    arr=values.compulsory_subject.map(elem=>{
+                        return {
+                            batch:values.batch,
+                            classId:values.class_id,
+                            programId:values.program_id,
+                            semester:values.semester,
+                            isCompulsory:true,
+                            subjectId:elem.compulsory_subject
+                        }
+                    })
                     console.log('values is:', values)
-                    
+                    console.log('finaldata:',arr)
+                    await axios.post(`${baseURL}/api/program-subjects/bulk`, arr)
+                    resetForm()
+                    arr=[]
+                     alert("Form submitted successfully!");
+
                 }}
             >
                 {({ isSubmitting, values }) => (
                     <Form>
                         <div className="row g-3">
 
-                            <div className="col-md-4">
+                            <div className="col-md-3">
                                 <label className="form-label">Batch</label>
                                 <Field name="batch" className="form-control" />
                                 <ErrorMessage name="batch" component="div" className="text-danger small mt-1" />
                             </div>
 
-                            <div className="col-md-4">
+                            <div className="col-md-3">
                                 <label className="form-label">Class</label>
                                 <Field as="select" name="class_id" className="form-select">
                                     <option value="">Select class</option>
                                     {classes.map((cls) => (
-                                        <option key={cls.id} value={cls.class_name}>
+                                        <option key={cls.id} value={cls.id}>
                                             {cls.class_name}
                                         </option>
                                     ))}
                                 </Field>
                                 <ErrorMessage name="class_id" component="div" className="text-danger small mt-1" />
                             </div>
-
-                            <div className="col-md-4">
-                                <label className="form-label">Subject Pattern</label>
-                                <Field as="select" name="subject_pattern" className="form-select">
-                                    <option value="">Select pattern</option>
-                                    <option value="Annual">Annual</option>
-                                    <option value="Semester">Semester</option>
+                            <div className="col-md-3">
+                                <label className="form-label">Program</label>
+                                <Field
+                                    as="select"
+                                    name='program_id'
+                                    className="form-select"
+                                >
+                                    <option value="">Select Program</option>
+                                    {programs.map((prog) => (
+                                        <option key={prog.id} value={prog.id}>
+                                            {prog.program_name}
+                                        </option>
+                                    ))}
                                 </Field>
-                                <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
+                            </div>
+
+                            <div className="col-md-3">
+                                 <label className="form-label">Select Semester</label>
+                                <Field
+                                    as="select"
+                                    name='semester'
+                                    className="form-select"
+                                >
+                                    <option value="">Semester</option>
+                                    {semester.map((sem) => (
+                                        <option key={sem} value={sem}>
+                                            {sem}
+                                        </option>
+                                    ))}
+                                </Field>
                             </div>
 
                             {values?.subject_pattern == 'Semester' && <div className="col-md-4">
@@ -116,7 +157,7 @@ const AssignSubject = () => {
                                                     >
                                                         <option value="">Select Subject</option>
                                                         {sujects.map((sub) => (
-                                                            <option key={sub.id} value={sub.value}>
+                                                            <option key={sub.id} value={sub.id}>
                                                                 {sub.value}
                                                             </option>
                                                         ))}
@@ -144,7 +185,7 @@ const AssignSubject = () => {
                                                         )}
                                                     </div>
 
-                                                    
+
                                                 </div>
                                             ))}
                                         </div>
@@ -161,7 +202,7 @@ const AssignSubject = () => {
                                 </Field>
                                 <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
                             </div>
-                            {values?.is_optional=='Yes'&&<div className="col-md-4">
+                            {values?.is_optional == 'Yes' && <div className="col-md-4">
                                 <label className="form-label">Select number of optional Subject</label>
                                 <Field as="select" name="is_multiple_choice" className="form-select">
                                     <option value="">Number of Optional</option>
@@ -173,58 +214,58 @@ const AssignSubject = () => {
                                 <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
                             </div>}
                             {
-                                values?.is_optional=='Yes'&& <div className="col-md-12">
-                                <label className="form-label">Optional Subject</label>
+                                values?.is_optional == 'Yes' && <div className="col-md-12">
+                                    <label className="form-label">Optional Subject</label>
 
-                                <FieldArray name="optional_subject">
-                                    {({ push, remove }) => (
-                                        <div className="row g-2 border">
-                                            {values.optional_subject.map((_, index) => (
-                                                <div key={index} className="position-relative col-4">
-                                                    <Field
-                                                        as="select"
-                                                        name={`optional_subject.${index}.optional_subject`}
-                                                        className="form-select pe-5"
-                                                    >
-                                                        <option value="">Optional Subject</option>
-                                                        {sujects.map((sub) => (
-                                                            <option key={sub.id} value={sub.value}>
-                                                                {sub.value}
-                                                            </option>
-                                                        ))}
-                                                    </Field>
-                                                    
+                                    <FieldArray name="optional_subject">
+                                        {({ push, remove }) => (
+                                            <div className="row g-2 border">
+                                                {values.optional_subject.map((_, index) => (
+                                                    <div key={index} className="position-relative col-4">
+                                                        <Field
+                                                            as="select"
+                                                            name={`optional_subject.${index}.optional_subject`}
+                                                            className="form-select pe-5"
+                                                        >
+                                                            <option value="">Optional Subject</option>
+                                                            {sujects.map((sub) => (
+                                                                <option key={sub.id} value={sub.value}>
+                                                                    {sub.value}
+                                                                </option>
+                                                            ))}
+                                                        </Field>
 
-                                                    <div className="position-absolute top-50 end-0 translate-middle-y pe-3 d-flex gap-2">
-                                                        {index === values.optional_subject.length - 1 && (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-sm btn-link text-success p-0"
-                                                                onClick={() => push({optional_subject: "" })}
-                                                            >
-                                                                <PlusCircle size={22} />
-                                                            </button>
-                                                        )}
 
-                                                        {values.optional_subject.length > 1 && (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-sm btn-link text-danger p-0"
-                                                                onClick={() => remove(index)}
-                                                            >
-                                                                <Trash size={22} />
-                                                            </button>
-                                                        )}
+                                                        <div className="position-absolute top-50 end-0 translate-middle-y pe-3 d-flex gap-2">
+                                                            {index === values.optional_subject.length - 1 && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-sm btn-link text-success p-0"
+                                                                    onClick={() => push({ optional_subject: "" })}
+                                                                >
+                                                                    <PlusCircle size={22} />
+                                                                </button>
+                                                            )}
+
+                                                            {values.optional_subject.length > 1 && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-sm btn-link text-danger p-0"
+                                                                    onClick={() => remove(index)}
+                                                                >
+                                                                    <Trash size={22} />
+                                                                </button>
+                                                            )}
+                                                        </div>
+
+
                                                     </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </FieldArray>
 
-                                                    
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </FieldArray>
-
-                            </div>
+                                </div>
                             }
 
 
