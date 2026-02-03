@@ -23,8 +23,10 @@ import AssignSubjectPage from "./pages/AdminPages/SubjectMaster/AssignSubjectPag
 import AddDocumentPage from "./pages/AdminPages/master/documentMaster/addDocumentPage";
 import AssignDocumentPage from "./pages/AdminPages/master/documentMaster/assignDocumentPage";
 import ProgramPage from "./pages/AdminPages/SubjectMaster/ProgramPage";
+import AssignSubjectPage2 from "./pages/AdminPages/SubjectMaster/AssingSubjectPage2";
+
 function App() {
-  let user = false;
+  let user = true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />

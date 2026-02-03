@@ -9,14 +9,16 @@ const AssignSubject = () => {
     const [classes, setClasses] = useState([]);
     const [sujects, setSubjects] = useState([])
     const [programs, setPrograms] = useState([])
+    const [electiveBasket, setElectiveBasket] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     const [semester, setSemester] = useState([1, 2, 3, 4, 5, 6])
 
     const initialValues = {
         batch: "",
         class_id: "",
-        program_id:"",
+        program_id: "",
         semester: "",
         is_optional: "",
+        no_of_optional: "",
         is_multiple_choice: "",
         optional_subject: [{}],
         compulsory_subject: [{}],
@@ -37,9 +39,11 @@ const AssignSubject = () => {
                 const { data } = await axios.get(`${baseURL}/api/classes`);
                 const res = await axios.get(`${baseURL}/api/subjects`)
                 const res2 = await axios.get(`${baseURL}/api/programs`)
+                const res3 = await axios.get(`${baseURL}/api/elective-baskets`)
                 setClasses(data?.data || []);
                 setSubjects(res?.data?.data || [])
                 setPrograms(res2?.data?.data || [])
+
             } catch (err) {
                 console.error("Failed to load classes", err);
             }
@@ -55,23 +59,48 @@ const AssignSubject = () => {
                 initialValues={initialValues}
                 // validationSchema={validationSchema}
                 onSubmit={async (values, { resetForm }) => {
-                    let arr=[]
-                    arr=values.compulsory_subject.map(elem=>{
-                        return {
-                            batch:values.batch,
-                            classId:values.class_id,
-                            programId:values.program_id,
-                            semester:values.semester,
-                            isCompulsory:true,
-                            subjectId:elem.compulsory_subject
-                        }
+                    let arr = []
+                    let firstelem=values.compulsory_subject[0]
+                    if(firstelem?.compulsory_subject){
+                    values.compulsory_subject.map(elem => {
+                        arr.push({
+                            batch: values.batch,
+                            classId: Number(values.class_id)||null,
+                            programId: Number(values.program_id)||null,
+                            semester: Number(values.semester)||null,
+                            isCompulsory: true,
+                            subjectId: Number(elem.compulsory_subject)
+                        })
                     })
-                    console.log('values is:', values)
-                    console.log('finaldata:',arr)
-                    await axios.post(`${baseURL}/api/program-subjects/bulk`, arr)
+                }
+                    if (values.is_optional) {
+                        let elective = {}
+                        elective['classId'] = Number(values.class_id)||null
+                        elective['semester'] = Number(values.semester)||null,
+                        elective['exactChoices'] = Number(values.no_of_optional)||null
+                        let { data } = await axios.post(`${baseURL}/api/elective-baskets`, elective)
+                        let id = data?.data?.id
+                        values.optional_subject.map(elem => {
+                            arr.push({
+                                batch: values.batch,
+                                classId: values.class_id,
+                                programId: values.program_id,
+                                semester: values.semester,
+                                isCompulsory: false,
+                                subjectId: elem.optional_subject,
+                                basketId: id
+                            })
+                        })
+
+                        console.log('elective choice', elective)
+                        elective = {}
+                   }
+                   await axios.post(`${baseURL}/api/program-subjects/bulk`, { arr: arr })
                     resetForm()
-                    arr=[]
-                     alert("Form submitted successfully!");
+                    arr = []
+
+                    alert("Form submitted successfully!");
+
 
                 }}
             >
@@ -114,7 +143,7 @@ const AssignSubject = () => {
                             </div>
 
                             <div className="col-md-3">
-                                 <label className="form-label">Select Semester</label>
+                                <label className="form-label">Select Semester</label>
                                 <Field
                                     as="select"
                                     name='semester'
@@ -202,17 +231,23 @@ const AssignSubject = () => {
                                 </Field>
                                 <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
                             </div>
+
                             {values?.is_optional == 'Yes' && <div className="col-md-4">
-                                <label className="form-label">Select number of optional Subject</label>
-                                <Field as="select" name="is_multiple_choice" className="form-select">
-                                    <option value="">Number of Optional</option>
-                                    <option value="Yes">1</option>
-                                    <option value="NO">2</option>
-                                    <option value="Yes">3</option>
-                                    <option value="NO">4</option>
+                                <label className="form-label">Number of optional Subject</label>
+                                <Field as="select" name="no_of_optional" className="form-select">
+                                    <option value="">Select</option>
+                                    {
+                                        electiveBasket.map(elem => (
+                                            <option value={elem}>{elem}</option>
+
+                                        ))
+                                    }
+
+
                                 </Field>
                                 <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
                             </div>}
+
                             {
                                 values?.is_optional == 'Yes' && <div className="col-md-12">
                                     <label className="form-label">Optional Subject</label>
@@ -229,7 +264,7 @@ const AssignSubject = () => {
                                                         >
                                                             <option value="">Optional Subject</option>
                                                             {sujects.map((sub) => (
-                                                                <option key={sub.id} value={sub.value}>
+                                                                <option key={sub.id} value={sub.id}>
                                                                     {sub.value}
                                                                 </option>
                                                             ))}

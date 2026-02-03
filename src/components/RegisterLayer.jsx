@@ -2,6 +2,7 @@ import OrderByFollowingStep from "./child/OrderByFollowingStep"
 import { useState } from "react"
 import PersonalInformationForm from "./child/PersonalInformationForm";
 import DocumentStage from "./child/DocumentStage";
+import SubjectStage from "./child/SubjectStage";
 const RegisterLayer = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const nextStep = () => {
@@ -250,6 +251,7 @@ const RegisterLayer = () => {
                                             </div>
                                         </div>
                                     </fieldset>
+                                   
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 2 && "show"} `}
                                     >
@@ -279,6 +281,27 @@ const RegisterLayer = () => {
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 3 && "show"} `}
                                     >
+                                        {<SubjectStage/>}
+                                        <div className='form-group d-flex align-items-center justify-content-end gap-8'>
+                                            <button
+                                                onClick={prevStep}
+                                                type='button'
+                                                className='form-wizard-previous-btn btn btn-neutral-500 border-neutral-100 px-32'
+                                            >
+                                                Back
+                                            </button>
+                                            <button
+                                                    onClick={nextStep}
+                                                    type='button'
+                                                    className='form-wizard-next-btn btn btn-primary-600 px-32'
+                                                >
+                                                    Next
+                                                </button>
+                                        </div>
+                                    </fieldset>
+                                     <fieldset
+                                        className={`wizard-fieldset ${currentStep === 4 && "show"} `}
+                                    >
                                         
                                         <div className='row gy-3'>
                                           <DocumentStage/>
@@ -300,8 +323,10 @@ const RegisterLayer = () => {
                                             </div>
                                         </div>
                                     </fieldset>
+                                    
+                                     
                                     <fieldset
-                                        className={`wizard-fieldset ${currentStep === 4 && "show"} `}
+                                        className={`wizard-fieldset ${currentStep === 5 && "show"} `}
                                     >
                                         <div className='text-center mb-40'>
                                             <img
