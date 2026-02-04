@@ -1,6 +1,5 @@
 import axios from "axios"
 import { useState, useEffect } from "react"
-
 import baseURL from "../../utils/baseUrl"
 import { Button } from "react-bootstrap"
 const SubjectStage = () => {
@@ -8,6 +7,7 @@ const SubjectStage = () => {
     const [programs, setPrograms] = useState([])
     const [checkedSubjects, setCheckedSubjects] = useState([]);
     const [selectedProgram, setSeletedProgram] = useState('')
+
     useEffect(() => {
         let fetchData = async () => {
             try {
@@ -38,10 +38,14 @@ const SubjectStage = () => {
         if (!acc[basketId]) acc[basketId] = [];
 
         acc[basketId].push({
+
             exactChoices: item.electivebasket?.exactChoices, // from basket table
             subject: item.subject.value,
             electiveId: item.electivebasket?.id,
-            semester: item.semester
+            semester: item.semester,
+            subjectId:item.subjectId,
+            classId:item.classId,
+            programId:item.programId
         });
 
         return acc;
@@ -50,11 +54,44 @@ const SubjectStage = () => {
     const allOption = Object.values(grouped).map(arr => ({
         opion: arr
     }));
-   
-    const handleSubmit=()=>{
-        console.log('selected program',selectedProgram)
-        console.log('checked subject:',checkedSubjects)
+    const handleCheckboxChange = (item, groupIndex) => {
+        setCheckedSubjects(prev => {
+            const exists = prev.find(s => s.subject === item.subject && s.electiveId === item.electiveId);
 
+            if (exists) {
+                // remove if unchecked
+                return prev.filter(s => !(s.subject === item.subject && s.electiveId === item.electiveId));
+            } else {
+                // add if checked
+                return [...prev, item];
+            }
+        });
+    };
+
+
+    const handleSubmit = async() => {
+        console.log('selected program', selectedProgram)
+        let complusaryData = filterSubject.reduce((arr, elem) => {
+            if (elem.isCompulsory == true) {
+                arr.push({ student_reg_no: 1, class_id: elem.classId, program_id: elem.programId, semester: elem.semester, subject_id: elem.subjectId, elective_bbasket_id: elem.electivebasket })
+            }
+            return arr
+        }, [])
+       // console.log('complusaryData:', complusaryData)
+        //console.log('checked subject:',checkedSubjects)
+        let nonCompulsoryData=checkedSubjects.map(elem=>({student_reg_no:1,class_id:elem.classId,program_id:elem.programId,semester:elem.semester,subject_id: elem.subjectId,elective_bbasket_id:elem.electiveId})) 
+       
+        const assignments = [...complusaryData, ...nonCompulsoryData];
+         try{
+
+            let {data}=await axios.post(`${baseURL}/api/studentsubjects/bulk`,{assignments})
+            alert("Subjects assigned successfully!");
+
+         }
+         catch(err){
+            alert("Error assigning subjects. Please try again.");
+
+         }
     }
 
 
@@ -115,8 +152,10 @@ const SubjectStage = () => {
                                     className="form-check-input mt-0"
                                     type="checkbox"
                                     id={`chk-${index}-${i}`}
-                                    value={item.electiveId || item.subject} // optional: good for form submission
+                                    checked={checkedSubjects.some(s => s.subject === item.subject && s.electiveId === item.electiveId)}
+                                    onChange={() => handleCheckboxChange(item, index)}
                                 />
+
                                 <label
                                     className="form-check-label fw-bold"
                                     htmlFor={`chk-${index}-${i}`}
@@ -129,14 +168,14 @@ const SubjectStage = () => {
                 </div>
             ))}
 
-         <div className="mt-10" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-            <div className="" style={{ width: "50%" }}>
-                <Button className="btn btn-primary btn-sm px-20" onClick={handleSubmit}>Submit</Button>
+            <div className="mt-10" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+                <div className="" style={{ width: "50%" }}>
+                    <Button className="btn btn-primary btn-sm px-20" onClick={handleSubmit}>Submit</Button>
+                </div>
+
+
             </div>
 
-             
-         </div>
-        
 
 
 

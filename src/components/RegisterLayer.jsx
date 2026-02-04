@@ -3,6 +3,7 @@ import { useState } from "react"
 import PersonalInformationForm from "./child/PersonalInformationForm";
 import DocumentStage from "./child/DocumentStage";
 import SubjectStage from "./child/SubjectStage";
+import DeclarationStage from "./child/DeclarationStage";
 const RegisterLayer = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const nextStep = () => {
@@ -61,7 +62,7 @@ const RegisterLayer = () => {
                         <div className='form-wizard-list__line'>
                             <span className='count'>4</span>
                         </div>
-                        <span className='text text-xs fw-semibold'>Select Optional</span>
+                        <span className='text text-xs fw-semibold'>Select Documents</span>
                     </li>
                     <li
                         className={`form-wizard-list__item
@@ -323,10 +324,35 @@ const RegisterLayer = () => {
                                             </div>
                                         </div>
                                     </fieldset>
+                                     <fieldset
+                                        className={`wizard-fieldset ${currentStep === 5 && "show"} `}
+                                    >
+                                        
+                                        <div className='row gy-3'>
+                                          <DeclarationStage/>
+                                            <div className='form-group d-flex align-items-center justify-content-end gap-8'>
+                                                <button
+                                                    onClick={prevStep}
+                                                    type='button'
+                                                    className='form-wizard-previous-btn btn btn-neutral-500 border-neutral-100 px-32'
+                                                >
+                                                    Back
+                                                </button>
+                                                <button
+                                                    onClick={nextStep}
+                                                    type='button'
+                                                    className='form-wizard-next-btn btn btn-primary-600 px-32'
+                                                >
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </fieldset>
                                     
                                      
-                                    <fieldset
-                                        className={`wizard-fieldset ${currentStep === 5 && "show"} `}
+                                    
+                                     <fieldset
+                                        className={`wizard-fieldset ${currentStep === 6 && "show"} `}
                                     >
                                         <div className='text-center mb-40'>
                                             <img

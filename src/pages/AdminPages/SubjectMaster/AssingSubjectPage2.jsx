@@ -17,7 +17,7 @@ const AssignSubjectPage2 = () => {
       const res = await axios.get(`${baseURL}/api/classes`);
       setClasses(res.data?.data || []);
     };
-    fetchClasses();
+   // fetchClasses();
   }, []);
 
   // Reload DataTable whenever selectedClass or search changes
@@ -34,41 +34,10 @@ const AssignSubjectPage2 = () => {
 
   return (
     <>
-      <AssignSubject />
+    
 
       {/* Top filter row */}
-      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-        {/* Left side: Select + Submit */}
-        <div className="d-flex align-items-center gap-2 flex-wrap">
-          <h6 className="mb-0">Select Class:</h6>
-          <select
-            className="form-select form-select-sm w-auto"
-            value={selectedClass}
-            onChange={(e) => setSelectedClass(e.target.value)}
-          >
-            <option value="">Select class</option>
-            {classes.map((elem, idx) => (
-              <option key={idx} value={elem.class_name}>
-                {elem.class_name}
-              </option>
-            ))}
-          </select>
-          <button className="btn btn-success" onClick={handleSubmit}>
-            Submit
-          </button>
-        </div>
-
-        {/* Right side: Search input */}
-        <div style={{ minWidth: "250px" }}>
-          <input
-            className="form-control py-2"
-            type="text"
-            placeholder="Search by program or semester"
-            value={search}
-            onChange={handleSearchChange}
-          />
-        </div>
-      </div>
+     
 
       {/* DataTable */}
       <GenericTableAssignSubject
