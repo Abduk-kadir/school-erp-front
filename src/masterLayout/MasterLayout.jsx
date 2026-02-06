@@ -190,6 +190,42 @@ const MasterLayout = () => {
 
     ]
   },
+  {
+    title: "Admission",
+    icon: "icon-park-outline:id-card",
+    children: [
+      { title: "Seat Allotment", path: "/dashboard/setting/institute" },
+      { title: "Addmission Fee", path: "/dashboard/setting/institute" },
+      { title: "Addmission Conform", path: "/dashboard/setting/institute" },
+      { title: "Addmission Form Coupon", path: "/dashboard/setting/institute" },
+      
+      
+       
+
+    ]
+  },
+   {
+    title: "Admission Report",
+    icon: "icon-park-outline:id-card",
+    children: [
+      { title: "Institute", path: "/dashboard/setting/institute" },
+      
+      
+       
+
+    ]
+  },
+  {
+    title: "Setting",
+    icon: "icon-park-outline:id-card",
+    children: [
+      { title: "Institute", path: "/dashboard/setting/institute" },
+      
+      
+       
+
+    ]
+  },
 
   // ... you can do the same for other sections (Master, Subject, etc.)
 ];

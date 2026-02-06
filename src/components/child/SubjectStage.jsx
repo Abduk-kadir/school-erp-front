@@ -2,6 +2,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import baseURL from "../../utils/baseUrl"
 import { Button } from "react-bootstrap"
+import FormWizard from "./FormWizard"
 const SubjectStage = () => {
     const [subjects, setSubjects] = useState([])
     const [programs, setPrograms] = useState([])
@@ -98,7 +99,9 @@ const SubjectStage = () => {
 
     console.log('grouped data is:', allOption)
     return (
-        <div className="card">
+        <div className="container">
+           <FormWizard/> 
+        <div className="card p-10 shadow p-10">
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
                 <div className="d-flex" style={{ width: "50%" }}>
                     <h6>Select Program</h6>
@@ -196,6 +199,7 @@ const SubjectStage = () => {
 
 
 
+        </div>
         </div>
 
     )

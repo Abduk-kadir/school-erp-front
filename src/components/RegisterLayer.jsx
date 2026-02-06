@@ -4,6 +4,7 @@ import PersonalInformationForm from "./child/PersonalInformationForm";
 import DocumentStage from "./child/DocumentStage";
 import SubjectStage from "./child/SubjectStage";
 import DeclarationStage from "./child/DeclarationStage";
+import Registration from "./child/Registration";
 const RegisterLayer = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const nextStep = () => {
@@ -128,7 +129,7 @@ const RegisterLayer = () => {
                 <div className="col-12">
                     <div className='card'>
                         <div className='card-body'>
-            
+
                             {/* Form Wizard Start */}
                             <div className='form-wizard'>
                                 <div>
@@ -136,110 +137,16 @@ const RegisterLayer = () => {
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 1 && "show"} `}
                                     >
-                                        <h6 className='text-md text-neutral-500'>
-                                            Registration
-                                        </h6>
+                                        
                                         <div className='row gy-3'>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Sir Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter First Name'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>First Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='text'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Last Name'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-6'>
-                                                <label className='form-label'>Father Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='email'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Email'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Mother Name*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='password'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Password'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-12'>
-                                                <label className='form-label'>Please select the class for child promoted*</label>
-                                                <div className='position-relative'>
-                                                    <select class="form-select" aria-label="Default select example">
-                                                        <option selected>class</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
-                                                    </select>
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Email*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='password'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Password'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                    <label className='form-label text-danger'>Note-Emails are sent to this number</label>
-                                                </div>
-                                            </div>
-                                            <div className='col-sm-6'>
-                                                <label className='form-label'>Mobile Number*</label>
-                                                <div className='position-relative'>
-                                                    <input
-                                                        type='password'
-                                                        className='form-control wizard-required'
-                                                        placeholder='Enter Password'
-                                                        required=''
-                                                    />
-                                                    <div className='wizard-form-error' />
-                                                </div>
-                                                <label className='form-label text-danger'>Note-Messages will be this number</label>
-                                            </div>
-                                            <div className='col-sm-6'>
-
-                                                <div className='position-relative'>
-                                                    <button
-
-                                                        type='button'
-                                                        className='btn btn-success'
-                                                    >
-                                                        Send Otp
-                                                    </button>
-                                                </div>
-                                                <label className='form-label text-danger'>Click Here to send otp</label>
-
-                                            </div>
+                                           
+                                            
+                                            
+                                            
+                                            
+                                           <Registration/>
+                                           
+                                            
                                             <div className='form-group text-end'>
 
                                                 <button
@@ -252,7 +159,7 @@ const RegisterLayer = () => {
                                             </div>
                                         </div>
                                     </fieldset>
-                                   
+
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 2 && "show"} `}
                                     >
@@ -282,7 +189,7 @@ const RegisterLayer = () => {
                                     <fieldset
                                         className={`wizard-fieldset ${currentStep === 3 && "show"} `}
                                     >
-                                        {<SubjectStage/>}
+                                        {<SubjectStage />}
                                         <div className='form-group d-flex align-items-center justify-content-end gap-8'>
                                             <button
                                                 onClick={prevStep}
@@ -292,20 +199,20 @@ const RegisterLayer = () => {
                                                 Back
                                             </button>
                                             <button
-                                                    onClick={nextStep}
-                                                    type='button'
-                                                    className='form-wizard-next-btn btn btn-primary-600 px-32'
-                                                >
-                                                    Next
-                                                </button>
+                                                onClick={nextStep}
+                                                type='button'
+                                                className='form-wizard-next-btn btn btn-primary-600 px-32'
+                                            >
+                                                Next
+                                            </button>
                                         </div>
                                     </fieldset>
-                                     <fieldset
+                                    <fieldset
                                         className={`wizard-fieldset ${currentStep === 4 && "show"} `}
                                     >
-                                        
+
                                         <div className='row gy-3'>
-                                          <DocumentStage/>
+                                            <DocumentStage />
                                             <div className='form-group d-flex align-items-center justify-content-end gap-8'>
                                                 <button
                                                     onClick={prevStep}
@@ -324,12 +231,12 @@ const RegisterLayer = () => {
                                             </div>
                                         </div>
                                     </fieldset>
-                                     <fieldset
+                                    <fieldset
                                         className={`wizard-fieldset ${currentStep === 5 && "show"} `}
                                     >
-                                        
+
                                         <div className='row gy-3'>
-                                          <DeclarationStage/>
+                                            <DeclarationStage />
                                             <div className='form-group d-flex align-items-center justify-content-end gap-8'>
                                                 <button
                                                     onClick={prevStep}
@@ -348,10 +255,10 @@ const RegisterLayer = () => {
                                             </div>
                                         </div>
                                     </fieldset>
-                                    
-                                     
-                                    
-                                     <fieldset
+
+
+
+                                    <fieldset
                                         className={`wizard-fieldset ${currentStep === 6 && "show"} `}
                                     >
                                         <div className='text-center mb-40'>

@@ -25,6 +25,9 @@ import AssignDocumentPage from "./pages/AdminPages/master/documentMaster/assignD
 import ProgramPage from "./pages/AdminPages/SubjectMaster/ProgramPage";
 import AssignSubjectPage2 from "./pages/AdminPages/SubjectMaster/AssingSubjectPage2";
 import DeclarationStatement from "./components/child/master/Declaration/DeclarationStatement";
+import InstitutePage from "./pages/AdminPages/setting/InstitutePage";
+import Registration from "./components/child/Registration";
+import SubjectStage from "./components/child/SubjectStage";
 
 function App() {
   let user = true;
@@ -33,10 +36,12 @@ function App() {
       <RouteScrollToTop />
       <Routes>
         <Route >
-          <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <RegisterPage/>} />
-          <Route path="dashboard" element={<MasterLayout />} >
+          <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <LoginPage/>} />
+             <Route path="/registration" element={<Registration/>} />
+            <Route path="/personal-information" element={<PersonalInformationForm/>} />
+            <Route path="/subject-stage" element={<SubjectStage/>}/>
+            <Route path="dashboard" element={<MasterLayout />} >
             <Route index element={<Dashboard />} />
-            
             <Route path='employee-master' element={<EmployeePage/>}/>
             <Route path='class-master' element={<ClassPage/>} />
             <Route path='academic-year-master' element={<AcademicYearPage/>}/>
@@ -56,9 +61,10 @@ function App() {
             <Route path="program" element={<ProgramPage/>}/>
             <Route path="document-master/add-document" element={<AddDocumentPage/>}/>
             <Route path="document-master/assign-document" element={<AssignDocumentPage/>}/>
-            
+            <Route path="setting" >
+               <Route path='institute'  element={<InstitutePage/>}/>
+            </Route>  
 
-           
           </Route>
         </Route>
       </Routes>

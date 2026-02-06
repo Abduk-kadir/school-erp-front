@@ -7,7 +7,10 @@ import * as Yup from "yup";
 import { PenNibStraight } from "@phosphor-icons/react";
 import baseURL from "../../utils/baseUrl";
 import axios from "axios";
+import FormWizard from "./FormWizard";
+import { Navigate, useNavigate } from "react-router-dom";
 const PersonalInformationForm = () => {
+    const navigate=useNavigate()
     const dispatch = useDispatch();
     let id=4;
    
@@ -66,19 +69,24 @@ const PersonalInformationForm = () => {
 
     return (
         <div className="container mt-5">
+            <FormWizard/>
             <div className="card p-4 shadow">
                 <h3 className="mb-4">Personal Information Form</h3>
 
                 <Formik
                     initialValues={initialValues}
                     enableReinitialize={true}
-                    validationSchema={validationSchema}
+                   // validationSchema={validationSchema}
                     onSubmit={async(values, { resetForm }) => {
-                        console.log('selected value:', values);
+                       /* console.log('selected value:', values);
                         await axios.post(`${baseURL}/api/personal-information`,values)
                         alert("Form submitted successfully!");
                         resetForm();
+                        */
+                       navigate('/subject-stage')
                     }}
+                        
+                     
                 >
                     {({ isSubmitting }) => (
                         <Form>
@@ -215,14 +223,22 @@ const PersonalInformationForm = () => {
                                     </div>
                                 ))}
                             </div>
-
+                            <div className="d-flex justify-content-end gap-3 mb-10">
+                                <button
+                                type="Previous"
+                                className="btn btn-success mt-3 px-5"
+                                onClick={() => navigate(-1)}
+                            >
+                                Previosus
+                            </button>
                             <button
-                                type="submit"
-                                className="btn btn-primary mt-3"
+                                type="Next"
+                                className="btn btn-success mt-3 px-5"
                                 disabled={isSubmitting}
                             >
                                 Submit
                             </button>
+                            </div>
                         </Form>
                     )}
                 </Formik>
