@@ -194,10 +194,10 @@ const MasterLayout = () => {
     title: "Admission",
     icon: "icon-park-outline:id-card",
     children: [
-      { title: "Seat Allotment", path: "/dashboard/setting/institute" },
-      { title: "Addmission Fee", path: "/dashboard/setting/institute" },
-      { title: "Addmission Conform", path: "/dashboard/setting/institute" },
-      { title: "Addmission Form Coupon", path: "/dashboard/setting/institute" },
+      { title: "Seat Allotment", path: "/dashboard/admission/seat-allotment" },
+      { title: "Addmission Fee", path: "/dashboard/admission/fee" },
+      { title: "Addmission Conform", path: "/dashboard/admission/form-conform" },
+      { title: "Addmission Form Coupon", path: "/dashboard/admission/coupon" },
       
       
        

@@ -11,7 +11,7 @@ import EmployeePage from './pages/EmployeePage'
 import RolePage from "./pages/RolePage";
 import PhisallyDisablePage from "./pages/PyisallyDisablePage";
 import LoginPage from "./pages/LoginPage";
-import RegisterPage from './pages/RegisterPage'
+
 import StagePage from "./pages/stagePage";
 import FiledTypePage from "./pages/FieldTypePae";
 import FiledPage from "./pages/FieldPage";
@@ -28,19 +28,22 @@ import DeclarationStatement from "./components/child/master/Declaration/Declarat
 import InstitutePage from "./pages/AdminPages/setting/InstitutePage";
 import Registration from "./components/child/Registration";
 import SubjectStage from "./components/child/SubjectStage";
+import AddmissionConformPage from "./pages/AdminPages/admissionMaster/AddmissionConformPage";
 
 function App() {
-  let user = true;
+  let user = false;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
       <Routes>
         <Route >
-          <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <LoginPage/>} />
-             <Route path="/registration" element={<Registration/>} />
+            <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <LoginPage/>} />
+            <Route path="/registration" element={<Registration/>} />
             <Route path="/personal-information" element={<PersonalInformationForm/>} />
             <Route path="/subject-stage" element={<SubjectStage/>}/>
             <Route path="dashboard" element={<MasterLayout />} >
+
+             {/*admin route*/}
             <Route index element={<Dashboard />} />
             <Route path='employee-master' element={<EmployeePage/>}/>
             <Route path='class-master' element={<ClassPage/>} />
@@ -63,7 +66,11 @@ function App() {
             <Route path="document-master/assign-document" element={<AssignDocumentPage/>}/>
             <Route path="setting" >
                <Route path='institute'  element={<InstitutePage/>}/>
-            </Route>  
+            </Route> 
+            <Route path="admission" >
+               <Route path='form-conform'  element={<AddmissionConformPage/>}/>
+            </Route> 
+
 
           </Route>
         </Route>

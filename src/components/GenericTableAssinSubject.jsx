@@ -1,24 +1,45 @@
 import { useEffect, useRef, useState } from "react";
 import $ from "jquery";
 import "datatables.net-dt";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import baseURL from "../utils/baseUrl";
 
 const GenericTableAssignSubject = ({ url, columns }) => {
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
 
-  let classNameRef = useRef(null)
-  let programNameRef = useRef(null)
+  const [classes, setClasses] = useState([]);
+  const [stages, setStages] = useState([]);
 
-  const handleFilter = () => {
-
-    if (datatableRef.current) {
-      datatableRef.current.draw();
-    }
-  }
+  // Controlled filter values
+  const [classFilter, setClassFilter] = useState("");
+  const [programFilter, setProgramFilter] = useState("");
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [res1, res2] = await Promise.all([
+          axios.get(`${baseURL}/api/classes`),
+          axios.get(`${baseURL}/api/stage`),
+        ]);
+        setClasses(res1?.data?.data || []);
+        setStages(res2?.data?.data || []);
+      } catch (err) {
+        console.error("Failed to load classes/stages", err);
+      }
+    };
+    fetchData();
+  }, []);
+  console.log('classess', classes)
+  const handleFilter = () => {
+    if (datatableRef.current) {
+      datatableRef.current.draw(); // ← this triggers new ajax call
+    }
+  };
+
+  useEffect(() => {
+    if (!tableRef.current) return;
+
     datatableRef.current = $(tableRef.current).DataTable({
       pageLength: 5,
       processing: true,
@@ -29,52 +50,85 @@ const GenericTableAssignSubject = ({ url, columns }) => {
         type: "GET",
         data: (d) => {
           d.filter = {
-            className: classNameRef.current,
-            programName: programNameRef.current,
-          }
-        }
+            className: classFilter.trim(),
+            programName: programFilter.trim(),
+          };
+        },
       },
-      columns
+      columns,
     });
+
     return () => {
       if (datatableRef.current) {
-        datatableRef.current.destroy(true)
+        datatableRef.current.destroy(true);
       }
     };
-  }, [url, columns]);
-
+  }, [url, columns]); // Important: do NOT put classFilter/programFilter here
 
   return (
     <>
-      <div className="card">
-        <div className="card-body">
-          <div className="row">
-            <div className="col-md-4">
-              <input className="form-control" type="text" value={classNameRef.current} onChange={e => classNameRef.current = e.target.value} />
-            </div>
-            <div className="col-md-4">
-              <input className="form-control" type="text" value={programNameRef.current} onChange={e => programNameRef.current = e.target.value} />
-            </div>
-            <div className="col-md-4">
-              <button className="btn btn-primary" onClick={handleFilter}>Submit</button>
-            </div>
-          </div>
-        </div>
+     <div className="mb-20" >
+  <div >
+    <div className="row g-3 align-items-center">   {/* ← key change: align-items-center */}
+      
+      <div className="col-md-3">
+        <label className="form-label fw-bold">Reg No</label>
+        <input
+          className="form-control"
+          type="text"
+          placeholder="enter reg_no"
+          value={programFilter}
+          onChange={(e) => setProgramFilter(e.target.value)}
+        />
       </div>
 
-      <div className='card basic-data-table'>
+      <div className="col-md-2">
+        <label className="form-label fw-bold">Class</label>
+        <select className="form-select " aria-label="Default select example">
+          <option selected>Select Class</option>
+          {classes.map((elem, index) => (
+            <option key={index} value={elem?.id || elem?.class_name}>
+              {elem?.class_name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-        <div className='card-header'>
-          <h5 className='card-title mb-0'>Default Data Tables</h5>
+      <div className="col-md-2">
+        <label className="form-label fw-bold">Stage</label>
+        <select className="form-select " aria-label="Default select example">
+          <option selected>Select Stage</option>
+          {stages.map((elem, index) => (
+            <option key={index} value={elem?.id || elem?.name}>
+              {elem?.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="col-md-3 col-12 d-flex align-items-end mt-5">  {/* ← or align-items-center */}
+        <button 
+          className="btn btn-success px-5" 
+          onClick={handleFilter}
+        >
+          Submit
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+      <div className="card basic-data-table mt-4">
+        <div className="card-header">
+          <h5 className="card-title mb-0">Assigned Subjects</h5>
         </div>
-        <div className='card-body'>
-
+        <div className="card-body">
           <table
-            className='table bordered-table mb-0'
-            id='dataTable'
+            className="table bordered-table mb-0"
+            id="dataTable"
             ref={tableRef}
-          >
-          </table>
+          />
         </div>
       </div>
     </>

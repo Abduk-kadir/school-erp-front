@@ -13,8 +13,6 @@ const PersonalInformationForm = () => {
     const navigate=useNavigate()
     const dispatch = useDispatch();
     let id=4;
-   
-
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
     );
@@ -63,7 +61,7 @@ const PersonalInformationForm = () => {
 
     useEffect(() => {
        dispatch(getPersonalInformationForm({}));
-    dispatch(getStage1({}));
+       dispatch(getStage1({}));
      
     }, [dispatch]);
 

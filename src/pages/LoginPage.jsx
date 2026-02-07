@@ -1,14 +1,18 @@
 // LoginPage.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Carousel, Card, Form, Button, Row, Col } from 'react-bootstrap';
 import { Formik, Field, ErrorMessage, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/loginpage.css';
+import { useEffect } from 'react';
+import axios from 'axios';
+import baseUrl from '../utils/baseUrl'
+
 
 // Validation schema with Yup
 const loginSchema = Yup.object().shape({
-  username: Yup.string()
+  email: Yup.string()
     .email('Please enter a valid email')
     .required('Email / Username is required'),
   password: Yup.string()
@@ -23,6 +27,24 @@ const loginSchema = Yup.object().shape({
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [personalInformations,setPersonalInformations]=useState([])
+  const [reg_no,setRegNo]=''
+  /*useEffect(()=>{
+    let fetchData=(async()=>{
+
+      try{
+      let {data}=await axios.get(`${baseUrl}/api/classes`)
+       setClasses(data?.data||[])
+      }
+      catch(err){
+        console.log('error fetching class in login page')
+      }
+    })
+    fetchData()
+  },[])
+*/
+ console.log('personal information is:',personalInformations)
+
 
   const carouselImages = [
     {
@@ -72,21 +94,68 @@ const LoginPage = () => {
             }}
           >
             <Card.Body className="p-4 p-md-5">
-              <div className="text-center mb-4">
-                <h3 className="fw-bold text-primary">Welcome</h3>
+              <div className="text-center mb-10">
+                <h4 className="fw-bold text-primary">Welcome to our Institute</h4>
               </div>
 
               <Formik
                 initialValues={{
-                  username: '',
+                  email: '',
                   password: '',
                   academicYear: '',
                   loginAs: '',
+                  reg_no:''
+                  
                 }}
                // validationSchema={loginSchema}
-                onSubmit={(values, { setSubmitting, resetForm }) => {
-                  // Simulate API call / authentication
-                  console.log('Login submitted:', values);
+                onSubmit={async (values, { setSubmitting, resetForm }) => {
+
+                  console.log('login is called')
+                  try{
+                  let res=await axios.post(`${baseUrl}/api/personal-information/all`,{email:values.email})
+                   setPersonalInformations(res.data.data)
+                   console.log('form value is:',values)
+                   if(personalInformations.length>0){
+                  let {data}=await axios.post(`${baseUrl}/api/personal-information/login`,{email:values.email,reg_no:values.reg_no})
+                  alert('login successfully')
+                  let reg_no=data?.reg_no 
+                  let token=data?.token
+                  localStorage.setItem("token",token)
+                  localStorage.setItem("reg_no",reg_no)
+                  let res2=await axios.get(`${baseUrl}/api/form-status/${values.reg_no}`)
+                  let current_step=res2?.data?.data?.current_step
+                  console.log('current step',current_step)
+                  switch(current_step){
+                    case 1:
+                      navigate(`/registration?step=${current_step}&reg_no=${reg_no}`);
+                      break;
+                    case 2:
+                      navigate(`personal-information?step=${current_step}&reg_no=${reg_no}`)
+                      break; 
+                       case 3:
+                      navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`);
+                      break;
+                    case 4:
+                      navigate()
+                      break; 
+                       case 5:
+                      navigate('');
+                      break;
+                    case 6:
+                      navigate()
+                      break;  
+                  }
+
+                   }
+                  
+            
+                   
+
+                  }
+                  catch(err){
+                    alert(err)
+                  }
+                 
 
                   
                 }}
@@ -94,7 +163,7 @@ const LoginPage = () => {
                 {({ isSubmitting, touched, errors }) => (
                   <FormikForm noValidate>
                     {/* Username / Email */}
-                    <Form.Group as={Row} className="mb-4 align-items-center">
+                    <Form.Group as={Row} className="mb-10 align-items-center">
                       <Form.Label column sm={4} className="fw-medium fs-5">
                         Username
                       </Form.Label>
@@ -102,7 +171,7 @@ const LoginPage = () => {
                         <Field
                           as={Form.Control}
                           type="email"
-                          name="username"
+                          name="email"
                           placeholder="Enter Email"
                           size="lg"
                           isInvalid={touched.username && !!errors.username}
@@ -117,7 +186,7 @@ const LoginPage = () => {
                     </Form.Group>
 
                     {/* Password */}
-                    <Form.Group as={Row} className="mb-4 align-items-center">
+                    <Form.Group as={Row} className="mb-10 align-items-center">
                       <Form.Label column sm={4} className="fw-medium fs-5">
                         Password
                       </Form.Label>
@@ -140,7 +209,7 @@ const LoginPage = () => {
                     </Form.Group>
 
                     {/* Academic Year */}
-                    <Form.Group as={Row} className="mb-4 align-items-center">
+                    <Form.Group as={Row} className="mb-10 align-items-center">
                       <Form.Label column sm={4} className="fw-medium fs-5">
                         Academic Year
                       </Form.Label>
@@ -166,9 +235,37 @@ const LoginPage = () => {
                         />
                       </Col>
                     </Form.Group>
+                    {personalInformations.length>0&&<Form.Group as={Row} className="mb-10 align-items-center">
+                      <Form.Label column sm={4} className="fw-medium fs-5">
+                        Select Student
+                      </Form.Label>
+                     {<Col sm={8}>
+                        <Field
+                          as={Form.Select}
+                          name="reg_no"
+                          size="lg"
+                          isInvalid={touched.academicYear && !!errors.academicYear}
+                          isValid={touched.academicYear && !errors.academicYear}
+                        >
+                          <option value="">Class</option>
+                         
+                          {personalInformations.map(elem=>(
+                          <option value={elem.reg_no}>{`${elem.first_name}-${elem.class}`}</option>
+                            
+                          ))}
+                        </Field>
+                        <ErrorMessage
+                          name="class"
+                          component="div"
+                          className="invalid-feedback"
+                        />
+                      </Col>}
+                     
+                    </Form.Group>}
+
 
                     {/* Login As */}
-                    <Form.Group as={Row} className="mb-4 align-items-center">
+                    <Form.Group as={Row} className="mb-10 align-items-center">
                       <Form.Label column sm={4} className="fw-medium fs-5">
                         Login As
                       </Form.Label>
