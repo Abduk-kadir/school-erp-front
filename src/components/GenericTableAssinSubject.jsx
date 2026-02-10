@@ -3,7 +3,6 @@ import $ from "jquery";
 import "datatables.net-dt";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
-
 const GenericTableAssignSubject = ({ url, columns }) => {
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
@@ -56,6 +55,9 @@ const GenericTableAssignSubject = ({ url, columns }) => {
         },
       },
       columns,
+      headerCallback: function (thead) {
+    $(thead).find("th").css("white-space", "nowrap");
+  }
     });
 
     return () => {
@@ -82,7 +84,7 @@ const GenericTableAssignSubject = ({ url, columns }) => {
         />
       </div>
 
-      <div className="col-md-2">
+      <div className="col-md-3">
         <label className="form-label fw-bold">Class</label>
         <select className="form-select " aria-label="Default select example">
           <option selected>Select Class</option>
@@ -94,7 +96,7 @@ const GenericTableAssignSubject = ({ url, columns }) => {
         </select>
       </div>
 
-      <div className="col-md-2">
+      <div className="col-md-3">
         <label className="form-label fw-bold">Stage</label>
         <select className="form-select " aria-label="Default select example">
           <option selected>Select Stage</option>
@@ -124,11 +126,13 @@ const GenericTableAssignSubject = ({ url, columns }) => {
           <h5 className="card-title mb-0">Assigned Subjects</h5>
         </div>
         <div className="card-body">
-          <table
-            className="table bordered-table mb-0"
-            id="dataTable"
-            ref={tableRef}
-          />
+          <div className="table-responsive" style={{ overflowY: "hidden", overflowX: "auto" }}>
+            <table
+              className="table bordered-table mb-0"
+              id="dataTable"
+              ref={tableRef}
+            />
+          </div>
         </div>
       </div>
     </>

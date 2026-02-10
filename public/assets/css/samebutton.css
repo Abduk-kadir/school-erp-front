@@ -1,0 +1,31 @@
+/* src/App.css */
+#dataTable .action-btn {
+  height: 40px;
+  padding: 0.375rem 0.75rem; /* control top/bottom & left/right padding */
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Purple button for View Photo */
+.action-btn-purple {
+  background-color: #7571f0; /* purple */
+  color: white;
+          /* pointer on hover */
+}
+.view-edit{
+    background-color: #7b168f; /* blue */
+    color: white;
+            /* pointer on hover */
+}
+.view-edit:hover {
+  background-color: #7b168f; /* keep same color */
+  color: white;
+}
+.action-btn-purple:hover {
+  background-color: #7b168f; /* keep same color */
+  color: white;
+}
+
+
+

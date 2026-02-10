@@ -3,11 +3,17 @@ import { useState, useEffect } from "react"
 import baseURL from "../../utils/baseUrl"
 import { Button } from "react-bootstrap"
 import FormWizard from "./FormWizard"
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 const SubjectStage = () => {
     const [subjects, setSubjects] = useState([])
     const [programs, setPrograms] = useState([])
     const [checkedSubjects, setCheckedSubjects] = useState([]);
     const [selectedProgram, setSeletedProgram] = useState('')
+    const [searchParams] = useSearchParams();
+    
+      const reg_no = searchParams.get("reg_no");
+      let step = searchParams.get("step")
+      step=Number(step)
 
     useEffect(() => {
         let fetchData = async () => {
@@ -100,10 +106,10 @@ const SubjectStage = () => {
     console.log('grouped data is:', allOption)
     return (
         <div className="container">
-           <FormWizard/> 
+           <FormWizard currentStep={step}/> 
         <div className="card p-10 shadow p-10">
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-                <div className="d-flex" style={{ width: "50%" }}>
+                <div className="d-flex" style={{ width: "70%" }}>
                     <h6>Select Program</h6>
                     <select class="form-select form-select-sm"
                         value={selectedProgram}
@@ -121,7 +127,7 @@ const SubjectStage = () => {
                 </div >
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-                <div className="border" style={{ width: "50%" }}>
+                <div className="border" style={{ width: "70%" }}>
                     <h6 className="mb-10 mt-10">Complusary</h6>
                     <ul>
                         {
@@ -143,7 +149,7 @@ const SubjectStage = () => {
 
 
             {allOption.map((group, index) => (
-                <div key={index} className="border" style={{ width: "50%", margin: "auto" }}>
+                <div key={index} className="border" style={{ width: "70%", margin: "auto" }}>
 
                     <h6 className="mt_10">Select Any  {group.opion[0]?.exactChoices}</h6>
 

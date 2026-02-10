@@ -5,6 +5,8 @@ import FormWizard from './FormWizard';
 import axios from 'axios';
 import baseURL from '../../utils/baseUrl';
 import { useNavigate } from "react-router-dom";
+
+
 const registrationSchema = Yup.object().shape({
   sirName: Yup.string()
     .trim()
@@ -53,7 +55,6 @@ const Registration = () => {
     <div className="card p-10 shadow">
       
       <h6 className="text-md text-neutral-500 mb-3">Registration</h6>
-
       <Formik
         initialValues={{
           sirName: '',
@@ -66,12 +67,16 @@ const Registration = () => {
           otpVerified: false,
         }}
        // validationSchema={registrationSchema}
-        onSubmit={(values, { setSubmitting, resetForm }) => {
-         
-          alert('Registration data submitted! (check console)');
-          navigate('/personal-information')
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          try{
+            console.log('vlaues are:',values)
+           //await axios.post(`${baseURL}/api/personal-information`,values)
+           //navigate('/personal-information');
+          }
+          catch(err){
 
-         
+          }
+       
          
         }}
       >
@@ -127,7 +132,7 @@ const Registration = () => {
               </div>
 
               {/* Class selection */}
-              <div className="col-sm-12">
+              <div className="col-sm-6">
                 <label className="form-label">Class for child promoted to*</label>
                 <Field as="select" name="classPromoted" className="form-select">
                   <option value="">Select Class</option>
@@ -174,8 +179,8 @@ const Registration = () => {
                   />
                   <button
                     type="button"
-                    className="btn btn-outline-success"
-                    disabled={!values.mobile || isSubmitting}
+                    className="btn btn-success"
+                   
                     onClick={() => {
                       // In real app → call send OTP API
                       alert(`OTP would be sent to: ${values.mobile}`);

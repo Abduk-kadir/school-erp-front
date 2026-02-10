@@ -1,0 +1,39 @@
+:root {
+  --color-primary-green: #67f97b;
+  --color-success-green: #198754;
+  --color-text-dark: #000;
+  --color-text-white: #fff;
+  --color-text-light: #495057;
+  --color-bg-light: #f1f3f5;
+  --color-bg-success-light: #e6f4ea;
+  --color-border-dark: #dee2e6;
+  --color-muted: #6c757d;
+}
+
+.form-wizard-list.style-two .form-wizard-list__item.activated{
+    background-color: var(--color-success-green)   !important;
+}
+.form-wizard-list.style-two .form-wizard-list__item.activated .text{
+    color: var(--color-text-white) !important;
+}
+
+.form-wizard-list.style-two .form-wizard-list__item .count{
+  font-size:0.8rem !important;
+  
+}
+
+.form-wizard-list.style-two .form-wizard-list__item.activated .count{
+    color: var(--color-text-dark);
+    border-color: var(--color-success-green)   !important;
+}
+.form-wizard-list.style-two .form-wizard-list__item .text{
+    color: var(--color-text-dark)   !important;
+    font-size: 0.7rem !important;
+}
+
+.form-wizard-list.style-two .form-wizard-list__item.active .count {
+    color: var(--color-text-white);
+    border-color: var(--color-success-green)   !important;
+    background-color: var(--color-success-green)   !important;
+    font-size: 0.7rem !important;
+}

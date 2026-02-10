@@ -8,10 +8,17 @@ import { PenNibStraight } from "@phosphor-icons/react";
 import baseURL from "../../utils/baseUrl";
 import axios from "axios";
 import FormWizard from "./FormWizard";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+
 const PersonalInformationForm = () => {
     const navigate=useNavigate()
     const dispatch = useDispatch();
+    const [searchParams] = useSearchParams();
+
+  const reg_no = searchParams.get("reg_no");
+  let step = searchParams.get("step")
+  step=Number(step)
+  console.log('step in personal information',step)
     let id=4;
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
@@ -67,7 +74,7 @@ const PersonalInformationForm = () => {
 
     return (
         <div className="container mt-5">
-            <FormWizard/>
+            <FormWizard currentStep={step}/>
             <div className="card p-4 shadow">
                 <h3 className="mb-4">Personal Information Form</h3>
 

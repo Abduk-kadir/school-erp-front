@@ -58,7 +58,7 @@ const LoginPage = () => {
   ];
 
   return (
-    <div className="container-fluid login-container">
+    <div className="container-fluid login-container border">
       <div className="row g-0 mt-50">
         {/* Left Side - Carousel */}
         <div className="col-lg-6 left-side p-0" style={{ height: '80vh' }}>
@@ -247,7 +247,7 @@ const LoginPage = () => {
                           isInvalid={touched.academicYear && !!errors.academicYear}
                           isValid={touched.academicYear && !errors.academicYear}
                         >
-                          <option value="">Class</option>
+                          <option value="">Student</option>
                          
                           {personalInformations.map(elem=>(
                           <option value={elem.reg_no}>{`${elem.first_name}-${elem.class}`}</option>

@@ -29,9 +29,10 @@ import InstitutePage from "./pages/AdminPages/setting/InstitutePage";
 import Registration from "./components/child/Registration";
 import SubjectStage from "./components/child/SubjectStage";
 import AddmissionConformPage from "./pages/AdminPages/admissionMaster/AddmissionConformPage";
+import SeatAllotmentPage from "./pages/AdminPages/admissionMaster/SeatAllotmentPage";
 
 function App() {
-  let user = false;
+  let user = true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -42,7 +43,6 @@ function App() {
             <Route path="/personal-information" element={<PersonalInformationForm/>} />
             <Route path="/subject-stage" element={<SubjectStage/>}/>
             <Route path="dashboard" element={<MasterLayout />} >
-
              {/*admin route*/}
             <Route index element={<Dashboard />} />
             <Route path='employee-master' element={<EmployeePage/>}/>
@@ -52,7 +52,6 @@ function App() {
             <Route path='cast-master' element={<CastPage/>}/>
             <Route path='role-master' element={<RolePage/>}/>
             <Route path='add-declaration' element={<DeclarationStatement/>}/>
-            
             <Route path='phisally-disable' element={<PhisallyDisablePage/>}/>
             <Route path="admission-form-master/stages" element={<StagePage/>}/>
             <Route path="admission-form-master/filed-type" element={<FiledTypePage/>}/>
@@ -69,6 +68,7 @@ function App() {
             </Route> 
             <Route path="admission" >
                <Route path='form-conform'  element={<AddmissionConformPage/>}/>
+                 <Route path='seat-allotment'  element={<SeatAllotmentPage/>}/>
             </Route> 
 
 
