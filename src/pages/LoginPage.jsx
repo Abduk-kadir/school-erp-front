@@ -8,6 +8,8 @@ import '../assets/css/loginpage.css';
 import { useEffect } from 'react';
 import axios from 'axios';
 import baseUrl from '../utils/baseUrl'
+import { useDispatch, useSelector } from 'react-redux';
+import { setRegistrationNo } from '../redux/slices/registrationNo';
 
 
 // Validation schema with Yup
@@ -28,7 +30,7 @@ const loginSchema = Yup.object().shape({
 const LoginPage = () => {
   const navigate = useNavigate();
   const [personalInformations,setPersonalInformations]=useState([])
-  const [reg_no,setRegNo]=''
+  const dispatch=useDispatch()
   /*useEffect(()=>{
     let fetchData=(async()=>{
 
@@ -123,6 +125,7 @@ const LoginPage = () => {
                   localStorage.setItem("token",token)
                   localStorage.setItem("reg_no",reg_no)
                   let res2=await axios.get(`${baseUrl}/api/form-status/${values.reg_no}`)
+                  dispatch(setRegistrationNo({ reg_no:values.reg_no }))
                   let current_step=res2?.data?.data?.current_step
                   console.log('current step',current_step)
                   switch(current_step){

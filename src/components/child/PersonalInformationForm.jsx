@@ -1,7 +1,7 @@
 import { getPersonalInformationForm } from "../../redux/slices/dynamicForm/personalInfoFormSlice";
 import { getStage1 } from "../../redux/slices/stage1Sclice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useMemo } from "react";
+import { useEffect,useState ,useMemo } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { PenNibStraight } from "@phosphor-icons/react";
@@ -9,16 +9,45 @@ import baseURL from "../../utils/baseUrl";
 import axios from "axios";
 import FormWizard from "./FormWizard";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { getRegistrationNo } from "../../redux/slices/registrationNo";
+import { useReducer } from "react";
 
 const PersonalInformationForm = () => {
     const navigate=useNavigate()
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
+    const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+    const [reistrationData, setReistrationData] =useState(null);
+    console.log('registration no:', reg_no)
+    useEffect(() => {
+        let fetchData = async () => {
+          try {
+            if (reg_no) {
+              console.log('in registration get regsitration by reg no api called')
+              let { data } = await axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
+              setReistrationData(data?.data)
+              console.log('registration data is:', data?.data)
+            }
+          }
+          catch (err) {
+    
+          }
+        }
+        fetchData()
+    
+      }, [])
 
-  const reg_no = searchParams.get("reg_no");
+
+       useEffect(() => {
+       dispatch(getPersonalInformationForm({}));
+       dispatch(getStage1({}));
+     
+    }, [dispatch]);
+      
+  console.log('registrationData is:', reistrationData)
   let step = searchParams.get("step")
   step=Number(step)
-  console.log('step in personal information',step)
+ 
     let id=4;
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
@@ -30,7 +59,7 @@ const PersonalInformationForm = () => {
     const personalFormfields = wholeForm ? wholeForm[0]?.fields : [];
     console.log('user data is:',stageData)
 
-    const initialValues = useMemo(() => {
+    let initialValues = useMemo(() => {
         if (stageData) return stageData;
 
         const values = { first_name: "", last_name: "",father_name:"",class:"",division:"",contact_number:"",
@@ -42,7 +71,7 @@ const PersonalInformationForm = () => {
         return values;
     }, [personalFormfields]);
     
-
+  initialValues = reistrationData || initialValues;
     const validationSchema = Yup.object(
         personalFormfields.reduce((schema, field) => {
 
@@ -66,11 +95,7 @@ const PersonalInformationForm = () => {
             })
     );
 
-    useEffect(() => {
-       dispatch(getPersonalInformationForm({}));
-       dispatch(getStage1({}));
-     
-    }, [dispatch]);
+   
 
     return (
         <div className="container mt-5">
@@ -83,12 +108,17 @@ const PersonalInformationForm = () => {
                     enableReinitialize={true}
                    // validationSchema={validationSchema}
                     onSubmit={async(values, { resetForm }) => {
-                       /* console.log('selected value:', values);
-                        await axios.post(`${baseURL}/api/personal-information`,values)
-                        alert("Form submitted successfully!");
-                        resetForm();
-                        */
-                       navigate('/subject-stage')
+                            try {
+                             let { data } = await axios.put(`${baseURL}/api/personal-information/reg_no/${reg_no}`, values)
+                             let formStatusPayload = { current_step: 3, reg_no: reg_no}
+                             await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                             alert("Form updated successfully!")
+
+                            }
+                            catch(err){
+                                console.log('error is:', err)
+                            }
+                       navigate('/subject-stage?step=3')
                     }}
                         
                      
@@ -232,16 +262,16 @@ const PersonalInformationForm = () => {
                                 <button
                                 type="Previous"
                                 className="btn btn-success mt-3 px-5"
-                                onClick={() => navigate(-1)}
+                                onClick={() => navigate(`/registration?step=1`) }
                             >
-                                Previosus
+                                Prev
                             </button>
                             <button
                                 type="Next"
                                 className="btn btn-success mt-3 px-5"
                                 disabled={isSubmitting}
                             >
-                                Submit
+                                Next
                             </button>
                             </div>
                         </Form>

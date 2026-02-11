@@ -6,6 +6,7 @@ import axios from 'axios'
 import baseURL from '../../../utils/baseUrl'
 
 
+
 const AddmissionConformPage = () => {
 
 
@@ -19,9 +20,11 @@ const AddmissionConformPage = () => {
         { data: "reg_no", title: "Form No" },
         { data: "", title: "Accept by" },
         { data: "first_name", title: "First Name<br>Last Name<br>Father Name<br>Mother Name" },
-        { data: "", title: "Photo", render: (data, type, row) => { 
-          return'<button class="btn action-btn action-btn-purple">View Photo</button>'
-        } },
+        {
+          data: "", title: "Photo", render: (data, type, row) => {
+            return '<button class="btn action-btn action-btn-purple">View Photo</button>'
+          }
+        },
 
         { data: "class", title: "class" },
         { data: "email", title: "Email<br>Password<br>Mobile No" },

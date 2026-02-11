@@ -42,7 +42,7 @@ const FormWizard = ({ currentStep }) => {
                     <div className='form-wizard-list__line'>
                         <span className='count'>3</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Education Detail</span>
+                    <span className='text text-xs fw-semibold'>Select Subjects</span>
                 </li>
                 <li
                     className={`form-wizard-list__item
