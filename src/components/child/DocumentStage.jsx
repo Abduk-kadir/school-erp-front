@@ -3,15 +3,20 @@ import axios from "axios";
 import baseURL from "../../utils/baseUrl";
 import { Formik, Form, ErrorMessage, useFormikContext } from "formik";
 import { Icon } from "@iconify/react/dist/iconify.js";
-
+import { useNavigate,useSearchParams } from "react-router-dom";
+import FormWizard from "./FormWizard";
+import { useSelector, useDispatch } from "react-redux"
 const DocumentStage = () => {
+  const navigate = useNavigate();
   const [docReq, setDocReq] = useState([]);
   let [document,setDocuments]=useState({})
   const [userDocument,setUserDocument]=useState([])
- 
+  const [searchParams] = useSearchParams();
   const [uploadedDocs, setUploadedDocs] = useState({})
-
-  let edit=true;
+  const  [edit,setEdit]=useState(false);
+  const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+  let step = searchParams.get("step")
+  step = Number(step)
   let editdocument={}
 
   useEffect(() => {
@@ -20,11 +25,12 @@ const DocumentStage = () => {
         const res = await axios.get(`${baseURL}/api/requirement-documents`, {
           params: { class_id: 4 },
         });
-        const res2 = await axios.get(`${baseURL}/api/student-documents/student/${123}`, {
+        const res2 = await axios.get(`${baseURL}/api/student-documents/student/${reg_no}`, {
   
         });
         setDocReq(res.data.data || []);
         setUserDocument(res2.data.data || [])
+        if(res2.data.data.length>0)setEdit(true)
       } catch (err) {
         console.error("API error:", err);
       }
@@ -34,7 +40,7 @@ const DocumentStage = () => {
   }, []);
 
   // Remove duplicates and prepare unique document types
-  const uniqueDocs = Array.from(
+  let uniqueDocs = Array.from(
     new Map(docReq.map((item) => [item.document_type, item])).values()
   );
 
@@ -43,12 +49,10 @@ const DocumentStage = () => {
  // console.log('my uniquie:::',uniqueDocs)
  // console.log('user document:',userDocument)
   console.log('document is:',document)
+  console.log('my uniquie:::',uniqueDocs)
+  console.log('uplodded docs***',uploadedDocs)
+  console.log('user document:',userDocument)
 
-  if(edit==true)userDocument.map(elem=>editdocument[elem.document_id]=true)
-  console.log('edit document is:',editdocument)
- 
- 
-  
   const handleChange = (docType,file) => {
   if (!file) return;
 
@@ -60,53 +64,80 @@ const DocumentStage = () => {
 };
 
 
-const handleSubmit = async (document_type, document_id) => {
+const handleSubmit = async (document_type, document_id,id) => {
   const doc = document[document_type];
-
+ 
   if (!doc) {
     alert("Please select file first");
     return;
   }
-
+  
   const formData = new FormData();
   formData.append("document", doc);
-  formData.append("reg_number", 123);
+  formData.append("reg_number", reg_no);
   formData.append("document_id", document_id);
 
   try {
+    if(!id){
     const response = await axios.post(
-      `${baseURL}/api/student-documents/upload`,
-      formData
+     `${baseURL}/api/student-documents/upload`,
+     formData
     );
-
-    console.log("Upload success:", response.data);
-    setUploadedDocs((prev)=>({
+     console.log("Upload success:", response.data);
+     setUploadedDocs((prev)=>({
       ...prev,
       [document_id]:true
     }))
+  }
+  if(edit&&id){
+    const response2 = await axios.put(`${baseURL}/api/student-documents/${id}`,formData);
+      console.log("Update success:", response2.data);
+    alert('Document updated successfully')
+  }
+
+   
+    
   } catch (err) {
     console.error("Upload error:", err.response?.data || err.message);
   }
+    
 };
 
+const handleNext = async() => {
+   let formStatusPayload = { current_step: 4, reg_no: reg_no }
+   await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+        
+   navigate(`/declaration-stage?step=5`)
+}
+
+
   
- console.log('uplodded docs***',uploadedDocs)
+ 
   return (
-    <div className="container  card p-5 shadow ">
-      <h4 className="mb-10">Document Stage</h4>
-       <label className=" mb-10 text-danger fw-bold">Star mark is  Complusary</label>
+    <div className="container mt-5 mb-5">
+      <div className="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <FormWizard currentStep={step}/>
+       
+          <div className="card-body">
+          <h4 className="mb-2 fw-semibold">Upload Document</h4>  
+          <p className="text-danger fw-bold mb-4">
+            <span className="me-1">★</span>Fields marked with star are mandatory
+          </p>
       
        
             {uniqueDocs.map((elem) =>{
               
-               //const isUploaded = uploadedDocs[elem.document_id];
-              const isUploaded = edit==true?editdocument[elem.document_id]:uploadedDocs[elem.document_id];
+               const isUploaded = uploadedDocs[elem.document_id];
+               //this is for showing the already uploaded document,if user come back to this page from declaration stage for editing the document
+              const uploadedfileName=userDocument.find(doc=>doc.document_id===elem.document_id)?.original_filename
+              const uploadedDocument=userDocument.find(doc=>doc.document_id===elem.document_id)
+              
               return(
                
               <div key={elem.id || elem.document_type} className="row mb-5 gap-3">
                  
 
-                <div className="col-12 col-md-2">
+                <div className="col-12 col-md-3">
                   <label className="form-label fs-5 fw-semibold mb-0">
                     Upload {elem.document_type}
                     {elem.is_mandatory === 1 && <span className="text-danger"> *</span>}
@@ -124,11 +155,12 @@ const handleSubmit = async (document_type, document_id) => {
                     if (file) handleChange(elem.document_type,file);
                 }}
                   />
-                  {isUploaded&&<label className="form-label text-success">{elem.document_type} is uploaded</label>}
+                  {uploadedfileName&&<label className="form-label text-success">{uploadedfileName} is uploaded</label>}
+                  {isUploaded&& <label className="form-label text-success">Document uploaded successfully</label>}
                 </div>
                 <div className="col-12 col-md-3 ">
 
-                  <label onClick={()=>handleSubmit(elem.document_type,elem.document_id)}
+                  <label onClick={()=>handleSubmit(elem.document_type,elem.document_id,uploadedDocument?.id)}
                     htmlFor='basic-upload'
                     className='border border-primary-600 fw-medium text-primary-600 px-16 py-10 radius-12 d-inline-flex align-items-center gap-2 bg-hover-primary-50'
                   >
@@ -143,10 +175,25 @@ const handleSubmit = async (document_type, document_id) => {
               </div>
             )})}
 
-           
+           <div className="d-flex justify-content-end gap-3 mb-10">
+                    <button
+                        type="Previous"
+                        className="btn btn-success mt-3 px-5"
+                        onClick={() => navigate(`/subject-stage?step=3`)}
+                    >
+                        Prev
+                    </button>
+                    <button
+                        type="Next"
+                        className="btn btn-success mt-3 px-5"
+                        onClick={handleNext}
+                    >
+                        Next
+                    </button>
+                </div>
          
-       
-     
+        </div>
+     </div>
     </div>
   );
 };

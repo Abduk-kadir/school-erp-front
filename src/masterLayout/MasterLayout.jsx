@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
@@ -73,162 +73,161 @@ const MasterLayout = () => {
   const mobileMenuControl = () => setMobileMenu(!mobileMenu);
 
   // ── Modern nested menu structure ───────────────────────────────────────
- const menuItems = [
-  {
-    title: "Dashboard",
-    icon: "solar:home-smile-angle-outline",
-    children: [
-      { title: "Overview", path: "/" },
-      {
-        title: "Analytics",
-        icon: "solar:card-send-outline",
-        children: [
-          { title: "Traffic Sources", path: "/analytics/traffic" },
-          {
-            title: "User Behavior",  
-            icon: "solar:card-send-outline",                       // ← new level
-            children: [
-              { title: "Session Duration", path: "/analytics/behavior/sessions" },
-              { title: "Page Views", path: "/analytics/behavior/pages" },
-              { title: "Bounce Rate", path: "/analytics/behavior/bounce" }
-            ]
-          },
-          { title: "Conversion Rate", path: "/analytics/conversion" }
-        ]
-      },
-      {
-        title: "My Page",
-        children: [
-          { title: "Profile Overview", path: "/dashboard/my-page" },
-          {
-            title: "Settings",                             // ← new level
-            children: [
-              { title: "Personal Info", path: "/dashboard/my-page/personal" },
-              { title: "Security", path: "/dashboard/my-page/security" },
-              { title: "Notifications", path: "/dashboard/my-page/notifications" }
-            ]
-          },
-          { title: "Activity Log", path: "/dashboard/my-page/activity" }
-        ]
-      }
-    ]
-  },
+  const menuItems = [
+    {
+      title: "Dashboard",
+      icon: "solar:home-smile-angle-outline",
+      children: [
+        { title: "Overview", path: "/" },
+        {
+          title: "Analytics",
+          icon: "solar:card-send-outline",
+          children: [
+            { title: "Traffic Sources", path: "/analytics/traffic" },
+            {
+              title: "User Behavior",
+              icon: "solar:card-send-outline",                       // ← new level
+              children: [
+                { title: "Session Duration", path: "/analytics/behavior/sessions" },
+                { title: "Page Views", path: "/analytics/behavior/pages" },
+                { title: "Bounce Rate", path: "/analytics/behavior/bounce" }
+              ]
+            },
+            { title: "Conversion Rate", path: "/analytics/conversion" }
+          ]
+        },
+        {
+          title: "My Page",
+          children: [
+            { title: "Profile Overview", path: "/dashboard/my-page" },
+            {
+              title: "Settings",                             // ← new level
+              children: [
+                { title: "Personal Info", path: "/dashboard/my-page/personal" },
+                { title: "Security", path: "/dashboard/my-page/security" },
+                { title: "Notifications", path: "/dashboard/my-page/notifications" }
+              ]
+            },
+            { title: "Activity Log", path: "/dashboard/my-page/activity" }
+          ]
+        }
+      ]
+    },
 
-  {
-    title: "ID Card Master",
-    icon: "icon-park-outline:id-card",
-    children: [
-      { title: "Generate ID Card", path: "/id-card/generate" },
-      {
-        title: "Settings",
-        children: [
-          { title: "Field Configuration", path: "/id-card/fields" },
-          {
-            title: "Template Management",                    // ← new level
-            children: [
-              { title: "Create New Template", path: "/id-card/templates/new" },
-              { title: "Edit Templates", path: "/id-card/templates/edit" },
-              { title: "Preview Templates", path: "/id-card/templates/preview" }
-            ]
-          },
-          { title: "Print Settings", path: "/id-card/print" }
-        ]
-      },
-      { title: "Batch Master", path: "/id-card/batch-master" }
-    ]
-  },
-  {
-    title: "Master",
-    icon: "icon-park-outline:id-card",
-    children: [
-      { title: "Role Master", path: "/dashboard/role-master" },
-      
-      { title: "Employee Master", path:"/dashboard/employee-master" },
-      { title: "Academic Year Master", path: "/dashboard/academic-year-master" },
-      { title: "Class Master", path: "/dashboard/class-master" },
-      { title: "Division Master", path: "/dashboard/division-master" },
-      { title: "Cast Master", path: "/dashboard/cast-master"},
-       { title: "Add Declaration", path: "/dashboard/add-declaration"},
-      { title: "Document Master", 
-        children:[
-          {title:"Add Doucment",path: "/dashboard/document-master/add-document"},
-          {title:"Assign Doucment",path: "/dashboard/document-master/assign-document"}
-        ]
-      },
-      { title: "Phisally Disable", path: "/dashboard/phisally-disable"},
-      
-      {title:'Admision Form master',
-        children: [
-          { title: "Stages", path: "admission-form-master/stages" },
-          {
-            title: "Field Type",  
-            path: "admission-form-master/filed-type"
-                              
-           
-          },
-          { title: "Field", path: "admission-form-master/Field" },
-          { title: "drop-radio-values", path: "admission-form-master/field-values" }
-        ]
-      },
-     
+    {
+      title: "ID Card Master",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Generate ID Card", path: "/id-card/generate" },
+        {
+          title: "Settings",
+          children: [
+            { title: "Field Configuration", path: "/id-card/fields" },
+            {
+              title: "Template Management",                    // ← new level
+              children: [
+                { title: "Create New Template", path: "/id-card/templates/new" },
+                { title: "Edit Templates", path: "/id-card/templates/edit" },
+                { title: "Preview Templates", path: "/id-card/templates/preview" }
+              ]
+            },
+            { title: "Print Settings", path: "/id-card/print" }
+          ]
+        },
+        { title: "Batch Master", path: "/id-card/batch-master" }
+      ]
+    },
+    {
+      title: "Master",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Role Master", path: "/dashboard/role-master" },
 
-       
+        { title: "Employee Master", path: "/dashboard/employee-master" },
+        { title: "Academic Year Master", path: "/dashboard/academic-year-master" },
+        { title: "Class Master", path: "/dashboard/class-master" },
+        { title: "Division Master", path: "/dashboard/division-master" },
+        { title: "Cast Master", path: "/dashboard/cast-master" },
+        { title: "Add Declaration", path: "/dashboard/add-declaration" },
+        {
+          title: "Document Master",
+          children: [
+            { title: "Add Doucment", path: "/dashboard/document-master/add-document" },
+            { title: "Assign Doucment", path: "/dashboard/document-master/assign-document" }
+          ]
+        },
+        { title: "Phisally Disable", path: "/dashboard/phisally-disable" },
 
-    ]
-  },
+        {
+          title: 'Admision Form master',
+          children: [
+            { title: "Stages", path: "admission-form-master/stages" },
+            {
+              title: "Field Type",
+              path: "admission-form-master/filed-type"
 
-   {
-    title: "Subject Master",
-    icon: "icon-park-outline:id-card",
-    children: [
-      { title: "Subject", path: "/dashboard/subject" },
-      { title: "Program", path: "/dashboard/program" },
-      
-      { title: "Assign Subject", path:"/dashboard/assign-subject" },
-      
-       
 
-    ]
-  },
-  {
-    title: "Admission",
-    icon: "icon-park-outline:id-card",
-    children: [
-      { title: "Seat Allotment", path: "/dashboard/admission/seat-allotment" },
-      { title: "Addmission Fee", path: "/dashboard/admission/fee" },
-      { title: "Addmission Conform", path: "/dashboard/admission/form-conform" },
-      { title: "Addmission Form Coupon", path: "/dashboard/admission/coupon" },
-      
-      
-       
+            },
+            { title: "Field", path: "admission-form-master/Field" },
+            { title: "drop-radio-values", path: "admission-form-master/field-values" }
+          ]
+        },
 
-    ]
-  },
-   {
-    title: "Admission Report",
-    icon: "icon-park-outline:id-card",
-    children: [
-      { title: "Institute", path: "/dashboard/setting/institute" },
-      
-      
-       
 
-    ]
-  },
-  {
-    title: "Setting",
-    icon: "icon-park-outline:id-card",
-    children: [
-      { title: "Institute", path: "/dashboard/setting/institute" },
-      
-      
-       
 
-    ]
-  },
 
-  // ... you can do the same for other sections (Master, Subject, etc.)
-];
+      ]
+    },
+
+    {
+      title: "Subject Master",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Subject", path: "/dashboard/subject" },
+        { title: "Program", path: "/dashboard/program" },
+
+        { title: "Assign Subject", path: "/dashboard/assign-subject" },
+
+
+
+      ]
+    },
+     {
+      title: "Academic",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Student", path: "/dashboard/academic/student" },
+        
+      ]
+    },
+    {
+      title: "Admission",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Seat Allotment", path: "/dashboard/admission/seat-allotment" },
+        { title: "Addmission Fee", path: "/dashboard/admission/fee" },
+        { title: "Addmission Conform", path: "/dashboard/admission/form-conform" },
+        { title: "Addmission Form Coupon", path: "/dashboard/admission/coupon" },
+      ]
+    },
+    {
+      title: "Admission Report",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Institute", path: "/dashboard/setting/institute" },
+      ]
+    },
+    
+    {
+      title: "Setting",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Institute", path: "/dashboard/setting/institute" },
+      ]
+    },
+
+    // ... you can do the same for other sections (Master, Subject, etc.)
+  ];
 
   return (
     <section className={mobileMenu ? "overlay active" : "overlay"}>
@@ -238,8 +237,8 @@ const MasterLayout = () => {
           sidebarActive
             ? "sidebar active"
             : mobileMenu
-            ? "sidebar sidebar-open"
-            : "sidebar"
+              ? "sidebar sidebar-open"
+              : "sidebar"
         }
       >
         <button
@@ -946,7 +945,7 @@ const MasterLayout = () => {
         </div>
 
         {/* dashboard-main-body */}
-        <div className='dashboard-main-body'>{<Outlet/>}</div>
+        <div className='dashboard-main-body'>{<Outlet />}</div>
 
         {/* Footer section */}
         <footer className='d-footer'>

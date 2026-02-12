@@ -118,7 +118,7 @@ const PersonalInformationForm = () => {
                             catch(err){
                                 console.log('error is:', err)
                             }
-                       navigate('/subject-stage?step=3')
+                       navigate('/educational-detail-stage?step=3')
                     }}
                         
                      

@@ -2,31 +2,34 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import baseURL from "../../utils/baseUrl";
+import FormWizard from "./FormWizard";
+import { useNavigate } from "react-router-dom";
 
 const DeclarationStage = () => {
+  const navigate = useNavigate();
   const [regNo, setReg] = useState(1235)
   const [formNo, setFormNo] = useState(345)
   const [classId, setClassid] = useState(7)
   const [place, setPlace] = useState("");
   const [date, setDate] = useState("");
   const [accepted, setAccepted] = useState(false);
-  const [declarationId,setDeclarationId]=useState(null)
+  const [declarationId, setDeclarationId] = useState(null)
 
-  useEffect(()=>{
-     let fetchData=async()=>{
-      try{
-      let {data}=await axios.get(`${baseURL}/api/declarations/5`)
-      setDeclarationId(data?.data?.id)
+  useEffect(() => {
+    let fetchData = async () => {
+      try {
+        let { data } = await axios.get(`${baseURL}/api/declarations/5`)
+        setDeclarationId(data?.data?.id)
       }
-      catch(err){
+      catch (err) {
         console.log('erro in fetching declaration')
       }
-      
-     }
-     fetchData()
-  },[])
 
-  const handleSubmit = async() => {
+    }
+    fetchData()
+  }, [])
+
+  const handleSubmit = async () => {
 
     console.log({
       declarationId,
@@ -37,14 +40,14 @@ const DeclarationStage = () => {
       date,
       accepted,
     });
-    try{
-    await axios.post(`${baseURL}/api/student-declarations`,
-    {reg_no:regNo,declaration_id:declarationId,accepted:accepted,date:date,location:place})
-    alert('successfully addeed declaration')
+    try {
+      await axios.post(`${baseURL}/api/student-declarations`,
+        { reg_no: regNo, declaration_id: declarationId, accepted: accepted, date: date, location: place })
+      alert('successfully addeed declaration')
     }
-    catch(err){
-      
-   alert('not added declaration')
+    catch (err) {
+
+      alert('not added declaration')
 
     }
 
@@ -54,8 +57,9 @@ const DeclarationStage = () => {
   return (
     <div className="d-flex justify-content-center">
 
-      {/* First Row - centered */}
-      <div className="card  border p-10" style={{ width: "60%" }}>
+
+      <div className="card  border p-10" style={{ width: "80%" }}>
+        <FormWizard />
         <div className="d-flex gap-2 flex-row justify-content-between flex-wrap">
           <div>
             <label className="form-label fw-bold">Regestration Id</label>
@@ -113,10 +117,26 @@ const DeclarationStage = () => {
         <div className="mt-10">
           <button className="btn btn-success" onClick={handleSubmit}>Submit</button>
         </div>
+        <div className="d-flex justify-content-end gap-3 mb-10">
+          <button
+            type="Previous"
+            className="btn btn-success mt-3 px-5"
+            onClick={() => navigate(`/document-stage?step=4`)}
+          >
+            Prev
+          </button>
+          <button
+            type="Next"
+            className="btn btn-success mt-3 px-5"
+            onClick={handleSubmit}
+          >
+            Next
+          </button>
+        </div>
 
 
       </div>
-      
+
 
     </div>
   );

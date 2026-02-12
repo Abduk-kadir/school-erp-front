@@ -136,10 +136,10 @@ const LoginPage = () => {
                       navigate(`personal-information?step=${current_step}&reg_no=${reg_no}`)
                       break; 
                        case 3:
-                      navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`);
+                      navigate(`/educational-detail-stage?step=${current_step}&reg_no=${reg_no}`);
                       break;
                     case 4:
-                      navigate()
+                      navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`)
                       break; 
                        case 5:
                       navigate('');

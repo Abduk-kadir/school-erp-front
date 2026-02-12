@@ -19,7 +19,10 @@ const AddmissionConformPage = () => {
         { data: "reg_no", title: "Reg No" },
         { data: "reg_no", title: "Form No" },
         { data: "", title: "Accept by" },
-        { data: "first_name", title: "First Name<br>Last Name<br>Father Name<br>Mother Name" },
+        { data: "first_name", title:  `<span class="text-danger">First Name</span><br/>
+    <span class="text-primary">Last Name</span><br/>
+    <span class="text-success">Father Name</span><br/>
+    <span class="text-purple">Mother Name</span><br/>` },
         {
           data: "", title: "Photo", render: (data, type, row) => {
             return '<button class="btn action-btn action-btn-purple">View Photo</button>'
@@ -27,7 +30,9 @@ const AddmissionConformPage = () => {
         },
 
         { data: "class", title: "class" },
-        { data: "email", title: "Email<br>Password<br>Mobile No" },
+        { data: "email", title:  `<span class="text-danger">Email</span><br/>
+    <span class="text-primary">Mobile No</span><br/>
+    <span class="text-success">Password</span><br/>` },
         { data: "cast", title: "Category" },
         { data: "", title: "Status" },
         { data: "", title: "Form Current Stage" },

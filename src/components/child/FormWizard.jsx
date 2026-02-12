@@ -42,7 +42,7 @@ const FormWizard = ({ currentStep }) => {
                     <div className='form-wizard-list__line'>
                         <span className='count'>3</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Select Subjects</span>
+                    <span className='text text-xs fw-semibold'>Educational Details</span>
                 </li>
                 <li
                     className={`form-wizard-list__item
@@ -52,7 +52,7 @@ const FormWizard = ({ currentStep }) => {
                     <div className='form-wizard-list__line'>
                         <span className='count'>4</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Select Documents</span>
+                    <span className='text text-xs fw-semibold'>Subjects</span>
                 </li>
                 <li
                     className={`form-wizard-list__item
@@ -62,7 +62,7 @@ const FormWizard = ({ currentStep }) => {
                     <div className='form-wizard-list__line'>
                         <span className='count'>5</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Parents/Gardian</span>
+                    <span className='text text-xs fw-semibold'>Transprot Details</span>
                 </li>
                 <li
                     className={`form-wizard-list__item
@@ -82,7 +82,7 @@ const FormWizard = ({ currentStep }) => {
                     <div className='form-wizard-list__line'>
                         <span className='count'>7</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Declare By Gardian</span>
+                    <span className='text text-xs fw-semibold'>Declaration</span>
                 </li>
                 <li
                     className={`form-wizard-list__item

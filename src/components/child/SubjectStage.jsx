@@ -213,7 +213,7 @@ const SubjectStage = () => {
                     <button
                         type="Previous"
                         className="btn btn-success mt-3 px-5"
-                        onClick={() => navigate(`/personal-information?step=2`)}
+                        onClick={() => navigate(`/educational-detail-stage/?step=3`)}
                     >
                         Prev
                     </button>

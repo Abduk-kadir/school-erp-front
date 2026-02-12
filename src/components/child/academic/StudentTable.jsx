@@ -1,0 +1,143 @@
+import { useEffect, useRef, useState } from "react";
+import $ from "jquery";
+import "datatables.net-dt";
+import axios from "axios";
+import baseURL from "../../../utils/baseUrl";
+const StudentTable = ({ url, columns }) => {
+  const tableRef = useRef(null);
+  const datatableRef = useRef(null);
+
+  const [classes, setClasses] = useState([]);
+  const [divisions, setDivisions] = useState([]);
+
+  // Controlled filter values
+  const [classFilter, setClassFilter] = useState("");
+  const [programFilter, setProgramFilter] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [res1, res2] = await Promise.all([
+          axios.get(`${baseURL}/api/classes`),
+          axios.get(`${baseURL}/api/divisions`),
+        ]);
+        setClasses(res1?.data?.data || []);
+        setDivisions(res2?.data?.data || []);
+      } catch (err) {
+        console.error("Failed to load classes/divisions", err);
+      }
+    };
+    fetchData();
+  }, []);
+  console.log('classess', classes)
+  console.log('division', divisions)
+  const handleFilter = () => {
+    if (datatableRef.current) {
+      datatableRef.current.draw(); // ← this triggers new ajax call
+    }
+  };
+
+  useEffect(() => {
+    if (!tableRef.current) return;
+
+    datatableRef.current = $(tableRef.current).DataTable({
+      pageLength: 5,
+      processing: true,
+      serverSide: true,
+      destroy: true,
+      ajax: {
+        url,
+        type: "GET",
+        data: (d) => {
+          d.filter = {
+            className: classFilter.trim(),
+            programName: programFilter.trim(),
+          };
+        },
+      },
+      columns,
+      headerCallback: function (thead) {
+    $(thead).find("th").css("white-space", "nowrap");
+  }
+    });
+
+    return () => {
+      if (datatableRef.current) {
+        datatableRef.current.destroy(true);
+      }
+    };
+  }, [url, columns]); // Important: do NOT put classFilter/programFilter here
+
+  return (
+    <>
+     <div className="mb-20" >
+  <div >
+    <div className="row g-3 align-items-center">   {/* ← key change: align-items-center */}
+      
+      <div className="col-md-3">
+        <label className="form-label fw-bold">Reg No</label>
+        <input
+          className="form-control"
+          type="text"
+          placeholder="enter reg_no"
+          value={programFilter}
+          onChange={(e) => setProgramFilter(e.target.value)}
+        />
+      </div>
+
+      <div className="col-md-3">
+        <label className="form-label fw-bold">Class</label>
+        <select className="form-select " aria-label="Default select example">
+          <option selected>Select Class</option>
+          {classes.map((elem, index) => (
+            <option key={index} value={elem?.id || elem?.class_name}>
+              {elem?.class_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="col-md-3">
+        <label className="form-label fw-bold">Division</label>
+        <select className="form-select " aria-label="Default select example">
+          <option selected>Select Division</option>
+          {divisions.map((elem, index) => (
+            <option key={index} value={elem?.id || elem?.name}>
+              {elem?.division_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="col-md-3 col-12 d-flex align-items-end mt-5">  {/* ← or align-items-center */}
+        <button 
+          className="btn btn-success px-5" 
+          onClick={handleFilter}
+        >
+          Submit
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+      <div className="card basic-data-table mt-4">
+        <div className="card-header">
+          <h5 className="card-title mb-0">Assigned Subjects</h5>
+        </div>
+        <div className="card-body">
+          <div className="table-responsive" style={{ overflowY: "hidden", overflowX: "auto" }}>
+            <table
+              className="table bordered-table mb-0"
+              id="dataTable"
+              ref={tableRef}
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default StudentTable;

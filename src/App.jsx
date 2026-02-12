@@ -30,6 +30,13 @@ import Registration from "./components/child/Registration";
 import SubjectStage from "./components/child/SubjectStage";
 import AddmissionConformPage from "./pages/AdminPages/admissionMaster/AddmissionConformPage";
 import SeatAllotmentPage from "./pages/AdminPages/admissionMaster/SeatAllotmentPage";
+import StudentPage from "./pages/AdminPages/academic/StudentPage";
+import DocumentStage from "./components/child/DocumentStage";
+import DeclarationStage from "./components/child/DeclarationStage";
+import ParentParticularStage from "./components/child/ParentParticularStage";
+import EducationalDetailStage from "./components/child/EducationalDetailStage";
+import TransportDetailStage from "./components/child/TransportDetailStage";
+import OtherInformationStage from "./components/child/OtherInformationStage";
 
 function App() {
   let user = true;
@@ -41,7 +48,14 @@ function App() {
             <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <LoginPage/>} />
             <Route path="/registration" element={<Registration/>} />
             <Route path="/personal-information" element={<PersonalInformationForm/>} />
+            <Route path="/educational-detail-stage" element={<EducationalDetailStage/>}/>
+           
             <Route path="/subject-stage" element={<SubjectStage/>}/>
+            <Route path="/parent-particular-stage" element={<ParentParticularStage/>}/>
+            <Route path="/transport-detail-stage" element={<TransportDetailStage/>}/>
+            <Route path="/other-information-stage" element={<OtherInformationStage/>}/>
+            <Route path="/declaration-stage" element={<DeclarationStage/>}/>
+            <Route path="/document-stage" element={<DocumentStage/>}/>
             <Route path="dashboard" element={<MasterLayout />} >
              {/*admin route*/}
             <Route index element={<Dashboard />} />
@@ -69,6 +83,10 @@ function App() {
             <Route path="admission" >
                <Route path='form-conform'  element={<AddmissionConformPage/>}/>
                  <Route path='seat-allotment'  element={<SeatAllotmentPage/>}/>
+            </Route>
+             <Route path="academic" >
+               <Route path='student'  element={<StudentPage/>}/>
+               
             </Route> 
 
 
