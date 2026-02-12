@@ -114,9 +114,10 @@ const handleNext = async() => {
   
  
   return (
-    <div className="container mt-5 mb-5">
-      <div className="card shadow-lg border-0 rounded-4 overflow-hidden">
+    <div className="container mt-5 mt-5">
         <FormWizard currentStep={step}/>
+      <div className="card shadow-lg border-0 rounded-4 overflow-hidden">
+      
        
           <div className="card-body">
           <h4 className="mb-2 fw-semibold">Upload Document</h4>  
@@ -179,7 +180,7 @@ const handleNext = async() => {
                     <button
                         type="Previous"
                         className="btn btn-success mt-3 px-5"
-                        onClick={() => navigate(`/subject-stage?step=3`)}
+                        onClick={() => navigate(`/declaration-stage?step=8`)}
                     >
                         Prev
                     </button>

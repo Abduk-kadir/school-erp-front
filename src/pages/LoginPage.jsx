@@ -142,10 +142,19 @@ const LoginPage = () => {
                       navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`)
                       break; 
                        case 5:
-                      navigate('');
+                       navigate(`/parent-particular-stage?step=${current_step}&reg_no=${reg_no}`)
                       break;
                     case 6:
-                      navigate()
+                      navigate(`/transport-detail-stage?step=${current_step}&reg_no=${reg_no}`)
+                      break; 
+                      case 7:
+                      navigate(`/other-information-stage?step=${current_step}&reg_no=${reg_no}`)
+                      break; 
+                      case 8:
+                      navigate(`/declaration-stage?step=${current_step}&reg_no=${reg_no}`)
+                      break; 
+                       case 9:
+                      navigate(`/document-stage?step=${current_step}&reg_no=${reg_no}`)
                       break;  
                   }
 

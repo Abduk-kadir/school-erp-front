@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import baseURL from "../../utils/baseUrl";
 import FormWizard from "./FormWizard";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate,useSearchParams } from "react-router-dom";
 const DeclarationStage = () => {
   const navigate = useNavigate();
+const [searchParams] = useSearchParams();
   const [regNo, setReg] = useState(1235)
   const [formNo, setFormNo] = useState(345)
   const [classId, setClassid] = useState(7)
@@ -59,7 +59,7 @@ const DeclarationStage = () => {
 
 
       <div className="card  border p-10" style={{ width: "80%" }}>
-        <FormWizard />
+        <FormWizard currentStep={Number(searchParams.get('step'))}/>
         <div className="d-flex gap-2 flex-row justify-content-between flex-wrap">
           <div>
             <label className="form-label fw-bold">Regestration Id</label>
@@ -114,21 +114,19 @@ const DeclarationStage = () => {
           </div>
         </div>
 
-        <div className="mt-10">
-          <button className="btn btn-success" onClick={handleSubmit}>Submit</button>
-        </div>
+       
         <div className="d-flex justify-content-end gap-3 mb-10">
           <button
             type="Previous"
             className="btn btn-success mt-3 px-5"
-            onClick={() => navigate(`/document-stage?step=4`)}
+            onClick={() => navigate(`/other-information-stage?step=7`)}
           >
             Prev
           </button>
           <button
             type="Next"
             className="btn btn-success mt-3 px-5"
-            onClick={handleSubmit}
+            onClick={() => navigate(`/document-stage?step=9`)}
           >
             Next
           </button>

@@ -12,7 +12,7 @@ const FormWizard = ({ currentStep }) => {
             <ul className='list-unstyled form-wizard-list style-two' >
                 <li
                     className={`form-wizard-list__item
-                      ${[2, 3, 4, 5, 6, 7, 8, 9].includes(currentStep) && "activated"}
+                      ${[2, 3, 4, 5, 6, 7, 8, 9,10].includes(currentStep) && "activated"}
                     ${currentStep === 1 ? "active" : ""} `}
                 >
                     <div className='form-wizard-list__line' >
@@ -24,7 +24,7 @@ const FormWizard = ({ currentStep }) => {
                 </li>
                 <li
                     className={`form-wizard-list__item
-                      ${[3, 4, 5, 6, 7, 8, 9].includes(currentStep) && "activated"}
+                      ${[3, 4, 5, 6, 7, 8, 9,10].includes(currentStep) && "activated"}
                     ${currentStep === 2 ? "active" : ""} `}
                 >
                     <div className='form-wizard-list__line'>
@@ -36,7 +36,7 @@ const FormWizard = ({ currentStep }) => {
                 </li>
                 <li
                     className={`form-wizard-list__item
-                      ${[4, 5, 6, 7, 8, 9].includes(currentStep) && "activated"}
+                      ${[4, 5, 6, 7, 8, 9,10].includes(currentStep) && "activated"}
                     ${currentStep === 3 ? "active" : ""} `}
                 >
                     <div className='form-wizard-list__line'>
@@ -46,7 +46,7 @@ const FormWizard = ({ currentStep }) => {
                 </li>
                 <li
                     className={`form-wizard-list__item
-                      ${[5, 6, 7, 8, 9].includes(currentStep) && "activated"}
+                      ${[5, 6, 7, 8, 9,10].includes(currentStep) && "activated"}
                     ${currentStep === 4 ? "active" : ""} `}
                 >
                     <div className='form-wizard-list__line'>
@@ -56,41 +56,51 @@ const FormWizard = ({ currentStep }) => {
                 </li>
                 <li
                     className={`form-wizard-list__item
-                      ${[6, 7, 8, 9].includes(currentStep) && "activated"}
+                      ${[6, 7, 8, 9,10].includes(currentStep) && "activated"}
                     ${currentStep === 5 && "active"} `}
                 >
                     <div className='form-wizard-list__line'>
                         <span className='count'>5</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Transprot Details</span>
+                    <span className='text text-xs fw-semibold'>Parents Particulars</span>
                 </li>
                 <li
                     className={`form-wizard-list__item
-                      ${[7, 8, 9].includes(currentStep) && "activated"}
+                      ${[7, 8, 9,10].includes(currentStep) && "activated"}
                     ${currentStep === 6 ? "active" : ""} `}
                 >
                     <div className='form-wizard-list__line'>
                         <span className='count'>6</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Other Infromation</span>
+                    <span className='text text-xs fw-semibold'>Transport Details</span>
                 </li>
                 <li
                     className={`form-wizard-list__item
-                      ${[8, 9].includes(currentStep) && "activated"}
+                      ${[8, 9,10].includes(currentStep) && "activated"}
                     ${currentStep === 7 ? "active" : ""} `}
                 >
                     <div className='form-wizard-list__line'>
                         <span className='count'>7</span>
                     </div>
-                    <span className='text text-xs fw-semibold'>Declaration</span>
+                    <span className='text text-xs fw-semibold'>Other Information</span>
                 </li>
                 <li
                     className={`form-wizard-list__item
-                      ${[9].includes(currentStep) && "activated"}
+                      ${[9,10].includes(currentStep) && "activated"}
                     ${currentStep === 8 ? "active" : ""} `}
                 >
                     <div className='form-wizard-list__line'>
                         <span className='count'>8</span>
+                    </div>
+                    <span className='text text-xs fw-semibold'>Declaration</span>
+                </li>
+                <li
+                    className={`form-wizard-list__item
+                      ${[10,11].includes(currentStep) && "activated"}
+                    ${currentStep === 9 ? "active" : ""} `}
+                >
+                    <div className='form-wizard-list__line'>
+                        <span className='count'>9</span>
                     </div>
                     <span className='text text-xs fw-semibold'>Document</span>
                 </li>
@@ -101,10 +111,10 @@ const FormWizard = ({ currentStep }) => {
                 <li
                     className={`form-wizard-list__item
 
-                    ${currentStep === 9 && "active"} `}
+                    ${currentStep === 10 && "active"} `}
                 >
                     <div className='form-wizard-list__line'>
-                        <span className='count'>4</span>
+                        <span className='count'>10</span>
                     </div>
                     <span className='text text-xs fw-semibold'>Completed</span>
                 </li>
