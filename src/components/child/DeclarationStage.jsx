@@ -3,23 +3,27 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import baseURL from "../../utils/baseUrl";
 import FormWizard from "./FormWizard";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import DOMPurify from "dompurify";
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { useSelector } from "react-redux";
 const DeclarationStage = () => {
   const navigate = useNavigate();
-const [searchParams] = useSearchParams();
-  const [regNo, setReg] = useState(1235)
+  const [searchParams] = useSearchParams();
+
   const [formNo, setFormNo] = useState(345)
   const [classId, setClassid] = useState(7)
-  const [place, setPlace] = useState("");
-  const [date, setDate] = useState("");
-  const [accepted, setAccepted] = useState(false);
-  const [declarationId, setDeclarationId] = useState(null)
-
+  const [declaration, setDeclaration] = useState({})
+  const [editMode, setEditMode] = useState(false)
+  const [editedDeclaration, setEditedDeclaration] = useState(null)
+  const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+ 
   useEffect(() => {
     let fetchData = async () => {
       try {
-        let { data } = await axios.get(`${baseURL}/api/declarations/5`)
-        setDeclarationId(data?.data?.id)
+        let { data } = await axios.get(`${baseURL}/api/declarations/6`)
+        setDeclaration(data?.data)
       }
       catch (err) {
         console.log('erro in fetching declaration')
@@ -28,114 +32,154 @@ const [searchParams] = useSearchParams();
     }
     fetchData()
   }, [])
+  useEffect(() => {
+    let fetchData = async () => {
+      try {
+        let { data } = await axios.get(`${baseURL}/api/student-declarations/student/${reg_no}`)
+        setEditedDeclaration(data?.data)
+        if (data?.data) {
+          setEditMode(true)
+        }
+      }
+      catch (err) {
+        console.log('erro in fetching declaration')
+      }
 
-  const handleSubmit = async () => {
-
-    console.log({
-      declarationId,
-      regNo,
-      formNo,
-      classId,
-      place,
-      date,
-      accepted,
-    });
+    }
+    fetchData()
+  }, [])
+  console.log('edited declaration is:', editedDeclaration)
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      await axios.post(`${baseURL}/api/student-declarations`,
-        { reg_no: regNo, declaration_id: declarationId, accepted: accepted, date: date, location: place })
-      alert('successfully addeed declaration')
+      console.log('values are:', values)
+      if(editMode){
+
+        await axios.patch(`${baseURL}/api/student-declarations/${editedDeclaration?.id}`, {
+          reg_no: values.reg_no,
+          declaration_id: declaration?.id,
+          accepted: values.accepted,
+          date: values.date,
+          location: values.place,
+        });
+        alert('successfully updated declaration');
+        navigate(`/document-stage?step=9`);
+      } else{
+      await axios.post(`${baseURL}/api/student-declarations`, {
+        reg_no: values.reg_no,
+        declaration_id: declaration?.id,
+        accepted: values.accepted,
+        date: values.date,
+        location: values.place,
+      });
+       alert('successfully added declaration');
+       let formStatusPayload = { current_step: 9, reg_no: reg_no }
+       await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+       navigate(`/document-stage?step=9`);
     }
-    catch (err) {
 
-      alert('not added declaration')
-
+    } catch (err) {
+      //alert('not added declaration');
+    } finally {
+      //setSubmitting(false);
     }
-
-
   };
 
+  const validationSchema = Yup.object({
+    place: Yup.string().required('Place is required'),
+    date: Yup.date().required('Date is required'),
+    accepted: Yup.bool().oneOf([true], 'You must accept the terms'),
+  });
+  console.log('declaration is:', declaration)
   return (
-    <div className="d-flex justify-content-center">
+    <div className="container mt-5">
+      <FormWizard currentStep={Number(searchParams.get('step'))} />
+      <div className="d-flex justify-content-center">
 
 
-      <div className="card  border p-10" style={{ width: "80%" }}>
-        <FormWizard currentStep={Number(searchParams.get('step'))}/>
-        <div className="d-flex gap-2 flex-row justify-content-between flex-wrap">
-          <div>
-            <label className="form-label fw-bold">Regestration Id</label>
-            <input type="text" className="form-control mb-2" value={regNo} disabled />
-          </div>
-          <div>
-            <label className="form-label fw-bold">Form No</label>
-            <input type="text" className="form-control mb-2" value={formNo} disabled />
-          </div>
-          <div>
-            <label className="form-label fw-bold">Standard Studing In</label>
-            <input type="text" className="form-control mb-2" placeholder="Username" value={classId} disabled />
-          </div>
-        </div>
+        <div className="card  border p-10" style={{ width: "90%" }}>
 
-        <div className="mt-10">
-          <p className="fw-semibold">fjdkfjdlkfjlkdjflkdjf
-            fkldjflkdjfkldsjfkldf
-            fjdlkjflkdjfkldjflkdjf
-            fldkjfldkjfkldjfd
-            fjdlkfjdklfjdkljfdf
-            fjdkljfkldjflkdjfkldjf
-            fjdkfjdlkjfldkjflkdjflk
-          </p>
-        </div>
-        <div className="form-check d-flex align-items-center mb-2 border">
-          <input
-            className="form-check-input me-2"
-            type="checkbox"
-            id="check1"
-            checked={accepted}
-            onChange={(e) => setAccepted(e.target.checked)}
-          />
-          <label className="form-check-label fw-bold" htmlFor="check1">
-            I accept all terms and conditions for this Institute
-          </label>
-        </div>
-
-
-
-        <div className="row mt-3">
-          <div className="col-6 mb-2">
-            <label className="form-label fw-bold">Place</label>
-            <input type="text" className="form-control" value={place}
-              onChange={(e) => setPlace(e.target.value)} />
+          <div className="d-flex gap-2 flex-row justify-content-between flex-wrap">
+            <div>
+              <label className="form-label fw-bold">Regestration Id</label>
+              <input type="text" className="form-control mb-2" value={reg_no} disabled />
+            </div>
+            <div>
+              <label className="form-label fw-bold">Form No</label>
+              <input type="text" className="form-control mb-2" value={formNo} disabled />
+            </div>
+            <div>
+              <label className="form-label fw-bold">Standard Studing In</label>
+              <input type="text" className="form-control mb-2" placeholder="Username" value={classId} disabled />
+            </div>
           </div>
 
-          <div className="col-6">
-            <label className="form-label fw-bold">Date</label>
-            <input type="date" className="form-control" value={date}
-              onChange={(e) => setDate(e.target.value)} />
-          </div>
-        </div>
+          <div className="mt-10" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(declaration?.content || '') }} />
 
-       
-        <div className="d-flex justify-content-end gap-3 mb-10">
-          <button
-            type="Previous"
-            className="btn btn-success mt-3 px-5"
-            onClick={() => navigate(`/other-information-stage?step=7`)}
+          <Formik
+            enableReinitialize={true}
+            initialValues={
+              {
+                reg_no: editedDeclaration?.reg_no || reg_no,
+                formNo: editedDeclaration?.formNo || formNo,
+                classId: editedDeclaration?.classId || classId,
+                place: editedDeclaration?.location || '',
+                date: editedDeclaration?.date
+                  ? editedDeclaration.date.split('T')[0]
+                  : '',
+                accepted: editedDeclaration?.accepted || false
+              }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
           >
-            Prev
-          </button>
-          <button
-            type="Next"
-            className="btn btn-success mt-3 px-5"
-            onClick={() => navigate(`/document-stage?step=9`)}
-          >
-            Next
-          </button>
-        </div>
+            {({ isSubmitting, isValid }) => (
+              <Form>
+                <div className="form-check d-flex align-items-center mb-2 border">
+                  <Field type="checkbox" name="accepted" className="form-check-input me-2" id="check1" />
+                  <label className="form-check-label fw-bold" htmlFor="check1">
+                    I accept all terms and conditions for this Institute
+                  </label>
 
+                </div>
+                <div className="text-danger"><ErrorMessage name="accepted" /></div>
+
+                <div className="row mt-3">
+                  <div className="col-6 mb-2">
+                    <label className="form-label fw-bold">Place</label>
+                    <Field name="place" type="text" className="form-control" />
+                    <div className="text-danger"><ErrorMessage name="place" /></div>
+                  </div>
+
+                  <div className="col-6">
+                    <label className="form-label fw-bold">Date</label>
+                    <Field name="date" type="date" className="form-control" />
+                    <div className="text-danger"><ErrorMessage name="date" /></div>
+                  </div>
+                </div>
+
+                <div className="d-flex justify-content-end gap-3 mb-10">
+                  <button
+                    type="button"
+                    className="btn btn-success mt-3 px-5"
+                    onClick={() => navigate(`/other-information-stage?step=7`)}
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-success mt-3 px-5"
+                    disabled={isSubmitting || !isValid}
+                  >
+                    {isSubmitting ? 'Saving...' : 'Next'}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+
+
+        </div>
 
       </div>
-
-
     </div>
   );
 };

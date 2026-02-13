@@ -14,7 +14,7 @@ const OtherInformationStage = () => {
           <button
             type="Previous"
             className="btn btn-success mt-3 px-5"
-            onClick={() => navigate(`/other-information-stage?step=7`)}
+            onClick={() => navigate(`/transport-detail-stage?step=6`)}
           >
             Prev
           </button>

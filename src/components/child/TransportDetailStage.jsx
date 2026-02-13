@@ -1,36 +1,157 @@
-import React from 'react'
-import FormWizard from './FormWizard'
-import { useSearchParams,useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';           // ← make sure this is imported
+import FormWizard from './FormWizard';
+import baseURL from '../../utils/baseUrl';
+import { useSelector } from 'react-redux';
+
+
+const validationSchema = Yup.object({
+  is_taken: Yup.string()
+    .oneOf(['yes', 'no'], 'Please select Yes or No')
+    .required('This field is required'),
+});
 
 const TransportDetailStage = () => {
-const [searchParams] = useSearchParams();
-const navigate=useNavigate()
+  const [searchParams] = useSearchParams();
+  const [subroutes, setSubRoutes] = useState([]);
+  const navigate = useNavigate();
+  const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+  const currentStep = Number(searchParams.get('step')) || 6; // fallback
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(`${baseURL}/api/subroutes`);
+        setSubRoutes(data?.data || []);
+      } catch (err) {
+        console.error('Error fetching routes:', err);
+      }
+    };
+    fetchData();
+  }, []);
+  console.log('sub routes,', subroutes)
   return (
-    <div className='container mt-5'>
-       <FormWizard currentStep={Number(searchParams.get('step'))}/>
-       <div className='card'>
-       
-         <h1>Transport Detail Stage</h1>
+    <div className="container ">
+      <FormWizard currentStep={currentStep} />
 
-         <div className="d-flex justify-content-end gap-3 mb-10">
-          <button
-            type="Previous"
-            className="btn btn-success mt-3 px-5"
-            onClick={() => navigate(`/parent-particular-stage/?step=5`)}
+      <div className="d-flex justify-content-center">
+        <div className="card p-5" style={{ width: '80%' }}>
+          <Formik
+            initialValues={{ reg_no: reg_no, is_taken: '', route_id: null, sub_route_id: null }}
+
+            onSubmit={async (values) => {
+
+              console.log('Form submitted:', values);
+
+              try {
+              //  await axios.post(`${baseURL}/api/student-transport`, values)
+               // let formStatusPayload = { current_step: 7, reg_no: reg_no }
+              //  await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+              //  alert('transport details are saved')
+                 navigate(`/other-information-stage?step=7`)
+              }
+              catch (err) {
+             // alert(err)
+              }
+
+            }}
           >
-            Prev
-          </button>
-          <button
-            type="Next"
-            className="btn btn-success mt-3 px-5"
-            onClick={() => navigate(`/other-information-stage?step=7`)}
-          >
-            Next
-          </button>
+            {({ isValid, dirty, values, handleSubmit, setFieldValue }) => (
+              <Form>
+                <div className="row mb-5 align-items-center">
+                  <div className="col-6">
+                    <h6 className="mb-0">Do you want Transport Service?</h6>
+                  </div>
+
+                  <div className="col-4">
+                    <Field as="select" name="is_taken" className="form-select">
+                      <option value="">Select Route </option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </Field>
+                    <ErrorMessage
+                      name="is_taken"
+                      component="div"
+                      className="text-danger small mt-1"
+                    />
+                  </div>
+                </div>
+
+
+                {values.is_taken && <div className="row mb-5 align-items-center">
+                  <div className="col-6">
+                    <h6 className="mb-0">Select Route</h6>
+                  </div>
+                  <div className='col-4'>
+                    <Field as="select" name="route_id" className="form-select">
+                      <option value=''>Select  Route</option>
+                      {
+                        subroutes.map(elem => (
+                          <option value={elem.Route.id}>{elem.Route.route_name}</option>
+                        ))
+                      }
+
+                    </Field>
+                  </div>
+                </div>
+                }
+
+                {values.is_taken && <div className="row mb-5 align-items-center">
+                  <div className="col-6">
+                    <h6 className="mb-0">Select Sub Routes</h6>
+                  </div>
+                  <div className='col-4'>
+                    <Field as="select" name="sub_route_id" className="form-select">
+                      <option value=''>Select Sub Route</option>
+                      {
+                        subroutes.map(elem => {
+
+                          if (elem.route_id == values.route_id) {
+                            return <option value={elem.id}>{elem.sub_route_name}</option>
+                          }
+
+                        }
+
+                        )
+                      }
+
+                    </Field>
+                  </div>
+                </div>
+                }
+
+
+
+
+
+                {/* We don't use form submit button → we control Next ourselves */}
+                <div className="d-flex justify-content-end gap-3 mt-5">
+                  <button
+                    type="button"
+                    className="btn btn-success px-5"
+                    onClick={() => navigate(`/parent-particular-stage?step=5`)}
+                  >
+                    Prev
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-success px-5"
+
+                    onClick={handleSubmit} // ← this triggers validation + onSubmit
+                  >
+                    Next
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TransportDetailStage
+export default TransportDetailStage;

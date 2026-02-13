@@ -217,6 +217,16 @@ const MasterLayout = () => {
         { title: "Institute", path: "/dashboard/setting/institute" },
       ]
     },
+    {
+      title: "Transport",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Add Route", path: "/dashboard/transport/add-route" },
+        { title: "Assign Sub Route", path: "/dashboard/transport/assign-sub-route" },
+        
+        
+      ]
+    },
     
     {
       title: "Setting",
