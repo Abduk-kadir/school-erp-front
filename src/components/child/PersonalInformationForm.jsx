@@ -40,7 +40,7 @@ const PersonalInformationForm = () => {
 
        useEffect(() => {
        dispatch(getPersonalInformationForm({}));
-       dispatch(getStage1({}));
+       //dispatch(getStage1({}));
      
     }, [dispatch]);
       
@@ -48,19 +48,19 @@ const PersonalInformationForm = () => {
   let step = searchParams.get("step")
   step=Number(step)
  
-    let id=4;
+   // let id=4;
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
     );
-    let stageData= useSelector(
+    /*let stageData= useSelector(
         (state) => state?.stage1?.stage1Data?.data
-    );
+    );*/
 
     const personalFormfields = wholeForm ? wholeForm[0]?.fields : [];
-    console.log('user data is:',stageData)
+   // console.log('user data is:',stageData)
 
     let initialValues = useMemo(() => {
-        if (stageData) return stageData;
+       // if (stageData) return stageData;
 
         const values = { first_name: "", last_name: "",father_name:"",class:"",division:"",contact_number:"",
             email:"",password:"",dob:"",blood_group:""

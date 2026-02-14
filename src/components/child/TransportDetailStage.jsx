@@ -7,7 +7,6 @@ import FormWizard from './FormWizard';
 import baseURL from '../../utils/baseUrl';
 import { useSelector } from 'react-redux';
 
-
 const validationSchema = Yup.object({
   is_taken: Yup.string()
     .oneOf(['yes', 'no'], 'Please select Yes or No')
@@ -20,18 +19,53 @@ const TransportDetailStage = () => {
   const navigate = useNavigate();
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
   const currentStep = Number(searchParams.get('step')) || 6; // fallback
+  const [editData, setEditData] = useState({})
+  const [edit, setEdit] = useState(false)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${baseURL}/api/subroutes`);
-        setSubRoutes(data?.data || []);
+        const results = await Promise.allSettled([
+          axios.get(`${baseURL}/api/subroutes`),
+          axios.get(`${baseURL}/api/student-transport/student/${reg_no}`)
+        ]);
+
+        // subroutes response
+        if (results[0].status === "fulfilled") {
+          setSubRoutes(results[0].value.data?.data || []);
+        }
+
+        // transport response
+        if (results[1].status === "fulfilled") {
+          const transportData = results[1].value.data?.data;
+          if (transportData) {
+            setEditData(transportData);
+            setEdit(true);
+          }
+        } else {
+          // reg_no not found → normal case
+          setEdit(false);
+          setEditData({});
+        }
+
       } catch (err) {
-        console.error('Error fetching routes:', err);
+        console.error("Unexpected error:", err);
       }
     };
-    fetchData();
-  }, []);
+
+    if (reg_no) {
+      fetchData();
+    }
+  }, [reg_no]);
+
+
   console.log('sub routes,', subroutes)
+  console.log('edit data:', editData)
+  // get unique routes from subroutes
+  const uniqueRoutes = [
+    ...new Map(subroutes.map(item => [item.Route.id, item.Route])).values()
+  ];
+  console.log('uniqur route', uniqueRoutes)
+
   return (
     <div className="container ">
       <FormWizard currentStep={currentStep} />
@@ -39,21 +73,36 @@ const TransportDetailStage = () => {
       <div className="d-flex justify-content-center">
         <div className="card p-5" style={{ width: '80%' }}>
           <Formik
-            initialValues={{ reg_no: reg_no, is_taken: '', route_id: null, sub_route_id: null }}
+            enableReinitialize
+            initialValues={{
+              reg_no: reg_no,
+              is_taken: editData?.is_taken || '',
+              route_id: editData?.route_id || null,
+              sub_route_id: editData?.sub_route_id || null
+            }}
 
             onSubmit={async (values) => {
 
               console.log('Form submitted:', values);
 
               try {
-              //  await axios.post(`${baseURL}/api/student-transport`, values)
-               // let formStatusPayload = { current_step: 7, reg_no: reg_no }
-              //  await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
-              //  alert('transport details are saved')
-                 navigate(`/other-information-stage?step=7`)
+                if (!edit) {
+                  await axios.post(`${baseURL}/api/student-transport`, values)
+                  let formStatusPayload = { current_step: 7, reg_no: reg_no }
+                  await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                  alert('transport details are saved')
+                  navigate(`/other-information-stage?step=7`)
+                }
+                if (edit) {
+
+                  await axios.patch(`${baseURL}/api/student-transport/${editData?.id}`, values)
+                  navigate(`/other-information-stage?step=7`)
+                  alert('transport updated success fully')
+
+                }
               }
               catch (err) {
-             // alert(err)
+                // alert(err)
               }
 
             }}
@@ -86,14 +135,14 @@ const TransportDetailStage = () => {
                   </div>
                   <div className='col-4'>
                     <Field as="select" name="route_id" className="form-select">
-                      <option value=''>Select  Route</option>
-                      {
-                        subroutes.map(elem => (
-                          <option value={elem.Route.id}>{elem.Route.route_name}</option>
-                        ))
-                      }
-
+                      <option value="">Select Route</option>
+                      {uniqueRoutes.map(route => (
+                        <option key={route.id} value={String(route.id)}>
+                          {route.route_name}
+                        </option>
+                      ))}
                     </Field>
+
                   </div>
                 </div>
                 }

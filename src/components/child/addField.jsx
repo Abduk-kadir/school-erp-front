@@ -53,6 +53,18 @@ const AddField = () => {
         tableName='personalinformations'
         columnType='VARCHAR(255)'
         break;
+       case "Parent Particular":
+        tableName='parentparticulars'
+        columnType='VARCHAR(255)'
+        break;
+       case "Education Detail":
+        tableName='educationdetails'
+        columnType='VARCHAR(255)'
+        break;
+        case "Other Information":
+        tableName='otherinformations'
+        columnType='VARCHAR(255)'
+        break;   
     }
     console.log(columnType)
     console.log(tableName)
