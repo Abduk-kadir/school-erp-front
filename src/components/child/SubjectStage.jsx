@@ -5,7 +5,6 @@ import { Button } from "react-bootstrap"
 import FormWizard from "./FormWizard"
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux"
-
 const SubjectStage = () => {
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState([])
@@ -25,6 +24,7 @@ const SubjectStage = () => {
                 const { data } = await axios.get(`${baseURL}/api/studentsubjects/student/${reg_no}`);
                 let editedCheckedSubjects = data?.data?.filter(elem => elem.elective_bbasket_id)
                 console.log('edtited checked subject**:', editedCheckedSubjects)
+                console.log('for edit data is in****',data)
                 const normalizedData = editedCheckedSubjects.map(item => ({
                     subject: item.subject.value,   // if you have subject value from your subjects list
                     subjectId: item.subject_id,
@@ -92,7 +92,7 @@ const SubjectStage = () => {
     // console.log('noncomplusary subjects are**:', nonCompulsory)
     //console.log('grouped**', grouped)
     // console.log('alloption***:', allOption)
-    console.log('checked subjects**:', checkedSubjects)
+   // console.log('checked subjects**:', checkedSubjects)
 
 
     const handleCheckboxChange = (item, groupIndex) => {
@@ -125,8 +125,8 @@ const SubjectStage = () => {
         const assignments = [...complusaryData, ...nonCompulsoryData];
         try {
 
-           // let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
-           // let formStatusPayload = { current_step: 5, reg_no: reg_no }
+          // let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
+          //  let formStatusPayload = { current_step: 5, reg_no: reg_no }
            // await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
            // alert("Subjects assigned successfully!");
             navigate(`/parent-particular-stage/?step=5`)

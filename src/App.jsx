@@ -39,7 +39,8 @@ import TransportDetailStage from "./components/child/TransportDetailStage";
 import OtherInformationStage from "./components/child/OtherInformationStage";
 import RoutePage from "./pages/AdminPages/transport/RoutePage";
 import SubRoutePage from "./pages/AdminPages/transport/SubRoutePage";
-
+import CounterPage from "./pages/CounterPage";
+import CompletedStage from "./components/child/CompletedStage";
 
 function App() {
   let user = true;
@@ -52,13 +53,13 @@ function App() {
             <Route path="/registration" element={<Registration/>} />
             <Route path="/personal-information" element={<PersonalInformationForm/>} />
             <Route path="/educational-detail-stage" element={<EducationalDetailStage/>}/>
-           
             <Route path="/subject-stage" element={<SubjectStage/>}/>
             <Route path="/parent-particular-stage" element={<ParentParticularStage/>}/>
             <Route path="/transport-detail-stage" element={<TransportDetailStage/>}/>
             <Route path="/other-information-stage" element={<OtherInformationStage/>}/>
             <Route path="/declaration-stage" element={<DeclarationStage/>}/>
             <Route path="/document-stage" element={<DocumentStage/>}/>
+             <Route path="/complete-stage" element={<CompletedStage/>} />
             <Route path="dashboard" element={<MasterLayout />} >
              {/*admin route*/}
             <Route index element={<Dashboard />} />

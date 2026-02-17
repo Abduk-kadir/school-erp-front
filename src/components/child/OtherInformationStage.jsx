@@ -20,15 +20,13 @@ const OtherInformationStage = () => {
   const wholeForm = useSelector(
     (state) => state?.personalInfoForms?.personalInfoForm?.data
   );
-  let personalFormfields = wholeForm ? wholeForm[3]?.fields : [];
+  
+   let personalFormfields = wholeForm?.find(elem => elem.name === 'Other Information')?.fields || [];
 
 
-  useEffect(() => {
-    console.log('inside dispatch*********')
-    dispatch(getPersonalInformationForm({}));
+  
 
 
-  }, []);
   useEffect(() => {
     let fetchData = async () => {
       try {

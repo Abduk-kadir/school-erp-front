@@ -10,6 +10,7 @@ import axios from 'axios';
 import baseUrl from '../utils/baseUrl'
 import { useDispatch, useSelector } from 'react-redux';
 import { setRegistrationNo } from '../redux/slices/registrationNo';
+import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personalInfoFormSlice';
 
 
 // Validation schema with Yup
@@ -31,20 +32,11 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [personalInformations,setPersonalInformations]=useState([])
   const dispatch=useDispatch()
-  /*useEffect(()=>{
-    let fetchData=(async()=>{
+   useEffect(() => {
+          dispatch(getPersonalInformationForm({}));
+      }, []);
 
-      try{
-      let {data}=await axios.get(`${baseUrl}/api/classes`)
-       setClasses(data?.data||[])
-      }
-      catch(err){
-        console.log('error fetching class in login page')
-      }
-    })
-    fetchData()
-  },[])
-*/
+
  console.log('personal information is:',personalInformations)
 
 

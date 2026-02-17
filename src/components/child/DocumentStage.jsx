@@ -107,7 +107,7 @@ const handleNext = async() => {
    let formStatusPayload = { current_step: 4, reg_no: reg_no }
    await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
         
-   navigate(`/declaration-stage?step=5`)
+   navigate(`/complete-stage?step=10`)
 }
 
 
