@@ -16,6 +16,7 @@ const validationSchema = Yup.object({
 const TransportDetailStage = () => {
   const [searchParams] = useSearchParams();
   const [subroutes, setSubRoutes] = useState([]);
+     const [personalData, setPersonalData] = useState({})
   const navigate = useNavigate();
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
   const currentStep = Number(searchParams.get('step')) || 6; // fallback
@@ -69,9 +70,42 @@ const TransportDetailStage = () => {
   return (
     <div className="container ">
       <FormWizard currentStep={currentStep} />
-
+      
       <div className="d-flex justify-content-center">
+        
         <div className="card p-5" style={{ width: '80%' }}>
+          <div> 
+          <div className="d-flex justify-content-between gap-3 ">
+                    <h6 className="mb-4">Transport Detail</h6>
+
+                    <button
+                        type="Next"
+                        className="btn btn-success"
+                        onClick={() => navigate('/')}
+
+                    >
+                        Logout
+                    </button>
+                </div>
+                <div className='row mb-5'>
+                    <div className='col-3'>
+                        <label className="form-label">Reg NO</label>
+                        <input className='form-control' value={reg_no} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">First Name</label>
+                        <input className='form-control' value={personalData?.first_name} disabled />
+
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Last Name</label>
+                        <input className='form-control' value={personalData?.last_name} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Class</label>
+                        <input className='form-control' value={personalData?.class} disabled />
+                    </div>
+                </div></div>
           <Formik
             enableReinitialize
             initialValues={{
@@ -129,7 +163,7 @@ const TransportDetailStage = () => {
                 </div>
 
 
-                {values.is_taken && <div className="row mb-5 align-items-center">
+                {values.is_taken=='yes' && <div className="row mb-5 align-items-center">
                   <div className="col-6">
                     <h6 className="mb-0">Select Route</h6>
                   </div>
@@ -147,7 +181,7 @@ const TransportDetailStage = () => {
                 </div>
                 }
 
-                {values.is_taken && <div className="row mb-5 align-items-center">
+                {values.is_taken=='yes' && <div className="row mb-5 align-items-center">
                   <div className="col-6">
                     <h6 className="mb-0">Select Sub Routes</h6>
                   </div>

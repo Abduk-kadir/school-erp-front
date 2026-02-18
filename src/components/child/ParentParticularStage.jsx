@@ -15,24 +15,39 @@ const ParentParticularStage = () => {
     const [searchParams] = useSearchParams();
     const dispatch = useDispatch()
     const navigate = useNavigate()
+     const [personalData, setPersonalData] = useState({})
     const [parentParticularData, setParentParticularData] = useState(null);
     const [edit, setEdit] = useState(false)
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
     );
-   
+
     let personalFormfields = wholeForm?.find(elem => elem.name === 'Parent Particular')?.fields || [];
-
-
     useEffect(() => {
         let fetchData = async () => {
             try {
                 if (reg_no) {
-                    let { data } = await axios.get(`${baseURL}/api/parent-particular/${reg_no}`)
-                    setParentParticularData(data?.data)
-                    setEdit(true)
-                    console.log('registration data is:', data?.data)
+                    const results = await Promise.allSettled([
+                        axios.get(`${baseURL}/api/parent-particular/${reg_no}`),
+                        axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
+                    ]);
+
+                    if (results[0].status === "fulfilled") {
+
+                        setParentParticularData(results[0].value?.data?.data)
+                        setEdit(true)
+                       
+
+
+                    }
+                    if (results[1].status === "fulfilled") {
+
+                        console.log('personal Data**********',parentParticularData)
+                        setPersonalData(results[1].value?.data?.data);
+                    }
+
+
                 }
             }
             catch (err) {
@@ -43,8 +58,27 @@ const ParentParticularStage = () => {
 
     }, [])
 
-   
-   console.log('parent particular data:',parentParticularData)
+    /*
+      useEffect(() => {
+          let fetchData = async () => {
+              try {
+                  if (reg_no) {
+                      let { data } = await axios.get(`${baseURL}/api/parent-particular/${reg_no}`)
+                      setParentParticularData(data?.data)
+                      setEdit(true)
+                      console.log('registration data is:', data?.data)
+                  }
+              }
+              catch (err) {
+                  console.log('error in other information ')
+              }
+          }
+          fetchData()
+  
+      }, [])
+  
+     */
+    console.log('parent particular data:', parentParticularData)
     let initialValues = useMemo(() => {
         // if (stageData) return stageData;
 
@@ -61,7 +95,37 @@ const ParentParticularStage = () => {
         <div className="container mt-5">
             <FormWizard currentStep={Number(searchParams.get('step'))} />
             <div className="card p-4 shadow">
-                <h6 className="mb-4">Other Information</h6>
+                 <div className="d-flex justify-content-between gap-3 ">
+                    <h6 className="mb-4">Parent Particular</h6>
+
+                    <button
+                        type="Next"
+                        className="btn btn-success"
+                        onClick={() => navigate('/')}
+
+                    >
+                        Logout
+                    </button>
+                </div>
+                <div className='row mb-3'>
+                    <div className='col-3'>
+                        <label className="form-label">Reg NO</label>
+                        <input className='form-control' value={reg_no} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">First Name</label>
+                        <input className='form-control' value={personalData?.first_name} disabled />
+
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Last Name</label>
+                        <input className='form-control' value={personalData?.last_name} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Class</label>
+                        <input className='form-control' value={personalData?.class} disabled />
+                    </div>
+                </div>
                 <Formik
                     initialValues={initialValues}
                     enableReinitialize={true}
@@ -76,13 +140,13 @@ const ParentParticularStage = () => {
                                 let formStatusPayload = { current_step: 4, reg_no: reg_no }
                                 await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
                                 alert("education detail added successfully!")
-                                 navigate('/transport-detail-stage?step=6')
+                                navigate('/transport-detail-stage?step=6')
                             }
                             if (edit) {
 
                                 let { data } = await axios.put(`${baseURL}/api/parent-particular/${reg_no}`, payload)
                                 alert("Update  successfully!")
-                                 navigate('/transport-detail-stage?step=6')
+                                navigate('/transport-detail-stage?step=6')
 
                             }
 
@@ -90,7 +154,7 @@ const ParentParticularStage = () => {
                         catch (err) {
                             console.log('error is:', err)
                         }
-                       
+
                     }}
 
 

@@ -9,6 +9,7 @@ import { setRegistrationNo } from '../../redux/slices/registrationNo';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getRegistrationNo } from "../../redux/slices/registrationNo";
+import { useState } from 'react';
 
 
 const registrationSchema = Yup.object().shape({
@@ -36,8 +37,8 @@ const registrationSchema = Yup.object().shape({
     .max(80, 'Too long')
     .required('Mother Name is required'),
 
-  classPromoted: Yup.string()
-    .oneOf(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'], 'Please select a valid class')
+  class: Yup.string()
+    
     .required('Please select the class'),
 
   email: Yup.string()
@@ -56,6 +57,7 @@ const Registration = () => {
   const navigate = useNavigate();
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
   const [reistrationData, setReistrationData] = React.useState(null);
+   const [allClasses,setClasses]=useState([])
   console.log('registration no:', reg_no)
   useEffect(() => {
     let fetchData = async () => {
@@ -74,9 +76,24 @@ const Registration = () => {
     fetchData()
 
   }, [])
-  console.log('registrationData is:', reistrationData)
-  console.log('registration first_name:', reistrationData?.first_name)
 
+   useEffect(() => {
+    let fetchData = async () => {
+      try {
+        
+        
+          let { data } = await axios.get(`${baseURL}/api/classes`)
+          setClasses(data?.data||[])
+          
+      }
+      catch (err) {
+
+      }
+    }
+    fetchData()
+
+  }, [])
+  
   return (
     <div className='container mt-5'>
       <FormWizard currentStep={1} />
@@ -90,7 +107,7 @@ const Registration = () => {
             first_name: reistrationData?.first_name || '',
             father_name: reistrationData?.father_name || '',
             mother_name: reistrationData?.mother_name || '',
-            classPromoted: reistrationData?.classPromoted || '',
+            class: reistrationData?.class || '',
             email: reistrationData?.email || '',
             contact_number: reistrationData?.contact_number || '',
             otpVerified: false,
@@ -176,21 +193,13 @@ const Registration = () => {
 
                 {/* Class selection */}
                 <div className="col-sm-6">
-                  <label className="form-label">Class for child promoted to*</label>
-                  <Field as="select" name="classPromoted" className="form-select">
+                  <label className="form-label">Class </label>
+                  <Field as="select" name="class" className="form-select">
                     <option value="">Select Class</option>
-                    <option value="1">Class 1</option>
-                    <option value="2">Class 2</option>
-                    <option value="3">Class 3</option>
-                    <option value="4">Class 4</option>
-                    <option value="5">Class 5</option>
-                    <option value="6">Class 6</option>
-                    <option value="7">Class 7</option>
-                    <option value="8">Class 8</option>
-                    <option value="9">Class 9</option>
-                    <option value="10">Class 10</option>
-                    <option value="11">Class 11</option>
-                    <option value="12">Class 12</option>
+                    {allClasses.map(elem=>(
+                      <option key={elem.id} value={elem.id}>{elem.class_name}</option>
+                    ))}
+                    
                   </Field>
                   <ErrorMessage name="classPromoted" component="div" className="text-danger small mt-1" />
                 </div>

@@ -41,6 +41,7 @@ import RoutePage from "./pages/AdminPages/transport/RoutePage";
 import SubRoutePage from "./pages/AdminPages/transport/SubRoutePage";
 import CounterPage from "./pages/CounterPage";
 import CompletedStage from "./components/child/CompletedStage";
+import ClassFiledPage from "./pages/ClassFieldPage";
 
 function App() {
   let user = true;
@@ -76,6 +77,7 @@ function App() {
             <Route path="admission-form-master/stages" element={<StagePage/>}/>
             <Route path="admission-form-master/Field" element={<AllFiledPage/>}/>
             <Route path="admission-form-master/field-values" element={<OptionValuePage/>}/>
+            <Route path="admission-form-master/class-field" element={<ClassFiledPage/>}/>
             <Route path="subject" element={<SubjectPage/>}/>
             <Route path="assign-subject" element={<AssignSubjectPage/>}/>
             <Route path="program" element={<ProgramPage/>}/>

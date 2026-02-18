@@ -15,6 +15,7 @@ const EducationalDetailStage = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [educationalDeatailData, setEducationalDetailData] = useState(null);
+    const [personalData,setPersonalData]=useState({})
     const [edit, setEdit] = useState(false)
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
     const wholeForm = useSelector(
@@ -23,15 +24,32 @@ const EducationalDetailStage = () => {
     console.log('whole form is:', wholeForm)
     let personalFormfields = wholeForm?.find(elem => elem.name === 'Education Detail')?.fields || [];
 
-
+  
     useEffect(() => {
         let fetchData = async () => {
             try {
                 if (reg_no) {
-                    let { data } = await axios.get(`${baseURL}/api/educational-detail/${reg_no}`)
-                    setEducationalDetailData(data?.data)
-                    setEdit(true)
-                    console.log('registration data is:', data?.data)
+                     const results = await Promise.allSettled([
+        axios.get(`${baseURL}/api/educational-detail/${reg_no}`), // may fail
+        axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`) // always should run
+      ]);
+
+      // handle educational detail
+      if (results[0].status === "fulfilled") {
+        setEducationalDetailData(results[0].value?.data?.data);
+        console.log("Educational Detail:", results[0].value?.data?.data);
+        setEdit(true)
+      } else {
+        console.log("Educational API failed:", results[0].reason);
+      }
+
+      // handle personal information
+      if (results[1].status === "fulfilled") {
+        setPersonalData(results[1].value?.data?.data);
+        console.log("Personal Data:", results[1].value?.data?.data);
+      } else {
+        console.log("Personal API failed:", results[1].reason);
+      }
                 }
             }
             catch (err) {
@@ -60,7 +78,38 @@ const EducationalDetailStage = () => {
         <div className="container mt-5">
             <FormWizard currentStep={Number(searchParams.get('step'))} />
             <div className="card p-4 shadow">
-                <h6 className="mb-4">Educational Detail</h6>
+               
+                 <div className="d-flex justify-content-between gap-3 ">
+                     <h6 className="mb-4">Educational Detail</h6>
+                              
+                                <button
+                                    type="Next"
+                                    className="btn btn-success"
+                                    onClick={() => navigate('/')}
+                                    
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                <div className='row'>
+                    <div className='col-3'>
+                         <label className="form-label">Reg NO</label>
+                         <input className='form-control' value={reg_no} disabled/>
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">First Name</label>
+                         <input className='form-control' value={personalData?.first_name} disabled/>
+
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Last Name</label>
+                         <input className='form-control' value={personalData?.last_name} disabled/>
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Class</label>
+                         <input className='form-control' value={personalData?.class} disabled/>
+                    </div>
+                </div>
                 <Formik
                     initialValues={initialValues}
                     enableReinitialize={true}

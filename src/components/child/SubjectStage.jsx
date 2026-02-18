@@ -13,10 +13,54 @@ const SubjectStage = () => {
     const [selectedProgram, setSeletedProgram] = useState('')
     const [searchParams] = useSearchParams();
     const [studentSubject, setStudentSubject] = useState([])
+    const [personalData, setPersonalData] = useState({})
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
     let step = searchParams.get("step")
     step = Number(step)
+ 
+    useEffect(() => {
+        console.log('fetching is called')
+        let fetchData = async () => {
+            try {
 
+                const results = await Promise.allSettled([
+                    axios.get(`${baseURL}/api/studentsubjects/student/${reg_no}`), // may fail
+                    axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`) // always should run
+                ]);
+                if (results[0].status === "fulfilled") {
+                    let editedCheckedSubjects = results[0].value?.data?.data?.filter(elem => elem.elective_bbasket_id)
+                    console.log('edtited checked subject**:', editedCheckedSubjects)
+                    
+                    const normalizedData = editedCheckedSubjects.map(item => ({
+                        subject: item.subject.value,   // if you have subject value from your subjects list
+                        subjectId: item.subject_id,
+                        electiveId: item.elective_bbasket_id,
+                        classId: item.class_id,
+                        programId: item.program_id,
+                        semester: item.semester
+                    }));
+                    setCheckedSubjects(normalizedData)
+                } else {
+                    console.log("Educational API failed:", results[0].reason);
+                }
+                 if (results[1].status === "fulfilled") {
+        setPersonalData(results[1].value?.data?.data);
+        console.log("Personal Data:", results[1].value?.data?.data);
+      } else {
+        console.log("Personal API failed:", results[1].reason);
+      }
+
+
+
+            }
+            catch (err) {
+
+            }
+        }
+        fetchData()
+    }, [])
+
+    /*
     useEffect(() => {
         console.log('fetching is called')
         let fetchData = async () => {
@@ -24,7 +68,7 @@ const SubjectStage = () => {
                 const { data } = await axios.get(`${baseURL}/api/studentsubjects/student/${reg_no}`);
                 let editedCheckedSubjects = data?.data?.filter(elem => elem.elective_bbasket_id)
                 console.log('edtited checked subject**:', editedCheckedSubjects)
-                console.log('for edit data is in****',data)
+                console.log('for edit data is in****', data)
                 const normalizedData = editedCheckedSubjects.map(item => ({
                     subject: item.subject.value,   // if you have subject value from your subjects list
                     subjectId: item.subject_id,
@@ -42,7 +86,7 @@ const SubjectStage = () => {
         fetchData()
     }, [])
 
-
+*/
     useEffect(() => {
         let fetchData = async () => {
             try {
@@ -92,7 +136,7 @@ const SubjectStage = () => {
     // console.log('noncomplusary subjects are**:', nonCompulsory)
     //console.log('grouped**', grouped)
     // console.log('alloption***:', allOption)
-   // console.log('checked subjects**:', checkedSubjects)
+    // console.log('checked subjects**:', checkedSubjects)
 
 
     const handleCheckboxChange = (item, groupIndex) => {
@@ -125,10 +169,10 @@ const SubjectStage = () => {
         const assignments = [...complusaryData, ...nonCompulsoryData];
         try {
 
-          // let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
-          //  let formStatusPayload = { current_step: 5, reg_no: reg_no }
+           // let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
+            //let formStatusPayload = { current_step: 5, reg_no: reg_no }
            // await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
-           // alert("Subjects assigned successfully!");
+           //  alert("Subjects assigned successfully!");
             navigate(`/parent-particular-stage/?step=5`)
 
         }
@@ -144,8 +188,39 @@ const SubjectStage = () => {
         <div className="container">
             <FormWizard currentStep={step} />
             <div className="card p-10 shadow p-10">
+                <div className="d-flex justify-content-end ">
+
+
+                    <button
+                        type="Next"
+                        className="btn btn-success"
+                        onClick={() => navigate('/')}
+
+                    >
+                        Logout
+                    </button>
+                </div>
+                <div className='row mb-5'>
+                    <div className='col-3'>
+                        <label className="form-label">Reg NO</label>
+                        <input className='form-control' value={reg_no} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">First Name</label>
+                        <input className='form-control' value={personalData?.first_name} disabled />
+
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Last Name</label>
+                        <input className='form-control' value={personalData?.last_name} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Class</label>
+                        <input className='form-control' value={personalData?.class} disabled />
+                    </div>
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-                    <div className="d-flex" style={{ width: "70%" }}>
+                    <div className="d-flex" style={{ width: "90%" }}>
                         <h6>Select Program</h6>
                         <select class="form-select form-select-sm"
                             value={selectedProgram}
@@ -163,7 +238,7 @@ const SubjectStage = () => {
                     </div >
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-                    <div className="border" style={{ width: "70%" }}>
+                    <div className="border" style={{ width: "90%" }}>
                         <h6 className="mb-10 mt-10">Complusary</h6>
                         <ul>
                             {
@@ -185,7 +260,7 @@ const SubjectStage = () => {
 
 
                 {allOption.map((group, index) => (
-                    <div key={index} className="border" style={{ width: "70%", margin: "auto" }}>
+                    <div key={index} className="border" style={{ width: "90%", margin: "auto" }}>
 
                         <h6 className="mt_10">Select Any  {group.opion[0]?.exactChoices}</h6>
 

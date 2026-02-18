@@ -169,7 +169,8 @@ const MasterLayout = () => {
 
             },
             { title: "Field", path: "admission-form-master/Field" },
-            { title: "drop-radio-values", path: "admission-form-master/field-values" }
+            { title: "drop-radio-values", path: "admission-form-master/field-values" },
+            { title: "class-filed", path: "admission-form-master/class-field" }
           ]
         },
 

@@ -38,29 +38,22 @@ const PersonalInformationForm = () => {
       }, [])
 
 
-       useEffect(() => {
-       dispatch(getPersonalInformationForm({}));
-       //dispatch(getStage1({}));
-     
-    }, [dispatch]);
-      
+    
   console.log('registrationData is:', reistrationData)
   let step = searchParams.get("step")
   step=Number(step)
  
-   // let id=4;
+   
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
     );
-    /*let stageData= useSelector(
-        (state) => state?.stage1?.stage1Data?.data
-    );*/
+   
 
     const personalFormfields = wholeForm ? wholeForm[0]?.fields : [];
-   // console.log('user data is:',stageData)
+   
 
     let initialValues = useMemo(() => {
-       // if (stageData) return stageData;
+      
 
         const values = { first_name: "", last_name: "",father_name:"",class:"",division:"",contact_number:"",
             email:"",password:"",dob:"",blood_group:""
@@ -259,13 +252,7 @@ const PersonalInformationForm = () => {
                                 ))}
                             </div>
                             <div className="d-flex justify-content-end gap-3 mb-10">
-                                <button
-                                type="Previous"
-                                className="btn btn-success mt-3 px-5"
-                                onClick={() => navigate(`/registration?step=1`) }
-                            >
-                                Prev
-                            </button>
+                            
                             <button
                                 type="Next"
                                 className="btn btn-success mt-3 px-5"
