@@ -44,7 +44,7 @@ import CompletedStage from "./components/child/CompletedStage";
 import ClassFiledPage from "./pages/ClassFieldPage";
 
 function App() {
-  let user = true;
+  let user = false;
   return (
     <BrowserRouter>
       <RouteScrollToTop />

@@ -5,8 +5,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import baseURL from '../../../utils/baseUrl'
 
-
-
 const AddmissionConformPage = () => {
 
 
@@ -19,10 +17,22 @@ const AddmissionConformPage = () => {
         { data: "reg_no", title: "Reg No" },
         { data: "reg_no", title: "Form No" },
         { data: "", title: "Accept by" },
-        { data: "first_name", title:  `<span class="text-danger">First Name</span><br/>
-    <span class="text-primary">Last Name</span><br/>
-    <span class="text-success">Father Name</span><br/>
-    <span class="text-purple">Mother Name</span><br/>` },
+        {
+          data: null,                    // ← important: we don't bind to one field
+          title: `<span class="text-danger">First Name</span><br/>
+          <span class="text-primary">Last Name</span><br/>
+          <span class="text-success">Father Name</span><br/>
+          <span class="text-purple">Mother Name</span>`,
+          render: function (data, type, row) {
+            // row = full object for this row (from your API)
+            return `
+      <span class="text-danger">${row.first_name || ''}</span><br/>
+      <span class="text-primary">${row.last_name || ''}</span><br/>
+      <span class="text-success">${row.father_name || row.father || ''}</span><br/>
+      <span class="text-purple">${row.mother_name || row.mother || ''}</span>
+    `;
+          }
+        },
         {
           data: "", title: "Photo", render: (data, type, row) => {
             return '<button class="btn action-btn action-btn-purple">View Photo</button>'
@@ -30,9 +40,24 @@ const AddmissionConformPage = () => {
         },
 
         { data: "class", title: "class" },
-        { data: "email", title:  `<span class="text-danger">Email</span><br/>
+        {
+          data: null, title: `
+          <span class="text-danger">Email</span><br/>
     <span class="text-primary">Mobile No</span><br/>
-    <span class="text-success">Password</span><br/>` },
+    <span class="text-success">Password</span><br/>`,
+    render: function (data, type, row) {
+            // row = full object for this row (from your API)
+            return `
+      <span class="text-danger">${row.email || ''}</span><br/>
+      <span class="text-primary">${row.contact_number || ''}</span><br/>
+      <span class="text-success">${row.password || ''}</span><br/>
+     
+    `;
+          }
+
+
+
+        },
         { data: "cast", title: "Category" },
         { data: "", title: "Status" },
         { data: "", title: "Form Current Stage" },

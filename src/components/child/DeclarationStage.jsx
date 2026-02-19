@@ -11,14 +11,14 @@ import { useSelector } from "react-redux";
 const DeclarationStage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
+  const [personalData, setPersonalData] = useState({})
   const [formNo, setFormNo] = useState(345)
   const [classId, setClassid] = useState(7)
   const [declaration, setDeclaration] = useState({})
   const [editMode, setEditMode] = useState(false)
   const [editedDeclaration, setEditedDeclaration] = useState(null)
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
- 
+
   useEffect(() => {
     let fetchData = async () => {
       try {
@@ -35,11 +35,30 @@ const DeclarationStage = () => {
   useEffect(() => {
     let fetchData = async () => {
       try {
-        let { data } = await axios.get(`${baseURL}/api/student-declarations/student/${reg_no}`)
-        setEditedDeclaration(data?.data)
-        if (data?.data) {
+
+        const results = await Promise.allSettled([
+          axios.get(`${baseURL}/api/student-declarations/student/${reg_no}`),
+          axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
+        ]);
+
+        if (results[0].status === "fulfilled") {
+
+          setEditedDeclaration(results[0].value?.data?.data)
           setEditMode(true)
+
+
+
         }
+        if (results[1].status === "fulfilled") {
+
+          console.log('personal Data**********', results[1].value?.data?.data)
+          setPersonalData(results[1].value?.data?.data);
+        }
+        else{}
+
+
+
+
       }
       catch (err) {
         console.log('erro in fetching declaration')
@@ -52,7 +71,7 @@ const DeclarationStage = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       console.log('values are:', values)
-      if(editMode){
+      if (editMode) {
 
         await axios.patch(`${baseURL}/api/student-declarations/${editedDeclaration?.id}`, {
           reg_no: values.reg_no,
@@ -63,19 +82,19 @@ const DeclarationStage = () => {
         });
         alert('successfully updated declaration');
         navigate(`/document-stage?step=9`);
-      } else{
-      await axios.post(`${baseURL}/api/student-declarations`, {
-        reg_no: values.reg_no,
-        declaration_id: declaration?.id,
-        accepted: values.accepted,
-        date: values.date,
-        location: values.place,
-      });
-       alert('successfully added declaration');
-       let formStatusPayload = { current_step: 9, reg_no: reg_no }
-       await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
-       navigate(`/document-stage?step=9`);
-    }
+      } else {
+        await axios.post(`${baseURL}/api/student-declarations`, {
+          reg_no: values.reg_no,
+          declaration_id: declaration?.id,
+          accepted: values.accepted,
+          date: values.date,
+          location: values.place,
+        });
+        alert('successfully added declaration');
+        let formStatusPayload = { current_step: 9, reg_no: reg_no }
+        await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+        navigate(`/document-stage?step=9`);
+      }
 
     } catch (err) {
       //alert('not added declaration');
@@ -96,20 +115,37 @@ const DeclarationStage = () => {
       <div className="d-flex justify-content-center">
 
 
-        <div className="card  border p-10" style={{ width: "90%" }}>
+        <div className="card  border p-10" style={{ width: "95%" }}>
 
-          <div className="d-flex gap-2 flex-row justify-content-between flex-wrap">
-            <div>
-              <label className="form-label fw-bold">Regestration Id</label>
-              <input type="text" className="form-control mb-2" value={reg_no} disabled />
+          <div className="d-flex justify-content-between gap-3 ">
+            <h6 className="mb-4">Declaration</h6>
+
+            <button
+              type="Next"
+              className="btn btn-success"
+              onClick={() => navigate('/')}
+
+            >
+              Logout
+            </button>
+          </div>
+          <div className='row mb-5'>
+            <div className='col-3'>
+              <label className="form-label">Reg NO</label>
+              <input className='form-control' value={reg_no} disabled />
             </div>
-            <div>
-              <label className="form-label fw-bold">Form No</label>
-              <input type="text" className="form-control mb-2" value={formNo} disabled />
+            <div className='col-3'>
+              <label className="form-label">First Name</label>
+              <input className='form-control' value={personalData?.first_name} disabled />
+
             </div>
-            <div>
-              <label className="form-label fw-bold">Standard Studing In</label>
-              <input type="text" className="form-control mb-2" placeholder="Username" value={classId} disabled />
+            <div className='col-3'>
+              <label className="form-label">Last Name</label>
+              <input className='form-control' value={personalData?.last_name} disabled />
+            </div>
+            <div className='col-3'>
+              <label className="form-label">Class</label>
+              <input className='form-control' value={personalData?.class} disabled />
             </div>
           </div>
 

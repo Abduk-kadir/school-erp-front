@@ -14,6 +14,7 @@ const DocumentStage = () => {
   const [searchParams] = useSearchParams();
   const [uploadedDocs, setUploadedDocs] = useState({})
   const  [edit,setEdit]=useState(false);
+  const [personalData, setPersonalData] = useState({})
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
   let step = searchParams.get("step")
   step = Number(step)
@@ -25,18 +26,49 @@ const DocumentStage = () => {
         const res = await axios.get(`${baseURL}/api/requirement-documents`, {
           params: { class_id: 4 },
         });
-        const res2 = await axios.get(`${baseURL}/api/student-documents/student/${reg_no}`, {
-  
-        });
+       
         setDocReq(res.data.data || []);
-        setUserDocument(res2.data.data || [])
-        if(res2.data.data.length>0)setEdit(true)
+       
       } catch (err) {
         console.error("API error:", err);
       }
     };
 
     fetchData();
+  }, []);
+
+   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const results = await Promise.allSettled([
+          await axios.get(`${baseURL}/api/student-documents/student/${reg_no}`),
+          axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
+        ]);
+
+        // subroutes response
+        if (results[0].status === "fulfilled") {
+         setUserDocument(results[0].value.data?.data || []);
+         setEdit(true)
+        }
+
+        // transport response
+       
+         if (results[1].status === "fulfilled") {
+           setPersonalData(results[1].value?.data?.data);
+        } 
+        
+        else {
+          
+        }
+
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      }
+    };
+
+    if (reg_no) {
+      fetchData();
+    }
   }, []);
 
   // Remove duplicates and prepare unique document types
@@ -120,7 +152,40 @@ const handleNext = async() => {
       
        
           <div className="card-body">
-          <h4 className="mb-2 fw-semibold">Upload Document</h4>  
+             <div className=''> 
+          <div className="d-flex justify-content-between gap-3 ">
+                     <h4 className="fw-semibold">Upload Document</h4> 
+
+                    <button
+                        type="Next"
+                        className="btn btn-success"
+                        onClick={() => navigate('/')}
+
+                    >
+                        Logout
+                    </button>
+                </div>
+                <div className='row mb-3'>
+                    <div className='col-3'>
+                        <label className="form-label">Reg NO</label>
+                        <input className='form-control' value={reg_no} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">First Name</label>
+                        <input className='form-control' value={personalData?.first_name} disabled />
+
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Last Name</label>
+                        <input className='form-control' value={personalData?.last_name} disabled />
+                    </div>
+                    <div className='col-3'>
+                        <label className="form-label">Class</label>
+                        <input className='form-control' value={personalData?.class} disabled />
+                    </div>
+                </div>
+                </div>
+         
           <p className="text-danger fw-bold mb-4">
             <span className="me-1">★</span>Fields marked with star are mandatory
           </p>

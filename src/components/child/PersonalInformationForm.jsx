@@ -1,7 +1,7 @@
 import { getPersonalInformationForm } from "../../redux/slices/dynamicForm/personalInfoFormSlice";
 import { getStage1 } from "../../redux/slices/stage1Sclice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect,useState ,useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { PenNibStraight } from "@phosphor-icons/react";
@@ -13,58 +13,60 @@ import { getRegistrationNo } from "../../redux/slices/registrationNo";
 import { useReducer } from "react";
 
 const PersonalInformationForm = () => {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
-    const [reistrationData, setReistrationData] =useState(null);
-    console.log('registration no:', reg_no)
+    const [reistrationData, setReistrationData] = useState(null);
+
     useEffect(() => {
         let fetchData = async () => {
-          try {
-            if (reg_no) {
-              console.log('in registration get regsitration by reg no api called')
-              let { data } = await axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
-              setReistrationData(data?.data)
-              console.log('registration data is:', data?.data)
+            try {
+                if (reg_no) {
+                    console.log('in registration get regsitration by reg no api called')
+                    let { data } = await axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
+                    setReistrationData(data?.data)
+                    console.log('registration data is:', data?.data)
+                }
             }
-          }
-          catch (err) {
-    
-          }
+            catch (err) {
+
+            }
         }
         fetchData()
-    
-      }, [])
+
+    }, [])
 
 
-    
-  console.log('registrationData is:', reistrationData)
-  let step = searchParams.get("step")
-  step=Number(step)
- 
-   
+    let step = searchParams.get("step")
+    step = Number(step)
+
+
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
     );
-   
 
-    const personalFormfields = wholeForm ? wholeForm[0]?.fields : [];
-   
+
+
+    let personalFormfields = wholeForm?.find(elem => elem.name === 'Personal Information')?.fields || [];
+
 
     let initialValues = useMemo(() => {
-      
 
-        const values = { first_name: "", last_name: "",father_name:"",class:"",division:"",contact_number:"",
-            email:"",password:"",dob:"",blood_group:""
-         };
-        personalFormfields.forEach((elem) => {
+        const values = {
+            first_name: "", last_name: "", father_name: "", class: "", division: "", contact_number: "",
+            email: "", password: "", dob: "", blood_group: ""
+        };
+
+        personalFormfields.forEach(elem => {
+
             values[elem.name] = "";
-        });
+        })
+
         return values;
     }, [personalFormfields]);
-    
-  initialValues = reistrationData || initialValues;
+
+    initialValues = reistrationData || initialValues;
     const validationSchema = Yup.object(
         personalFormfields.reduce((schema, field) => {
 
@@ -82,46 +84,64 @@ const PersonalInformationForm = () => {
                 father_name: Yup.string().required("father name is required"),
                 email: Yup.string().required("email is required"),
                 password: Yup.string().required("password is required"),
-                dob:Yup.string().required("password is required"),
-                blood_group:Yup.string().required("blood group is required"),
+                dob: Yup.string().required("password is required"),
+                blood_group: Yup.string().required("blood group is required"),
 
             })
     );
 
-   
+    console.log('registration data:', reistrationData)
 
     return (
         <div className="container mt-5">
-            <FormWizard currentStep={step}/>
+            <FormWizard currentStep={step} />
             <div className="card p-4 shadow">
-                <h3 className="mb-4">Personal Information Form</h3>
+                <div className=''>
+                    <div className="d-flex justify-content-between gap-3 mb-3">
+                        <h6 className="">Personal Information</h6>
+
+                        <button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/')}
+
+                        >
+                            Logout
+                        </button>
+                    </div>
+
+                </div>
 
                 <Formik
                     initialValues={initialValues}
                     enableReinitialize={true}
-                   // validationSchema={validationSchema}
-                    onSubmit={async(values, { resetForm }) => {
-                            try {
-                             let { data } = await axios.put(`${baseURL}/api/personal-information/reg_no/${reg_no}`, values)
-                             let formStatusPayload = { current_step: 3, reg_no: reg_no}
-                             await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
-                             alert("Form updated successfully!")
+                    // validationSchema={validationSchema}
+                    onSubmit={async (values, { resetForm }) => {
+                        try {
+                            const payload = { ...values };// this thing i used beacuse when edit created and updated date come
+                            delete payload?.createdAt;
+                            delete payload?.updatedAt;
+                            console.log('submitting values is:', values)
+                            let { data } = await axios.put(`${baseURL}/api/personal-information/reg_no/${reg_no}`, payload)
+                            let formStatusPayload = { current_step: 3, reg_no: reg_no }
+                            await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                            alert("Form updated successfully!")
 
-                            }
-                            catch(err){
-                                console.log('error is:', err)
-                            }
-                       navigate('/educational-detail-stage?step=3')
+                        }
+                        catch (err) {
+                            console.log('error is:', err)
+                        }
+                        navigate('/educational-detail-stage?step=3')
                     }}
-                        
-                     
+
+
                 >
                     {({ isSubmitting }) => (
                         <Form>
                             <div className="row">
                                 <div className="col-3 mb-3">
                                     <label className="form-label">First Name</label>
-                                    <Field name="first_name" type="text" className='form-control' />
+                                    <Field name="first_name" type="text" className='form-control' disabled />
                                     <ErrorMessage
                                         name="first_name"
                                         component="div"
@@ -131,9 +151,9 @@ const PersonalInformationForm = () => {
                                 </div>
                                 <div className="col-3 mb-3">
                                     <label className="form-label">Last Name</label>
-                                    <Field name="last_name" type="text" className='form-control' />
+                                    <Field name="last_name" type="text" className='form-control' disabled />
 
-                                 <ErrorMessage
+                                    <ErrorMessage
                                         name="last_name"
                                         component="div"
                                         className="text-danger mt-1"
@@ -142,9 +162,9 @@ const PersonalInformationForm = () => {
                                 </div>
                                 <div className="col-3 mb-3">
                                     <label className="form-label">Father Name</label>
-                                    <Field name="father_name" type="text" className='form-control' />
+                                    <Field name="father_name" type="text" className='form-control' disabled />
 
-                                 <ErrorMessage
+                                    <ErrorMessage
                                         name="father_name"
                                         component="div"
                                         className="text-danger mt-1"
@@ -153,7 +173,7 @@ const PersonalInformationForm = () => {
                                 </div>
                                 <div className="col-3 mb-3">
                                     <label className="form-label">Class</label>
-                                    <Field name="class" type="text" className='form-control' />
+                                    <Field name="class" type="text" className='form-control' disabled />
                                     <ErrorMessage
                                         name="class"
                                         component="div"
@@ -171,9 +191,9 @@ const PersonalInformationForm = () => {
                                     />
 
                                 </div>
-                                 <div className="col-3 mb-3">
+                                <div className="col-3 mb-3">
                                     <label className="form-label">Contact Number</label>
-                                    <Field name="contact_number" type="text" className='form-control' />
+                                    <Field name="contact_number" type="text" className='form-control' disabled />
                                     <ErrorMessage
                                         name="contact_number"
                                         component="div"
@@ -181,9 +201,9 @@ const PersonalInformationForm = () => {
                                     />
 
                                 </div>
-                                 <div className="col-3 mb-3">
+                                <div className="col-3 mb-3">
                                     <label className="form-label">Email</label>
-                                    <Field name="email" type="email" className='form-control' />
+                                    <Field name="email" type="email" className='form-control' disabled />
                                     <ErrorMessage
                                         name="email"
                                         component="div"
@@ -191,7 +211,7 @@ const PersonalInformationForm = () => {
                                     />
 
                                 </div>
-                                 <div className="col-3 mb-3">
+                                <div className="col-3 mb-3">
                                     <label className="form-label">Password</label>
                                     <Field name="password" type="password" className='form-control' />
                                     <ErrorMessage
@@ -201,7 +221,7 @@ const PersonalInformationForm = () => {
                                     />
 
                                 </div>
-                                 <div className="col-3 mb-3">
+                                <div className="col-3 mb-3">
                                     <label className="form-label">Date of birth</label>
                                     <Field name="dob" type="text" className='form-control' />
                                     <ErrorMessage
@@ -211,7 +231,7 @@ const PersonalInformationForm = () => {
                                     />
 
                                 </div>
-                                 <div className="col-3 mb-3">
+                                <div className="col-3 mb-3">
                                     <label className="form-label">Blood group</label>
                                     <Field name="blood_group" type="text" className='form-control' />
                                     <ErrorMessage
@@ -222,15 +242,15 @@ const PersonalInformationForm = () => {
 
                                 </div>
 
-                                {personalFormfields.map((elem) => (
-                                    <div className="col-3 mb-3" key={elem.name}>
+                                {personalFormfields.map((elem, indx) => (
+                                    <div className="col-3 mb-3" key={indx}>
                                         <label className="form-label">{elem.label}</label>
 
                                         {elem.type === "dropdown" ? (
                                             <Field as="select" name={elem.name} className="form-select">
                                                 <option value="">{elem.placeholder}</option>
-                                                {elem.options?.map((opt) => (
-                                                    <option key={opt.value} value={opt.value}>
+                                                {elem.options?.map((opt, index) => (
+                                                    <option key={opt.index} value={opt.value}>
                                                         {opt.value}
                                                     </option>
                                                 ))}
@@ -252,14 +272,14 @@ const PersonalInformationForm = () => {
                                 ))}
                             </div>
                             <div className="d-flex justify-content-end gap-3 mb-10">
-                            
-                            <button
-                                type="Next"
-                                className="btn btn-success mt-3 px-5"
-                                disabled={isSubmitting}
-                            >
-                                Next
-                            </button>
+
+                                <button
+                                    type="Next"
+                                    className="btn btn-success mt-3 px-5"
+                                    disabled={isSubmitting}
+                                >
+                                    Next
+                                </button>
                             </div>
                         </Form>
                     )}

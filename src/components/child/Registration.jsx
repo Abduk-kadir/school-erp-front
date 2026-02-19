@@ -110,27 +110,28 @@ const Registration = () => {
             class: reistrationData?.class || '',
             email: reistrationData?.email || '',
             contact_number: reistrationData?.contact_number || '',
-            otpVerified: false,
+            
           }}
           validationSchema={registrationSchema}
           onSubmit={async (values, { setSubmitting, resetForm }) => {
             try {
               if(!reistrationData){
               let { data } = await axios.post(`${baseURL}/api/personal-information`, values)
-
               let formStatusPayload = { current_step: 2, reg_no: Number(data?.data?.reg_no) }
               console.log('formStatusPayload:', formStatusPayload)
               await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
               dispatch(setRegistrationNo({ reg_no: data?.data?.reg_no }))
               alert("Form submitted successfully!")
+               navigate(`/personal-information?current_step=2`);
               }
               if(reistrationData){
                 let { data } = await axios.put(`${baseURL}/api/personal-information/reg_no/${reg_no}`, values)
                 alert("Form updated successfully!")
+                 navigate(`/personal-information?current_step=2`);
 
               }
               
-              navigate(`/personal-information?current_step=2`);
+             
             }
             catch (err) {
               console.log('error is:', err)

@@ -16,7 +16,7 @@ const validationSchema = Yup.object({
 const TransportDetailStage = () => {
   const [searchParams] = useSearchParams();
   const [subroutes, setSubRoutes] = useState([]);
-     const [personalData, setPersonalData] = useState({})
+  const [personalData, setPersonalData] = useState({})
   const navigate = useNavigate();
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
   const currentStep = Number(searchParams.get('step')) || 6; // fallback
@@ -27,7 +27,8 @@ const TransportDetailStage = () => {
       try {
         const results = await Promise.allSettled([
           axios.get(`${baseURL}/api/subroutes`),
-          axios.get(`${baseURL}/api/student-transport/student/${reg_no}`)
+          axios.get(`${baseURL}/api/student-transport/student/${reg_no}`),
+          axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
         ]);
 
         // subroutes response
@@ -42,10 +43,13 @@ const TransportDetailStage = () => {
             setEditData(transportData);
             setEdit(true);
           }
-        } else {
-          // reg_no not found → normal case
-          setEdit(false);
-          setEditData({});
+        } 
+         if (results[2].status === "fulfilled") {
+           setPersonalData(results[2].value?.data?.data);
+        } 
+        
+        else {
+          
         }
 
       } catch (err) {
@@ -56,7 +60,7 @@ const TransportDetailStage = () => {
     if (reg_no) {
       fetchData();
     }
-  }, [reg_no]);
+  }, []);
 
 
   console.log('sub routes,', subroutes)
@@ -70,13 +74,13 @@ const TransportDetailStage = () => {
   return (
     <div className="container ">
       <FormWizard currentStep={currentStep} />
-      
+
       <div className="d-flex justify-content-center">
-        
-        <div className="card p-5" style={{ width: '80%' }}>
-          <div> 
-          <div className="d-flex justify-content-between gap-3 ">
-                    <h6 className="mb-4">Transport Detail</h6>
+
+        <div className="card p-3" style={{ width: '80%' }}>
+          <div className=''> 
+          <div className="d-flex justify-content-between gap-3 mb-3">
+                    <h6 className="">Transport Detail</h6>
 
                     <button
                         type="Next"
@@ -105,7 +109,8 @@ const TransportDetailStage = () => {
                         <label className="form-label">Class</label>
                         <input className='form-control' value={personalData?.class} disabled />
                     </div>
-                </div></div>
+                </div>
+                </div>
           <Formik
             enableReinitialize
             initialValues={{
@@ -163,7 +168,7 @@ const TransportDetailStage = () => {
                 </div>
 
 
-                {values.is_taken=='yes' && <div className="row mb-5 align-items-center">
+                {values.is_taken == 'yes' && <div className="row mb-5 align-items-center">
                   <div className="col-6">
                     <h6 className="mb-0">Select Route</h6>
                   </div>
@@ -181,7 +186,7 @@ const TransportDetailStage = () => {
                 </div>
                 }
 
-                {values.is_taken=='yes' && <div className="row mb-5 align-items-center">
+                {values.is_taken == 'yes' && <div className="row mb-5 align-items-center">
                   <div className="col-6">
                     <h6 className="mb-0">Select Sub Routes</h6>
                   </div>
