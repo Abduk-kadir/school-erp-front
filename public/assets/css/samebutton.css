@@ -14,8 +14,8 @@
           /* pointer on hover */
 }
 .view-edit{
-    background-color: #7b168f; /* blue */
-    color: white;
+    background-color: #7b168f !important; /* blue */
+    color: white !important;
             /* pointer on hover */
 }
 .view-edit:hover {

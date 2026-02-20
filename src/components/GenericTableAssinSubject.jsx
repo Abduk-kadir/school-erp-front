@@ -40,7 +40,7 @@ const GenericTableAssignSubject = ({ url, columns }) => {
     if (!tableRef.current) return;
 
     datatableRef.current = $(tableRef.current).DataTable({
-      pageLength: 5,
+      pageLength: 2,
       processing: true,
       serverSide: true,
       destroy: true,
