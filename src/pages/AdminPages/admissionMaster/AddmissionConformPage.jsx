@@ -8,6 +8,40 @@ import Stage_accordingStep from '../../../helper/stageStep'
 import Form_Status from '../../../helper/fromStatus'
 
 const AddmissionConformPage = () => {
+  /*
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.target.classList.contains('btn-view-accept')) {
+        const id = e.target.getAttribute("data-id");
+        console.log("Accepted ID:", id);
+      }
+
+    }
+    document.addEventListener('click', handler);
+
+    return () => document.removeEventListener('click', handler)
+  }, [])
+  */
+
+  const handleAccept = async (row) => {
+
+    console.log("Accepted row:", row);
+
+    try {
+
+      await axios.post(`${baseURL}/api/admission-accept`, {
+        reg_no: row.reg_no
+      });
+
+      alert("Accepted successfully");
+
+    } catch (err) {
+
+      console.error(err);
+
+    }
+
+  };
 
   return (
 
@@ -17,7 +51,7 @@ const AddmissionConformPage = () => {
 
         { data: "reg_no", title: "Reg No" },
         { data: "reg_no", title: "Form No" },
-        { data: "", title: "Accept by" },
+        // { data: "", title: "Accept by" },
         {
           data: 'first_name',                    // ← important: we don't bind to one field
           title: `<span class="text-danger">First Name</span><br/>
@@ -59,8 +93,9 @@ const AddmissionConformPage = () => {
 
 
         },
-        { data: "cast", title: "Category" },
-        { data: null, title: "Status", 
+        // { data: null, title: "Category" },
+        {
+          data: 'formStatus', title: "Status",
           render: (data, type, row) =>
             `<span class="fw-bold">${Form_Status(row?.formStatus?.form_status)}</span>`
         },
@@ -92,24 +127,24 @@ const AddmissionConformPage = () => {
             return lines.join('<br>');
           }
         },
-       {
-  data: null,
-  title: "Action",
-  render: function (data, type, row) {
-    const currentStep = row.formStatus?.current_step ;
+        {
+          data: null,
+          title: "Action",
+          render: function (data, type, row) {
+            const currentStep = row.formStatus?.current_step;
 
-    // Determine if Accept button should be active
-    const isAcceptEnabled = currentStep <9;
-   
-    const allActionsDisabled = isAcceptEnabled; 
+            // Determine if Accept button should be active
+            const isAcceptEnabled = currentStep < 9;
 
-    const disabledClass = allActionsDisabled ? " disabled" : "";
-   
-    return `
+            const allActionsDisabled = isAcceptEnabled;
+
+            const disabledClass = allActionsDisabled ? " disabled" : "";
+
+            return `
       <div class="container">
         <div class="row mb-2">
           <div class="col-6 d-grid">
-             <button class="btn view-edit action-btn${disabledClass}">
+             <button class="btn view-edit action-btn${disabledClass} btn-view-accept" data-id=${row.reg_no}>
               View & Accept
             </button>
           </div>
@@ -135,9 +170,11 @@ const AddmissionConformPage = () => {
 
         <div class="row mb-2">
           <div class="col-6 d-grid">
-            <button class="btn btn-success action-btn${disabledClass}">
+            <button class="btn btn-success action-btn btn-accept${disabledClass}">
               Accept
             </button>
+
+            // click -> showModel -> confirm || cancel
           </div>
           <div class="col-6 d-grid">
             <button class="btn btn-danger action-btn${disabledClass}">
@@ -147,12 +184,13 @@ const AddmissionConformPage = () => {
         </div>
       </div>
     `;
-  }
-}
+          }
+        }
 
 
 
       ]}
+   
 
     />
 

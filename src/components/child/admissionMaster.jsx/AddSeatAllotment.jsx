@@ -26,30 +26,16 @@ const AddSeatAllotment = () => {
 
     // build initial values from categories
     const initialValues = {
-        items: categories.map((c) => ({ id: c.id, selected: false, seats: '', allot: 'no' })),
+       
+        items: categories.map((c) => ({ admission_category: c.id, class_id: '', no_seat: '',  is_merit_list: false })),
     }
 
-    const validationSchema = Yup.object({
-        items: Yup.array().of(
-            Yup.object({
-                id: Yup.number().required(),
-                selected: Yup.boolean(),
-                seats: Yup.number()
-                    .when('selected', {
-                        is: true,
-                        then: Yup.number().typeError('Must be a number').min(0, 'Minimum 0').required('Required when selected'),
-                        otherwise: Yup.number().notRequired(),
-                    }),
-                allot: Yup.string().oneOf(['yes', 'no']).required(),
-            })
-        ),
-    })
-
+   
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
             // adapt this as needed to call your API
-            console.log('Submitting seat allotment', values)
-            // example: await axios.post(`${baseURL}/api/seat-allotment`, values)
+            console.log('Submitting seat allotment', values.items)
+            await axios.post(`${baseURL}/api/seat-allotments/bulk`, values.items)
         } catch (err) {
             console.error(err)
         } finally {
@@ -59,10 +45,19 @@ const AddSeatAllotment = () => {
 
     return (
         <div className="container card ">
-            <h4 className="mb-3">Seat Allotment</h4>
+           
+
+
+            <Formik enableReinitialize initialValues={initialValues}  onSubmit={handleSubmit}>
+                {({ values, isSubmitting, setFieldValue }) => (
+                    <Form>
+                         <h4 className="mb-3">Seat Allotment</h4>
             <div className="col-3 mb-3">
-                <select className="form-select" aria-label="Default select example">
-                    <option selected>Select Class</option>
+                <select className="form-select" value={values.class_id} onChange={(e) => { 
+                    setFieldValue('class_id', e.target.value); 
+                    values.items.forEach((_, idx) => setFieldValue(`items.${idx}.class_id`, e.target.value)); 
+                }} aria-label="Default select example">
+                    <option value="">Select Class</option>
                     {
                         classes.map(elem => (
                             <option key={elem?.id} value={elem?.id}>{elem?.class_name}</option>
@@ -70,11 +65,6 @@ const AddSeatAllotment = () => {
                     }
                 </select>
             </div>
-
-
-            <Formik enableReinitialize initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                {({ values, isSubmitting }) => (
-                    <Form>
                         <div className="row py-2 fw-bold  align-items-center">
                             <div className="col-3">Admission Category</div>
                             <div className="col-3">No Of Seats</div>
@@ -84,29 +74,29 @@ const AddSeatAllotment = () => {
                         {values.items.map((item, idx) => {
                             const cat = categories.find((c) => c.id === item.id) || {}
                             return (
-                                <div className="row  py-2 align-items-center gap-2" key={item.id}>
+                                <div className="row  py-2 align-items-center gap-2" key={item.admission_category}>
                                     <div className="col-3 border d-flex align-items-center" style={{ height: "50px" }}>
                                         <div className="form-check">
-                                            <Field className="form-check-input mt-1 me-1" type="checkbox" name={`items.${idx}.selected`} id={`check-${item.id}`} />
-                                            <label className="form-check-label fw-bold" htmlFor={`check-${item.id}`}>
+                                            <Field className="form-check-input mt-1 me-1" type="checkbox" name={`items.${idx}.selected`} id={`check-${item.admission_category}`} />
+                                            <label className="form-check-label fw-bold" htmlFor={`check-${item.admission_category}`}>
                                                 {cat.name}
                                             </label>
                                         </div>
                                     </div>
 
                                     <div className="col-3 border d-flex align-items-center" style={{ height: "50px" }}>
-                                        <Field name={`items.${idx}.seats`} className='fw-bold' type="number" placeholder="0" />
-                                        <div className="text-danger small"><ErrorMessage name={`items.${idx}.seats`} /></div>
+                                        <Field name={`items.${idx}.no_seat`} className='fw-bold' type="number" placeholder="0" />
+                                        <div className="text-danger small"><ErrorMessage name={`items.${idx}.no_seat`} /></div>
                                     </div>
 
                                     <div className="col-3 border d-flex align-items-center " style={{ height: "50px" }}>
                                         <div className="form-check form-check-inline">
-                                            <Field className="form-check-input" type="radio" name={`items.${idx}.allot`} id={`allot-yes-${item.id}`} value="yes" />
-                                            <label className="form-check-label fw-bold" htmlFor={`allot-yes-${item.id}`}>Yes</label>
+                                            <Field className="form-check-input" type="radio" name={`items.${idx}.is_merit_list`} id={`allot-yes-${item.admission_category}`} value="yes" />
+                                            <label className="form-check-label fw-bold" htmlFor={`allot-yes-${item.admission_category}`}>Yes</label>
                                         </div>
                                         <div className="form-check form-check-inline ">
-                                            <Field className="form-check-input" type="radio" name={`items.${idx}.allot`} id={`allot-no-${item.id}`} value="no" />
-                                            <label className="form-check-label fw-bold" htmlFor={`allot-no-${item.id}`}>No</label>
+                                            <Field className="form-check-input" type="radio" name={`items.${idx}.is_merit_list`} id={`allot-no-${item.admission_category}`} value="no" />
+                                            <label className="form-check-label fw-bold" htmlFor={`allot-no-${item.admission_category}`}>No</label>
                                         </div>
                                     </div>
                                 </div>
