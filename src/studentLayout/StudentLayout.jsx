@@ -1,297 +1,424 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation,Outlet } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
 
+const StudentLayout = () => {
+  let [sidebarActive, seSidebarActive] = useState(false);
+  let [mobileMenu, setMobileMenu] = useState(false);
+  const location = useLocation(); // Hook to get the current route
 
-// ── Recursive Sidebar Menu Item Component ────────────────────────────────
-function SidebarMenuItem({ item, level = 0 }) {
-  const [open, setOpen] = useState(false);
-  const hasChildren = !!item.children?.length;
-  const location = useLocation();
-
-  // Auto open when child/grandchild route is active
   useEffect(() => {
-    if (hasChildren) {
-      const isActiveSomewhere = item.children.some((child) => {
-        if (child.path === location.pathname) return true;
-        return child.children?.some((gc) => gc.path === location.pathname);
+    const handleDropdownClick = (event) => {
+      event.preventDefault();
+      const clickedLink = event.currentTarget;
+      const clickedDropdown = clickedLink.closest(".dropdown");
+
+      if (!clickedDropdown) return;
+
+      const isActive = clickedDropdown.classList.contains("open");
+
+      // Close all dropdowns
+      const allDropdowns = document.querySelectorAll(".sidebar-menu .dropdown");
+      allDropdowns.forEach((dropdown) => {
+        dropdown.classList.remove("open");
+        const submenu = dropdown.querySelector(".sidebar-submenu");
+        if (submenu) {
+          submenu.style.maxHeight = "0px"; // Collapse submenu
+        }
       });
-      if (isActiveSomewhere) setOpen(true);
-    }
+
+      // Toggle the clicked dropdown
+      if (!isActive) {
+        clickedDropdown.classList.add("open");
+        const submenu = clickedDropdown.querySelector(".sidebar-submenu");
+        if (submenu) {
+          submenu.style.maxHeight = `${submenu.scrollHeight}px`; // Expand submenu
+        }
+      }
+    };
+
+    // Attach click event listeners to all dropdown triggers
+    const dropdownTriggers = document.querySelectorAll(
+      ".sidebar-menu .dropdown > a, .sidebar-menu .dropdown > Link"
+    );
+
+    dropdownTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", handleDropdownClick);
+    });
+
+    const openActiveDropdown = () => {
+      const allDropdowns = document.querySelectorAll(".sidebar-menu .dropdown");
+      allDropdowns.forEach((dropdown) => {
+        const submenuLinks = dropdown.querySelectorAll(".sidebar-submenu li a");
+        submenuLinks.forEach((link) => {
+          if (
+            link.getAttribute("href") === location.pathname ||
+            link.getAttribute("to") === location.pathname
+          ) {
+            dropdown.classList.add("open");
+            const submenu = dropdown.querySelector(".sidebar-submenu");
+            if (submenu) {
+              submenu.style.maxHeight = `${submenu.scrollHeight}px`; // Expand submenu
+            }
+          }
+        });
+      });
+    };
+
+    // Open the submenu that contains the active route
+    openActiveDropdown();
+
+    // Cleanup event listeners on unmount
+    return () => {
+      dropdownTriggers.forEach((trigger) => {
+        trigger.removeEventListener("click", handleDropdownClick);
+      });
+    };
   }, [location.pathname]);
 
-  return (
-    <li className={`dropdown level-${level} ${open ? "open" : ""}`}>
-      {hasChildren ? (
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setOpen((prev) => !prev);
-          }}
-          className="menu-link"
-        >
-          {item.icon && <Icon icon={item.icon} className="menu-icon" />}
-          <span>{item.title}</span>
-          {/* ↓ Arrow removed completely */}
-        </a>
-      ) : (
-        <NavLink
-          to={item.path || "#"}
-          className={({ isActive }) => `menu-link ${isActive ? "active" : ""}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {item.icon && <Icon icon={item.icon} className="menu-icon" />}
-          {level > 0 && (
-            <i className="ri-circle-fill circle-icon text-primary-600" />
-          )}
-          <span>{item.title}</span>
-        </NavLink>
-      )}
+  let sidebarControl = () => {
+    seSidebarActive(!sidebarActive);
+  };
 
-      {hasChildren && (
-        <ul
-          className={`sidebar-submenu ${open ? "open" : ""}`}
-          style={{ maxHeight: open ? "2000px" : "0px" }}
-        >
-          {item.children.map((child, i) => (
-            <SidebarMenuItem key={i} item={child} level={level + 1} />
-          ))}
-        </ul>
-      )}
-    </li>
-  );
-}
-// ── Main Layout Component ────────────────────────────────────────────────
-const MasterLayout = () => {
-  const [sidebarActive, setSidebarActive] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
-
-  const sidebarControl = () => setSidebarActive(!sidebarActive);
-  const mobileMenuControl = () => setMobileMenu(!mobileMenu);
-
-  // ── Modern nested menu structure ───────────────────────────────────────
-  const menuItems = [
-    {
-      title: "Dashboard",
-      icon: "solar:home-smile-angle-outline",
-      children: [
-        { title: "Overview", path: "/" },
-        {
-          title: "Analytics",
-          icon: "solar:card-send-outline",
-          children: [
-            { title: "Traffic Sources", path: "/analytics/traffic" },
-            {
-              title: "User Behavior",
-              icon: "solar:card-send-outline",                       // ← new level
-              children: [
-                { title: "Session Duration", path: "/analytics/behavior/sessions" },
-                { title: "Page Views", path: "/analytics/behavior/pages" },
-                { title: "Bounce Rate", path: "/analytics/behavior/bounce" }
-              ]
-            },
-            { title: "Conversion Rate", path: "/analytics/conversion" }
-          ]
-        },
-        {
-          title: "My Page",
-          children: [
-            { title: "Profile Overview", path: "/dashboard/my-page" },
-            {
-              title: "Settings",                             // ← new level
-              children: [
-                { title: "Personal Info", path: "/dashboard/my-page/personal" },
-                { title: "Security", path: "/dashboard/my-page/security" },
-                { title: "Notifications", path: "/dashboard/my-page/notifications" }
-              ]
-            },
-            { title: "Activity Log", path: "/dashboard/my-page/activity" }
-          ]
-        }
-      ]
-    },
-
-    {
-      title: "ID Card Master",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Generate ID Card", path: "/id-card/generate" },
-        {
-          title: "Settings",
-          children: [
-            { title: "Field Configuration", path: "/id-card/fields" },
-            {
-              title: "Template Management",                    // ← new level
-              children: [
-                { title: "Create New Template", path: "/id-card/templates/new" },
-                { title: "Edit Templates", path: "/id-card/templates/edit" },
-                { title: "Preview Templates", path: "/id-card/templates/preview" }
-              ]
-            },
-            { title: "Print Settings", path: "/id-card/print" }
-          ]
-        },
-        { title: "Batch Master", path: "/id-card/batch-master" }
-      ]
-    },
-    {
-      title: "Master",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Role Master", path: "/dashboard/role-master" },
-
-        { title: "Employee Master", path: "/dashboard/employee-master" },
-        { title: "Academic Year Master", path: "/dashboard/academic-year-master" },
-        { title: "Class Master", path: "/dashboard/class-master" },
-        { title: "Division Master", path: "/dashboard/division-master" },
-        { title: "Cast Master", path: "/dashboard/cast-master" },
-        { title: "Add Declaration", path: "/dashboard/add-declaration" },
-        {
-          title: "Document Master",
-          children: [
-            { title: "Add Doucment", path: "/dashboard/document-master/add-document" },
-            { title: "Assign Doucment", path: "/dashboard/document-master/assign-document" }
-          ]
-        },
-        { title: "Phisally Disable", path: "/dashboard/phisally-disable" },
-
-        {
-          title: 'Admision Form master',
-          children: [
-            { title: "Stages", path: "admission-form-master/stages" },
-            {
-              title: "Field Type",
-              path: "admission-form-master/filed-type"
-
-
-            },
-            { title: "Field", path: "admission-form-master/Field" },
-            { title: "drop-radio-values", path: "admission-form-master/field-values" },
-            { title: "class-filed", path: "admission-form-master/class-field" }
-          ]
-        },
-
-
-
-
-      ]
-    },
-
-    {
-      title: "Subject Master",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Subject", path: "/dashboard/subject" },
-        { title: "Program", path: "/dashboard/program" },
-
-        { title: "Assign Subject", path: "/dashboard/assign-subject" },
-
-
-
-      ]
-    },
-     {
-      title: "Academic",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Student", path: "/dashboard/academic/student" },
-        
-      ]
-    },
-    {
-      title: "Admission",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Seat Allotment", path: "/dashboard/admission/seat-allotment" },
-        { title: "Addmission Fee", path: "/dashboard/admission/fee" },
-        { title: "Addmission Conform", path: "/dashboard/admission/form-conform" },
-        { title: "Addmission Form Coupon", path: "/dashboard/admission/coupon" },
-      ]
-    },
-    {
-      title: "Admission Report",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Institute", path: "/dashboard/setting/institute" },
-      ]
-    },
-
-     {
-      title: "Class wise Schools",
-      icon: "icon-park-outline:id-card",
-      path: "/dashboard/class-wise-school" ,
-    },
-    {
-      title: "Transport",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Add Route", path: "/dashboard/transport/add-route" },
-        { title: "Assign Sub Route", path: "/dashboard/transport/assign-sub-route" },
-        
-        
-      ]
-    },
-    
-    {
-      title: "Setting",
-      icon: "icon-park-outline:id-card",
-      children: [
-        { title: "Institute", path: "/dashboard/setting/institute" },
-      ]
-    },
-
-    // ... you can do the same for other sections (Master, Subject, etc.)
-  ];
+  let mobileMenuControl = () => {
+    setMobileMenu(!mobileMenu);
+  };
 
   return (
-    <section className={mobileMenu ? "overlay active" : "overlay"}>
-      {/* Sidebar */}
+    <section className={mobileMenu ? "overlay active" : "overlay "}>
+      {/* sidebar */}
       <aside
         className={
           sidebarActive
-            ? "sidebar active"
+            ? "sidebar active "
             : mobileMenu
-              ? "sidebar sidebar-open"
-              : "sidebar"
+            ? "sidebar sidebar-open"
+            : "sidebar"
         }
       >
         <button
           onClick={mobileMenuControl}
-          type="button"
-          className="sidebar-close-btn"
+          type='button'
+          className='sidebar-close-btn'
         >
-          <Icon icon="radix-icons:cross-2" />
+          <Icon icon='radix-icons:cross-2' />
         </button>
-
         <div>
-          <Link to="/" className="sidebar-logo">
-            <img src="assets/images/logo.png" alt="logo" className="light-logo" />
+          <Link to='/' className='sidebar-logo'>
             <img
-              src="assets/images/logo-light.png"
-              alt="logo"
-              className="dark-logo"
+              src='assets/images/logo.png'
+              alt='site logo'
+              className='light-logo'
             />
             <img
-              src="assets/images/logo-icon.png"
-              alt="logo icon"
-              className="logo-icon"
+              src='assets/images/logo-light.png'
+              alt='site logo'
+              className='dark-logo'
+            />
+            <img
+              src='assets/images/logo-icon.png'
+              alt='site logo'
+              className='logo-icon'
             />
           </Link>
         </div>
+        <div className='sidebar-menu-area'>
+          <ul className='sidebar-menu' id='sidebar-menu'>
+            <li className='dropdown'>
+              <Link to='#'>
+                <Icon
+                  icon='solar:home-smile-angle-outline'
+                  className='menu-icon'
+                />
+                <span>Dashboard</span>
+              </Link>
+              <ul className='sidebar-submenu'>
+                <li>
+                  <NavLink
+                    to='/'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />
+                    AI
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-2'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-warning-main w-auto' />{" "}
+                    CRM
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-3'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
+                    eCommerce
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-4'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />
+                    Cryptocurrency
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-5'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-success-main w-auto' />{" "}
+                    Investment
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-6'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-purple w-auto' />{" "}
+                    LMS
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-7'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
+                    NFT &amp; Gaming
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-8'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
+                    Medical
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-9'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
+                    Analytics
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-10'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
+                    POS & Inventory
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/index-11'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
+                    Finance & Banking
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
 
-        <div className="sidebar-menu-area">
-          <ul className="sidebar-menu" id="sidebar-menu">
-            {menuItems.map((item, index) => (
-              <SidebarMenuItem key={index} item={item} />
-            ))}
+           
+
+         
+           
+            <li className='sidebar-menu-group-title'>UI Elements</li>
+
+          
+
+          
+
+         
+            {/* Chart Dropdown */}
+            <li className='dropdown'>
+              <Link to='#'>
+                <Icon icon='solar:pie-chart-outline' className='menu-icon' />
+                <span>Chart</span>
+              </Link>
+              <ul className='sidebar-submenu'>
+                <li>
+                  <NavLink
+                    to='/line-chart'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
+                    Line Chart
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/column-chart'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-warning-main w-auto' />{" "}
+                    Column Chart
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/pie-chart'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-success-main w-auto' />{" "}
+                    Pie Chart
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
+
+          
+
+          
+           
+
+            <li className='sidebar-menu-group-title'>Application</li>
+
+           
+
+           
+
+           
+
+            {/* Settings Dropdown */}
+            <li className='dropdown'>
+              <Link to='#'>
+                <Icon
+                  icon='icon-park-outline:setting-two'
+                  className='menu-icon'
+                />
+                <span>Settings</span>
+              </Link>
+              <ul className='sidebar-submenu'>
+                <li>
+                  <NavLink
+                    to='/company'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />{" "}
+                    Company
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/notification'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-warning-main w-auto' />{" "}
+                    Notification
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/notification-alert'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-info-main w-auto' />{" "}
+                    Notification Alert
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/theme'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
+                    Theme
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/currencies'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
+                    Currencies
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/language'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
+                    Languages
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/payment-gateway'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
+                    Payment Gateway
+                  </NavLink>
+                </li>
+              </ul>
+            </li>
           </ul>
         </div>
       </aside>
 
-      {/* Main Content */}
       <main
         className={sidebarActive ? "dashboard-main active" : "dashboard-main"}
       >
@@ -962,7 +1089,7 @@ const MasterLayout = () => {
         </div>
 
         {/* dashboard-main-body */}
-        <div className='dashboard-main-body'>{<Outlet />}</div>
+        <div className='dashboard-main-body'>{<Outlet/>}</div>
 
         {/* Footer section */}
         <footer className='d-footer'>
@@ -982,4 +1109,4 @@ const MasterLayout = () => {
   );
 };
 
-export default MasterLayout;
+export default StudentLayout;

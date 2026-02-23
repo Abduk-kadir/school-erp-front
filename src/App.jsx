@@ -42,6 +42,10 @@ import SubRoutePage from "./pages/AdminPages/transport/SubRoutePage";
 import CounterPage from "./pages/CounterPage";
 import CompletedStage from "./components/child/CompletedStage";
 import ClassFiledPage from "./pages/ClassFieldPage";
+import StudentLayout from "./studentLayout/StudentLayout";
+import StudentDashboard from "./pages/StudentDashboard";
+import ClasswiseSchoolPage from "./pages/AdminPages/classwiseSchool/classwiseSchoolPage";
+
 
 function App() {
   let user = false;
@@ -50,57 +54,74 @@ function App() {
       <RouteScrollToTop />
       <Routes>
         <Route >
-            <Route path="/" element={!user ? <Navigate to="/dashboard" replace/> : <LoginPage/>} />
-            <Route path="/registration" element={<Registration/>} />
-            <Route path="/personal-information" element={<PersonalInformationForm/>} />
-            <Route path="/educational-detail-stage" element={<EducationalDetailStage/>}/>
-            <Route path="/subject-stage" element={<SubjectStage/>}/>
-            <Route path="/parent-particular-stage" element={<ParentParticularStage/>}/>
-            <Route path="/transport-detail-stage" element={<TransportDetailStage/>}/>
-            <Route path="/other-information-stage" element={<OtherInformationStage/>}/>
-            <Route path="/declaration-stage" element={<DeclarationStage/>}/>
-            <Route path="/document-stage" element={<DocumentStage/>}/>
-             <Route path="/complete-stage" element={<CompletedStage/>} />
-            <Route path="dashboard" element={<MasterLayout />} >
-             {/*admin route*/}
+          <Route path="/" element={!user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/personal-information" element={<PersonalInformationForm />} />
+          <Route path="/educational-detail-stage" element={<EducationalDetailStage />} />
+          <Route path="/subject-stage" element={<SubjectStage />} />
+          <Route path="/parent-particular-stage" element={<ParentParticularStage />} />
+          <Route path="/transport-detail-stage" element={<TransportDetailStage />} />
+          <Route path="/other-information-stage" element={<OtherInformationStage />} />
+          <Route path="/declaration-stage" element={<DeclarationStage />} />
+          <Route path="/document-stage" element={<DocumentStage />} />
+          <Route path="/complete-stage" element={<CompletedStage />} />
+          <Route path="dashboard" element={<MasterLayout />} >
+            {/*admin route*/}
             <Route index element={<Dashboard />} />
-            <Route path='employee-master' element={<EmployeePage/>}/>
-            <Route path='class-master' element={<ClassPage/>} />
-            <Route path='academic-year-master' element={<AcademicYearPage/>}/>
-            <Route path='division-master' element={<DivisionPage/>}/>
-            <Route path='cast-master' element={<CastPage/>}/>
-            <Route path='role-master' element={<RolePage/>}/>
-            <Route path='add-declaration' element={<DeclarationStatement/>}/>
-            <Route path='phisally-disable' element={<PhisallyDisablePage/>}/>
-            <Route path="admission-form-master/stages" element={<StagePage/>}/>
-            <Route path="admission-form-master/filed-type" element={<FiledTypePage/>}/>
-            <Route path="admission-form-master/stages" element={<StagePage/>}/>
-            <Route path="admission-form-master/Field" element={<AllFiledPage/>}/>
-            <Route path="admission-form-master/field-values" element={<OptionValuePage/>}/>
-            <Route path="admission-form-master/class-field" element={<ClassFiledPage/>}/>
-            <Route path="subject" element={<SubjectPage/>}/>
-            <Route path="assign-subject" element={<AssignSubjectPage/>}/>
-            <Route path="program" element={<ProgramPage/>}/>
-            <Route path="document-master/add-document" element={<AddDocumentPage/>}/>
-            <Route path="document-master/assign-document" element={<AssignDocumentPage/>}/>
+            <Route path='employee-master' element={<EmployeePage />} />
+            <Route path='class-master' element={<ClassPage />} />
+            <Route path='academic-year-master' element={<AcademicYearPage />} />
+            <Route path='division-master' element={<DivisionPage />} />
+            <Route path='cast-master' element={<CastPage />} />
+            <Route path='role-master' element={<RolePage />} />
+            <Route path='add-declaration' element={<DeclarationStatement />} />
+            <Route path='phisally-disable' element={<PhisallyDisablePage />} />
+            <Route path="admission-form-master/stages" element={<StagePage />} />
+            <Route path="admission-form-master/filed-type" element={<FiledTypePage />} />
+            <Route path="admission-form-master/stages" element={<StagePage />} />
+            <Route path="admission-form-master/Field" element={<AllFiledPage />} />
+            <Route path="admission-form-master/field-values" element={<OptionValuePage />} />
+            <Route path="admission-form-master/class-field" element={<ClassFiledPage />} />
+            <Route path="subject" element={<SubjectPage />} />
+            <Route path="assign-subject" element={<AssignSubjectPage />} />
+            <Route path="program" element={<ProgramPage />} />
+            <Route path="document-master/add-document" element={<AddDocumentPage />} />
+            <Route path="document-master/assign-document" element={<AssignDocumentPage />} />
             <Route path="setting" >
-               <Route path='institute'  element={<InstitutePage/>}/>
-            </Route> 
+              <Route path='institute' element={<InstitutePage />} />
+            </Route>
             <Route path="admission" >
-               <Route path='form-conform'  element={<AddmissionConformPage/>}/>
-                 <Route path='seat-allotment'  element={<SeatAllotmentPage/>}/>
+              <Route path='form-conform' element={<AddmissionConformPage />} />
+              <Route path='seat-allotment' element={<SeatAllotmentPage />} />
             </Route>
-             <Route path="academic" >
-               <Route path='student'  element={<StudentPage/>}/>
-               
-            </Route> 
-             <Route path="transport" >
-               <Route path='add-route'  element={<RoutePage/>}/>
-                <Route path='assign-sub-route'  element={<SubRoutePage/>}/>
+            <Route path="academic" >
+              <Route path='student' element={<StudentPage />} />
+
             </Route>
-          {/*admin route end*/}
+            <Route path="transport" >
+              <Route path='add-route' element={<RoutePage />} />
+              <Route path='assign-sub-route' element={<SubRoutePage />} />
+            </Route>
+              <Route path="class-wise-school" element={<ClasswiseSchoolPage />} />
+            
+            {/*admin route end*/}
 
           </Route>
+
+          {/*student route start*/}
+
+          <Route path="studentdashboard" element={<StudentLayout />} >
+            {/*admin route*/}
+            <Route index element={<StudentDashboard />} />
+            
+          
+          
+            
+            {/* student  route end*/}
+
+          </Route>
+
+          
         </Route>
       </Routes>
     </BrowserRouter>

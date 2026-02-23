@@ -23,25 +23,7 @@ const AddmissionConformPage = () => {
   }, [])
   */
 
-  const handleAccept = async (row) => {
-
-    console.log("Accepted row:", row);
-
-    try {
-
-      await axios.post(`${baseURL}/api/admission-accept`, {
-        reg_no: row.reg_no
-      });
-
-      alert("Accepted successfully");
-
-    } catch (err) {
-
-      console.error(err);
-
-    }
-
-  };
+  
 
   return (
 
