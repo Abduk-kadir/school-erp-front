@@ -45,6 +45,7 @@ import ClassFiledPage from "./pages/ClassFieldPage";
 import StudentLayout from "./studentLayout/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
 import ClasswiseSchoolPage from "./pages/AdminPages/classwiseSchool/classwiseSchoolPage";
+import AllStageShown from "./components/child/admissionMaster.jsx/AllStageShown";
 
 
 function App() {
@@ -93,6 +94,7 @@ function App() {
             <Route path="admission" >
               <Route path='form-conform' element={<AddmissionConformPage />} />
               <Route path='seat-allotment' element={<SeatAllotmentPage />} />
+              <Route path='view-accept' element={< AllStageShown/>} />
             </Route>
             <Route path="academic" >
               <Route path='student' element={<StudentPage />} />

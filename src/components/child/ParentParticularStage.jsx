@@ -19,6 +19,7 @@ const ParentParticularStage = () => {
     const [parentParticularData, setParentParticularData] = useState(null);
     const [edit, setEdit] = useState(false)
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+    const staff_id = useSelector((state) => state?.staff?.staff_id);
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
     );
@@ -98,14 +99,23 @@ const ParentParticularStage = () => {
                  <div className="d-flex justify-content-between gap-3 ">
                     <h6 className="mb-4">Parent Particular</h6>
 
-                    <button
-                        type="Next"
-                        className="btn btn-success"
-                        onClick={() => navigate('/')}
+                      {!staff_id?<button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/')}
 
-                    >
-                        Logout
-                    </button>
+                        >
+                            Logout
+                        </button>:
+                        
+                        <button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/dashboard/admission/form-conform')}
+
+                        >
+                            Back to AdminDashboard
+                        </button>}
                 </div>
                 <div className='row mb-3'>
                     <div className='col-3'>
@@ -145,6 +155,10 @@ const ParentParticularStage = () => {
                             if (edit) {
 
                                 let { data } = await axios.put(`${baseURL}/api/parent-particular/${reg_no}`, payload)
+                                if(!staff_id){
+                                let formStatusPayload = { current_step: 6, reg_no: reg_no }
+                                await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                                }
                                 alert("Update  successfully!")
                                 navigate('/transport-detail-stage?step=6')
 

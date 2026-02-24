@@ -15,6 +15,7 @@ const SubjectStage = () => {
     const [studentSubject, setStudentSubject] = useState([])
     const [personalData, setPersonalData] = useState({})
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+     const staff_id = useSelector((state) => state?.staff?.staff_id);
     let step = searchParams.get("step")
     step = Number(step)
  
@@ -169,10 +170,10 @@ const SubjectStage = () => {
         const assignments = [...complusaryData, ...nonCompulsoryData];
         try {
 
-           let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
-            let formStatusPayload = { current_step: 5, reg_no: reg_no }
-           await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
-           alert("Subjects assigned successfully!");
+          // let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
+           // let formStatusPayload = { current_step: 5, reg_no: reg_no }
+          // await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+             alert("Subjects assigned successfully!");
             navigate(`/parent-particular-stage/?step=5`)
 
         }
@@ -191,14 +192,23 @@ const SubjectStage = () => {
                 <div className="d-flex justify-content-end ">
 
 
-                    <button
-                        type="Next"
-                        className="btn btn-success"
-                        onClick={() => navigate('/')}
+                   {!staff_id?<button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/')}
 
-                    >
-                        Logout
-                    </button>
+                        >
+                            Logout
+                        </button>:
+                        
+                        <button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/dashboard/admission/form-conform')}
+
+                        >
+                            Back to AdminDashboard
+                        </button>}
                 </div>
                 <div className='row mb-5'>
                     <div className='col-3'>

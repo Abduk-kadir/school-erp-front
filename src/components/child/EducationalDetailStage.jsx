@@ -18,6 +18,7 @@ const EducationalDetailStage = () => {
     const [personalData, setPersonalData] = useState({})
     const [edit, setEdit] = useState(false)
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+     const staff_id = useSelector((state) => state?.staff?.staff_id);
     const wholeForm = useSelector(
         (state) => state?.personalInfoForms?.personalInfoForm?.data
     );
@@ -82,14 +83,23 @@ const EducationalDetailStage = () => {
                 <div className="d-flex justify-content-between gap-3 ">
                     <h6 className="mb-4">Educational Detail</h6>
 
-                    <button
-                        type="Next"
-                        className="btn btn-success"
-                        onClick={() => navigate('/')}
+                   {!staff_id?<button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/')}
 
-                    >
-                        Logout
-                    </button>
+                        >
+                            Logout
+                        </button>:
+                        
+                        <button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/dashboard/admission/form-conform')}
+
+                        >
+                            Back to AdminDashboard
+                        </button>}
                 </div>
                 <div className='row'>
                     <div className='col-3'>
@@ -129,6 +139,10 @@ const EducationalDetailStage = () => {
                             if (edit) {
 
                                 let { data } = await axios.put(`${baseURL}/api/educational-detail/${reg_no}`, payload)
+                                if(!staff_id){
+                                let formStatusPayload = { current_step: 4, reg_no: reg_no }
+                                await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                                }
                                 alert("Update  successfully!")
                                 navigate('/subject-stage?step=4')
 

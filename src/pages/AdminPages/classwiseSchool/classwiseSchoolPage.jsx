@@ -22,14 +22,14 @@ const ClasswiseSchoolPage = () => {
                     { data: "email", title: "Email" },
                     { data: "contact_number", title: "Contact Numlber" },
                     { data: "gst_number", title: "Gst Numlber" },
-                   {
-      data: "logo",
-      title: "Logo Debug",
-      render: (value) => {
-        if (!value) return "No logo";
-        return `<img src="${value}" style="max-width:120px;" />`;  // ← string HTML
-      }
-    }
+                    {
+                        data: "logo",
+                        title: "Logo Debug",
+                        render: (value) => {
+                            if (!value) return "No logo";
+                            return `<img src="${value}" style="max-width:120px;" />`;  // ← string HTML
+                        }
+                    }
 
                 ]}
             />

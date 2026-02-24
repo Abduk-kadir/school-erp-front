@@ -3,7 +3,14 @@ import $ from "jquery";
 import "datatables.net-dt";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setStaffId } from "../redux/slices/dynamicForm/editByStaffSlice";
+import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personalInfoFormSlice';
+import { setRegistrationNo } from "../redux/slices/registrationNo";
 const GenericTableAssignSubject = ({ url, columns }) => {
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
 
@@ -58,27 +65,94 @@ const GenericTableAssignSubject = ({ url, columns }) => {
     }
   };
 
-  const handleAccept=async(data)=>{
+  const handleAccept = async (data) => {
     console.log('handle accept is calling')
-      try{
-             console.log('data is:',data)
-             let res= await axios.put(`${baseURL}/api/admission-conform/updateStatus`, {
-                reg_no: Number(data.reg_no)
-              });
-        
-             console.log('api is called')
-              if (datatableRef.current) {
-      datatableRef.current.draw(); // ← this triggers new ajax call
+    try {
+      console.log('data is:', data)
+      let res = await axios.put(`${baseURL}/api/admission-conform/updateStatus`, {
+        reg_no: Number(data.reg_no)
+      });
+
+      console.log('api is called')
+      if (datatableRef.current) {
+        datatableRef.current.draw(); // ← this triggers new ajax call
+      }
+
+    }
+    catch (err) {
+
     }
 
-      }
-      catch(err){
 
-      }
-
-    
 
   }
+
+  const handleEditByStudent = async (data) => {
+
+    try {
+      console.log('data is:', data)
+      let res = await axios.put(`${baseURL}/api/admission-conform/editbystudent`, {
+        reg_no: Number(data.reg_no)
+      });
+
+      console.log('api is called')
+      if (datatableRef.current) {
+        datatableRef.current.draw(); // ← this triggers new ajax call
+      }
+
+    }
+    catch (err) {
+
+    }
+
+
+  }
+
+  const handleEditByStaff = async (data) => {
+
+    try {
+      await dispatch(getPersonalInformationForm({}));
+       await dispatch(setRegistrationNo({ reg_no:data?.reg_no }))
+       await dispatch(setStaffId({ staff_id:2 }))
+      navigate(`/personal-information?step=${2}&reg_no=${data?.reg_no}`)
+      console.log('data is:', data)
+    
+
+      
+
+    }
+    catch (err) {
+
+    }
+
+
+  }
+
+  const handleEditAndView = async (data) => {
+
+    try {
+      //await dispatch(getPersonalInformationForm({}));
+      // await dispatch(setRegistrationNo({ reg_no:data?.reg_no }))
+       //await dispatch(setStaffId({ staff_id:2 }))
+      navigate(`/dashboard/admission/view-accept`)
+      console.log('data is:', data)
+    
+
+      
+
+    }
+    catch (err) {
+
+    }
+
+
+  }
+
+  
+
+
+
+
   useEffect(() => {
     if (!tableRef.current) return;
 
@@ -102,10 +176,31 @@ const GenericTableAssignSubject = ({ url, columns }) => {
       columns,
       createdRow: function (row, data, dataIndex) {
 
-        // Accept button click
+        // Accept button click btn-edit-by-staff
         $(row).find(".btn-accept").on("click", function () {
 
           handleAccept(data)
+
+        });
+
+        $(row).find(".btn-student").on("click", function () {
+
+
+          handleEditByStudent(data)
+
+        });
+
+         $(row).find(".btn-staff").on("click", function () {
+
+
+          handleEditByStaff(data)
+
+        });
+
+         $(row).find(".edit-view").on("click", function () {
+
+
+          handleEditAndView(data)
 
         });
 

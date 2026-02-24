@@ -16,6 +16,7 @@ const DocumentStage = () => {
   const  [edit,setEdit]=useState(false);
   const [personalData, setPersonalData] = useState({})
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+  const staff_id = useSelector((state) => state?.staff?.staff_id);
   let step = searchParams.get("step")
   step = Number(step)
   let editdocument={}
@@ -136,8 +137,10 @@ const handleSubmit = async (document_type, document_id,id) => {
 };
 
 const handleNext = async() => {
-   let formStatusPayload = { current_step: 4, reg_no: reg_no }
+   if(!staff_id){
+   let formStatusPayload = { current_step: 10, reg_no: reg_no }
    await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+   }
         
    navigate(`/complete-stage?step=10`)
 }
@@ -156,14 +159,23 @@ const handleNext = async() => {
           <div className="d-flex justify-content-between gap-3 ">
                      <h4 className="fw-semibold">Upload Document</h4> 
 
-                    <button
-                        type="Next"
-                        className="btn btn-success"
-                        onClick={() => navigate('/')}
+                    {!staff_id ? <button
+            type="Next"
+            className="btn btn-success"
+            onClick={() => navigate('/')}
 
-                    >
-                        Logout
-                    </button>
+          >
+            Logout
+          </button> :
+
+            <button
+              type="Next"
+              className="btn btn-success"
+              onClick={() => navigate('/dashboard/admission/form-conform')}
+
+            >
+              Back to AdminDashboard
+            </button>}
                 </div>
                 <div className='row mb-3'>
                     <div className='col-3'>

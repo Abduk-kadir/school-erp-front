@@ -19,6 +19,7 @@ const TransportDetailStage = () => {
   const [personalData, setPersonalData] = useState({})
   const navigate = useNavigate();
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+  const staff_id = useSelector((state) => state?.staff?.staff_id);
   const currentStep = Number(searchParams.get('step')) || 6; // fallback
   const [editData, setEditData] = useState({})
   const [edit, setEdit] = useState(false)
@@ -43,13 +44,13 @@ const TransportDetailStage = () => {
             setEditData(transportData);
             setEdit(true);
           }
-        } 
-         if (results[2].status === "fulfilled") {
-           setPersonalData(results[2].value?.data?.data);
-        } 
-        
+        }
+        if (results[2].status === "fulfilled") {
+          setPersonalData(results[2].value?.data?.data);
+        }
+
         else {
-          
+
         }
 
       } catch (err) {
@@ -78,39 +79,48 @@ const TransportDetailStage = () => {
       <div className="d-flex justify-content-center">
 
         <div className="card p-3" style={{ width: '80%' }}>
-          <div className=''> 
-          <div className="d-flex justify-content-between gap-3 mb-3">
-                    <h6 className="">Transport Detail</h6>
+          <div className=''>
+            <div className="d-flex justify-content-between gap-3 mb-3">
+              <h6 className="">Transport Detail</h6>
 
-                    <button
-                        type="Next"
-                        className="btn btn-success"
-                        onClick={() => navigate('/')}
+                {!staff_id?<button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/')}
 
-                    >
-                        Logout
-                    </button>
-                </div>
-                <div className='row mb-5'>
-                    <div className='col-3'>
-                        <label className="form-label">Reg NO</label>
-                        <input className='form-control' value={reg_no} disabled />
-                    </div>
-                    <div className='col-3'>
-                        <label className="form-label">First Name</label>
-                        <input className='form-control' value={personalData?.first_name} disabled />
+                        >
+                            Logout
+                        </button>:
+                        
+                        <button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/dashboard/admission/form-conform')}
 
-                    </div>
-                    <div className='col-3'>
-                        <label className="form-label">Last Name</label>
-                        <input className='form-control' value={personalData?.last_name} disabled />
-                    </div>
-                    <div className='col-3'>
-                        <label className="form-label">Class</label>
-                        <input className='form-control' value={personalData?.class} disabled />
-                    </div>
-                </div>
-                </div>
+                        >
+                            Back to AdminDashboard
+                        </button>}
+            </div>
+            <div className='row mb-5'>
+              <div className='col-3'>
+                <label className="form-label">Reg NO</label>
+                <input className='form-control' value={reg_no} disabled />
+              </div>
+              <div className='col-3'>
+                <label className="form-label">First Name</label>
+                <input className='form-control' value={personalData?.first_name} disabled />
+
+              </div>
+              <div className='col-3'>
+                <label className="form-label">Last Name</label>
+                <input className='form-control' value={personalData?.last_name} disabled />
+              </div>
+              <div className='col-3'>
+                <label className="form-label">Class</label>
+                <input className='form-control' value={personalData?.class} disabled />
+              </div>
+            </div>
+          </div>
           <Formik
             enableReinitialize
             initialValues={{
@@ -135,6 +145,10 @@ const TransportDetailStage = () => {
                 if (edit) {
 
                   await axios.patch(`${baseURL}/api/student-transport/${editData?.id}`, values)
+                  if(!reg_no){
+                  let formStatusPayload = { current_step: 7, reg_no: reg_no }
+                  await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                  }
                   navigate(`/other-information-stage?step=7`)
                   alert('transport updated success fully')
 

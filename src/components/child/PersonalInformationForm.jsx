@@ -10,6 +10,7 @@ import axios from "axios";
 import FormWizard from "./FormWizard";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { getRegistrationNo } from "../../redux/slices/registrationNo";
+import { getStaffId } from "../../redux/slices/dynamicForm/editByStaffSlice";
 import { useReducer } from "react";
 
 const PersonalInformationForm = () => {
@@ -17,6 +18,7 @@ const PersonalInformationForm = () => {
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
     const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+    const staff_id = useSelector((state) => state?.staff?.staff_id);
     const [reistrationData, setReistrationData] = useState(null);
 
     useEffect(() => {
@@ -100,14 +102,23 @@ const PersonalInformationForm = () => {
                     <div className="d-flex justify-content-between gap-3 mb-3">
                         <h6 className="">Personal Information</h6>
 
-                        <button
+                        {!staff_id?<button
                             type="Next"
                             className="btn btn-success"
                             onClick={() => navigate('/')}
 
                         >
                             Logout
-                        </button>
+                        </button>:
+                        
+                        <button
+                            type="Next"
+                            className="btn btn-success"
+                            onClick={() => navigate('/dashboard/admission/form-conform')}
+
+                        >
+                            Back to AdminDashboard
+                        </button>}
                     </div>
 
                 </div>
@@ -123,15 +134,18 @@ const PersonalInformationForm = () => {
                             delete payload?.updatedAt;
                             console.log('submitting values is:', values)
                             let { data } = await axios.put(`${baseURL}/api/personal-information/reg_no/${reg_no}`, payload)
+                            if(!staff_id){
                             let formStatusPayload = { current_step: 3, reg_no: reg_no }
                             await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                            }
                             alert("Form updated successfully!")
+                            navigate('/educational-detail-stage?step=3')
 
                         }
                         catch (err) {
                             console.log('error is:', err)
                         }
-                        navigate('/educational-detail-stage?step=3')
+                       
                     }}
 
 

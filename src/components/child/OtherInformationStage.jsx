@@ -18,6 +18,7 @@ const OtherInformationStage = () => {
   const [personalData, setPersonalData] = useState({})
   const [edit, setEdit] = useState(false)
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+  const staff_id = useSelector((state) => state?.staff?.staff_id);
   const wholeForm = useSelector(
     (state) => state?.personalInfoForms?.personalInfoForm?.data
   );
@@ -32,7 +33,7 @@ const OtherInformationStage = () => {
     let fetchData = async () => {
       try {
         if (reg_no) {
-         
+
           const results = await Promise.allSettled([
             axios.get(`${baseURL}/api/other-information/${reg_no}`),
             axios.get(`${baseURL}/api/personal-information/reg_no/${reg_no}`)
@@ -96,14 +97,23 @@ const OtherInformationStage = () => {
         <div className="d-flex justify-content-between gap-3 ">
           <h6 className="mb-4">Other Information</h6>
 
-          <button
+          {!staff_id ? <button
             type="Next"
             className="btn btn-success"
             onClick={() => navigate('/')}
 
           >
             Logout
-          </button>
+          </button> :
+
+            <button
+              type="Next"
+              className="btn btn-success"
+              onClick={() => navigate('/dashboard/admission/form-conform')}
+
+            >
+              Back to AdminDashboard
+            </button>}
         </div>
         <div className='row mb-5'>
           <div className='col-3'>
@@ -139,15 +149,21 @@ const OtherInformationStage = () => {
               if (!edit) {
 
                 let { data } = await axios.post(`${baseURL}/api/other-information`, payload)
-                let formStatusPayload = { current_step: 8, reg_no: reg_no }
 
+                let formStatusPayload = { current_step: 8, reg_no: reg_no }
                 await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+
                 alert("Other information is added successfully!")
                 navigate('/declaration-stage?step=8')
               }
               else {
 
                 let { data } = await axios.patch(`${baseURL}/api/other-information/${reg_no}`, payload)
+                if (!staff_id) {
+                  let formStatusPayload = { current_step: 8, reg_no: reg_no }
+
+                  await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+                }
                 alert("Update  successfully!")
                 navigate('/declaration-stage?step=8')
               }

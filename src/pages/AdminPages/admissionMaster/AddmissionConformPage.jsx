@@ -126,7 +126,7 @@ const AddmissionConformPage = () => {
       <div class="container">
         <div class="row mb-2">
           <div class="col-6 d-grid">
-             <button class="btn view-edit action-btn${disabledClass} btn-view-accept" data-id=${row.reg_no}>
+             <button class="btn view-edit action-btn edit-view${disabledClass}" data-id=${row.reg_no}>
               View & Accept
             </button>
           </div>
@@ -139,12 +139,12 @@ const AddmissionConformPage = () => {
 
         <div class="row mb-2">
           <div class="col-6 d-grid">
-            <button class="btn btn-warning action-btn${disabledClass}">
+            <button class="btn btn-warning action-btn btn-staff${disabledClass}">
               Edit by Staff
             </button>
           </div>
           <div class="col-6 d-grid">
-            <button class="btn btn-info action-btn${disabledClass}">
+            <button class="btn btn-info action-btn btn-student${disabledClass}">
               Edit by Student
             </button>
           </div>
@@ -156,7 +156,7 @@ const AddmissionConformPage = () => {
               Accept
             </button>
 
-            // click -> showModel -> confirm || cancel
+          
           </div>
           <div class="col-6 d-grid">
             <button class="btn btn-danger action-btn${disabledClass}">

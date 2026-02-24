@@ -18,6 +18,7 @@ const DeclarationStage = () => {
   const [editMode, setEditMode] = useState(false)
   const [editedDeclaration, setEditedDeclaration] = useState(null)
   const reg_no = useSelector((state) => state?.registrationNo?.reg_no);
+  const staff_id = useSelector((state) => state?.staff?.staff_id);
 
   useEffect(() => {
     let fetchData = async () => {
@@ -54,7 +55,7 @@ const DeclarationStage = () => {
           console.log('personal Data**********', results[1].value?.data?.data)
           setPersonalData(results[1].value?.data?.data);
         }
-        else{}
+        else { }
 
 
 
@@ -80,6 +81,10 @@ const DeclarationStage = () => {
           date: values.date,
           location: values.place,
         });
+        if(!staff_id){
+        let formStatusPayload = { current_step: 9, reg_no: reg_no }
+        await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+        }
         alert('successfully updated declaration');
         navigate(`/document-stage?step=9`);
       } else {
@@ -120,14 +125,23 @@ const DeclarationStage = () => {
           <div className="d-flex justify-content-between gap-3 ">
             <h6 className="mb-4">Declaration</h6>
 
+            {!staff_id ? <button
+            type="Next"
+            className="btn btn-success"
+            onClick={() => navigate('/')}
+
+          >
+            Logout
+          </button> :
+
             <button
               type="Next"
               className="btn btn-success"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/dashboard/admission/form-conform')}
 
             >
-              Logout
-            </button>
+              Back to AdminDashboard
+            </button>}
           </div>
           <div className='row mb-5'>
             <div className='col-3'>
