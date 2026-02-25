@@ -8,20 +8,7 @@ import Stage_accordingStep from '../../../helper/stageStep'
 import Form_Status from '../../../helper/fromStatus'
 
 const AddmissionConformPage = () => {
-  /*
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.target.classList.contains('btn-view-accept')) {
-        const id = e.target.getAttribute("data-id");
-        console.log("Accepted ID:", id);
-      }
-
-    }
-    document.addEventListener('click', handler);
-
-    return () => document.removeEventListener('click', handler)
-  }, [])
-  */
+ 
 
   
 

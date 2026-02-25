@@ -201,6 +201,49 @@ const MasterLayout = () => {
         
       ]
     },
+
+     {
+      title: "Account",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Role Master", path: "/dashboard/role-master" },
+
+        { title: "Employee Master", path: "/dashboard/employee-master" },
+        { title: "Academic Year Master", path: "/dashboard/academic-year-master" },
+        { title: "Class Master", path: "/dashboard/class-master" },
+        { title: "Division Master", path: "/dashboard/division-master" },
+        { title: "Cast Master", path: "/dashboard/cast-master" },
+        { title: "Add Declaration", path: "/dashboard/add-declaration" },
+        {
+          title: "Document Master",
+          children: [
+            { title: "Add Doucment", path: "/dashboard/document-master/add-document" },
+            { title: "Assign Doucment", path: "/dashboard/document-master/assign-document" }
+          ]
+        },
+        { title: "Phisally Disable", path: "/dashboard/phisally-disable" },
+
+        {
+          title: 'Admision Form master',
+          children: [
+            { title: "Stages", path: "admission-form-master/stages" },
+            {
+              title: "Field Type",
+              path: "admission-form-master/filed-type"
+
+
+            },
+            { title: "Field", path: "admission-form-master/Field" },
+            { title: "drop-radio-values", path: "admission-form-master/field-values" },
+            { title: "class-filed", path: "admission-form-master/class-field" }
+          ]
+        },
+
+
+
+
+      ]
+    },
     {
       title: "Admission",
       icon: "icon-park-outline:id-card",
@@ -224,6 +267,7 @@ const MasterLayout = () => {
       icon: "icon-park-outline:id-card",
       path: "/dashboard/class-wise-school" ,
     },
+    
     {
       title: "Transport",
       icon: "icon-park-outline:id-card",

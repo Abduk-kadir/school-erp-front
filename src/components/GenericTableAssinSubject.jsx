@@ -111,9 +111,13 @@ const GenericTableAssignSubject = ({ url, columns }) => {
   const handleEditByStaff = async (data) => {
 
     try {
-      await dispatch(getPersonalInformationForm({}));
-       await dispatch(setRegistrationNo({ reg_no:data?.reg_no }))
-       await dispatch(setStaffId({ staff_id:2 }))
+       Promise.all([
+                 dispatch(getPersonalInformationForm({})),
+       dispatch(setRegistrationNo({ reg_no:data?.reg_no })),
+       dispatch(setStaffId({ staff_id:2 }))
+      
+                 ])
+   
       navigate(`/personal-information?step=${2}&reg_no=${data?.reg_no}`)
       console.log('data is:', data)
     
@@ -131,9 +135,9 @@ const GenericTableAssignSubject = ({ url, columns }) => {
   const handleEditAndView = async (data) => {
 
     try {
-      //await dispatch(getPersonalInformationForm({}));
-      // await dispatch(setRegistrationNo({ reg_no:data?.reg_no }))
-       //await dispatch(setStaffId({ staff_id:2 }))
+     // await dispatch(getPersonalInformationForm({}));
+      await dispatch(setRegistrationNo({ reg_no:data?.reg_no }))
+      // await dispatch(setStaffId({ staff_id:2 }))
       navigate(`/dashboard/admission/view-accept`)
       console.log('data is:', data)
     
