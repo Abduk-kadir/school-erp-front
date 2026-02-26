@@ -95,6 +95,7 @@ function App() {
               <Route path='form-conform' element={<AddmissionConformPage />} />
               <Route path='seat-allotment' element={<SeatAllotmentPage />} />
               <Route path='view-accept' element={< AllStageShown/>} />
+             
             </Route>
             <Route path="academic" >
               <Route path='student' element={<StudentPage />} />

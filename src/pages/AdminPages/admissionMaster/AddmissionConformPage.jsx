@@ -118,7 +118,7 @@ const AddmissionConformPage = () => {
             </button>
           </div>
           <div class="col-6 d-grid">
-            <button class="btn btn-secondary action-btn${disabledClass}">
+            <button class="btn btn-secondary action-btn pdf-view${disabledClass}">
               Download PDF
             </button>
           </div>

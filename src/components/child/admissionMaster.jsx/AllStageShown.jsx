@@ -88,11 +88,11 @@ const AllStageShown = () => {
 
   }, [])
   // console.log('personal infromation data is', personalInformationData)
-  //console.log('education Data:', educationalData)
+  console.log('education Data:', educationalData)
   //console.log('subject data:', subjectData)
   //console.log('transport data:',transportData)
  // console.log('declaration data:', declarationData)
-   console.log('doucment data',documentData)
+   //console.log('doucment data',documentData)
 
    const handleEdit=async(current_step)=>{
          

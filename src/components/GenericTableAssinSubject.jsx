@@ -152,6 +152,11 @@ const GenericTableAssignSubject = ({ url, columns }) => {
 
   }
 
+  const handlePdf=()=>{
+   // navigate(`/dashboard/admission/admissionForm-pdf`)
+
+  }
+
   
 
 
@@ -182,31 +187,25 @@ const GenericTableAssignSubject = ({ url, columns }) => {
 
         // Accept button click btn-edit-by-staff
         $(row).find(".btn-accept").on("click", function () {
-
           handleAccept(data)
-
         });
 
         $(row).find(".btn-student").on("click", function () {
-
-
           handleEditByStudent(data)
-
         });
 
          $(row).find(".btn-staff").on("click", function () {
-
-
           handleEditByStaff(data)
-
         });
 
          $(row).find(".edit-view").on("click", function () {
-
-
           handleEditAndView(data)
-
         });
+
+          $(row).find(".pdf-view").on("click", function () {
+          handlePdf(data)
+        });
+
 
       },
       headerCallback: function (thead) {
