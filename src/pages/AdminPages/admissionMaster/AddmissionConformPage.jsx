@@ -6,16 +6,29 @@ import axios from 'axios'
 import baseURL from '../../../utils/baseUrl'
 import Stage_accordingStep from '../../../helper/stageStep'
 import Form_Status from '../../../helper/fromStatus'
+import Loader from '../../../helper/Loader'
 
 const AddmissionConformPage = () => {
+ const [loading, setLoading] = useState(false);
+ let loadingFun=(b)=>{
+    console.log('set loading is called ************************************',b)
+    setLoading(b)
+ }
  
 
-  
-
   return (
+    <>
+     {loading && (
+        <Loader
+          message="Generating PDF..."
+          overlay={true}
+        />
+      )}
 
     <GenericTableAssignSubject
       url={'http://localhost:5000/api/admission-conform'}
+           
+      loadingFun={loadingFun}
       columns={[
 
         { data: "reg_no", title: "Reg No" },
@@ -159,9 +172,10 @@ const AddmissionConformPage = () => {
 
 
       ]}
-   
+
 
     />
+    </>
 
   )
 }

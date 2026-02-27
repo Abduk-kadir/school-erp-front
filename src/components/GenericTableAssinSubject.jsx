@@ -8,12 +8,11 @@ import { useNavigate } from "react-router-dom";
 import { setStaffId } from "../redux/slices/dynamicForm/editByStaffSlice";
 import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personalInfoFormSlice';
 import { setRegistrationNo } from "../redux/slices/registrationNo";
-const GenericTableAssignSubject = ({ url, columns }) => {
+const GenericTableAssignSubject = ({ url, columns,loadingFun }) => {
   const dispatch=useDispatch()
   const navigate=useNavigate()
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
-
   const [classes, setClasses] = useState([]);
   const [stages, setStages] = useState([]);
 
@@ -21,6 +20,7 @@ const GenericTableAssignSubject = ({ url, columns }) => {
   const [classFilter, setClassFilter] = useState("");
   const [programFilter, setProgramFilter] = useState("");
   const [regFilter, setRegFilter] = useState("")
+  
 
   // Refs to hold current filter values for DataTable ajax
   const classFilterRef = useRef("");
@@ -152,10 +152,41 @@ const GenericTableAssignSubject = ({ url, columns }) => {
 
   }
 
-  const handlePdf=()=>{
-   // navigate(`/dashboard/admission/admissionForm-pdf`)
+  const handlePdf = async (data) => {
+  try {
+    loadingFun(true)
+    const reg_no = data.reg_no;
 
+    // Make POST request to your backend PDF route
+    const response = await axios.post(
+      `${baseURL}/api/admission/generate-pdf`,
+      { reg_no },
+      {
+        responseType: "blob", // important → tells axios to treat response as binary
+      }
+    );
+
+    // Create blob from response
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+
+    // Create temporary link to download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `admission-${reg_no}.pdf`; // set file name
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    // Clean up URL
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("PDF download failed:", err);
   }
+  finally {
+      loadingFun(false); // ✅ reset parent state
+    }
+};
 
   
 

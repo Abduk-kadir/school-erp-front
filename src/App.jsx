@@ -43,13 +43,14 @@ import CounterPage from "./pages/CounterPage";
 import CompletedStage from "./components/child/CompletedStage";
 import ClassFiledPage from "./pages/ClassFieldPage";
 import StudentLayout from "./studentLayout/StudentLayout";
-import StudentDashboard from "./pages/StudentDashboard";
+import StudentDashboard from "./pages/studentPages/StudentDashboardPage";
 import ClasswiseSchoolPage from "./pages/AdminPages/classwiseSchool/classwiseSchoolPage";
 import AllStageShown from "./components/child/admissionMaster.jsx/AllStageShown";
+import StudentAdmissionStatus from "./components/child/student/StudentAdmissionStatus";
 
 
 function App() {
-  let user = false;
+  let user = true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -116,6 +117,7 @@ function App() {
           <Route path="studentdashboard" element={<StudentLayout />} >
             {/*admin route*/}
             <Route index element={<StudentDashboard />} />
+            <Route path='admission-accept-status' element={<StudentAdmissionStatus />} />
             
           
           

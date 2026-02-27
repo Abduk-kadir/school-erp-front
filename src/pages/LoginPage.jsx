@@ -12,8 +12,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setRegistrationNo } from '../redux/slices/registrationNo';
 import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personalInfoFormSlice';
 
-
-// Validation schema with Yup
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .email('Please enter a valid email')
@@ -119,6 +117,7 @@ const LoginPage = () => {
                   let res2=await axios.get(`${baseUrl}/api/form-status/${values.reg_no}`)
                   dispatch(setRegistrationNo({ reg_no:values.reg_no }))
                   let current_step=res2?.data?.data?.current_step
+                  let status=res2?.data?.data?.form_status
                   console.log('current step',current_step)
                   switch(current_step){
                     case 1:
@@ -147,6 +146,16 @@ const LoginPage = () => {
                       break; 
                        case 9:
                       navigate(`/document-stage?step=${current_step}&reg_no=${reg_no}`)
+                      break;  
+                       break; 
+                       case 10:
+                        if(Number(status)==1){
+                          navigate(`/studentdashboard?reg_no=${reg_no}`)
+                        }
+                        else{
+                          navigate(`/studentdashboard/admission-accept-status?reg_no=${reg_no}`)
+                        }
+                     
                       break;  
                   }
 
