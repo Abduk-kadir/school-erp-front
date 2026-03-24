@@ -1,0 +1,60 @@
+/* Academic offline fee report — layout polish */
+.fee-report-scope {
+  --fee-radius: 0.75rem;
+  --fee-shadow: 0 0.2rem 1rem rgba(15, 23, 42, 0.06);
+  --fee-shadow-lg: 0 0.35rem 1.25rem rgba(15, 23, 42, 0.08);
+  --fee-border: rgba(15, 23, 42, 0.08);
+}
+
+.fee-report-scope .fee-report-card {
+  border-radius: var(--fee-radius);
+  border: 1px solid var(--fee-border);
+  box-shadow: var(--fee-shadow);
+  transition: box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.fee-report-scope .fee-report-card:hover {
+  box-shadow: var(--fee-shadow-lg);
+}
+
+.fee-report-scope .fee-report-icon-wrap {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fee-report-scope .fee-report-export-group {
+  border-radius: 2rem;
+  padding: 0.2rem 0.35rem;
+}
+
+.fee-report-scope .fee-report-table-card .fee-report-export-group {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.fee-report-scope .fee-report-table-card .fee-report-export-group .btn {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.fee-report-scope .fee-report-table-card .fee-report-export-group .btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.fee-report-scope .fee-report-table-card .card-body {
+  padding-top: 1.25rem;
+  background: linear-gradient(
+    180deg,
+    rgba(248, 250, 252, 0.5) 0,
+    #fff 12px
+  );
+}
+
+.fee-report-scope .fee-report-table-card .table-responsive {
+  border-radius: 0 0 calc(var(--fee-radius) - 2px) calc(var(--fee-radius) - 2px);
+}

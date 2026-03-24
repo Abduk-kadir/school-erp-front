@@ -56,15 +56,15 @@ const AddField = () => {
   const getTableNameAndColumnType = (stageName) => {
     switch (stageName) {
       case "Personal Information":
-        return { tableName: "personalinformations", columnType: "VARCHAR(255)" };
+        return { tableName: "personalinformations",tableName2:"par_student_personal_informations", columnType: "VARCHAR(255)" };
       case "Parent Particular":
-        return { tableName: "parentparticulars", columnType: "VARCHAR(255)" };
+        return { tableName: "parentparticulars",tableName2:"par_parentparticulars", columnType: "VARCHAR(255)" };
       case "Education Detail":
-        return { tableName: "educationdetails", columnType: "VARCHAR(255)" };
+        return { tableName: "educationdetails",tableName2:"par_educational_details", columnType: "VARCHAR(255)" };
       case "Other Information":
-        return { tableName: "otherinformations", columnType: "VARCHAR(255)" };
+        return { tableName: "otherinformations",tableName2:"par_other_informations", columnType: "VARCHAR(255)" };
       default:
-        return { tableName: "", columnType: "" };
+        return { tableName: "",tableName2:"", columnType: "" };
     }
   };
 
@@ -73,7 +73,7 @@ const AddField = () => {
 
     try {
       const selectedStage = stages.find((s) => s.id == values.stageId);
-      const { tableName, columnType } = getTableNameAndColumnType(selectedStage?.name);
+      const { tableName, tableName2,columnType } = getTableNameAndColumnType(selectedStage?.name);
 
       if (!tableName) {
         alert("Invalid stage selected");
@@ -87,6 +87,7 @@ const AddField = () => {
         placeholder: values.placeholder,
         isRequired: values.isRequired === "true",
         tableName,
+        tableName2,
         columnType,
         order: Number(values.order),
       };

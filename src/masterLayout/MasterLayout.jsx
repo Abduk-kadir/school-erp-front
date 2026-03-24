@@ -42,6 +42,7 @@ function SidebarMenuItem({ item, level = 0 }) {
           to={item.path || "#"}
           className={({ isActive }) => `menu-link ${isActive ? "active" : ""}`}
           onClick={(e) => e.stopPropagation()}
+
         >
           {item.icon && <Icon icon={item.icon} className="menu-icon" />}
           {level > 0 && (
@@ -193,49 +194,94 @@ const MasterLayout = () => {
 
       ]
     },
-     {
+    {
       title: "Academic",
       icon: "icon-park-outline:id-card",
       children: [
         { title: "Student", path: "/dashboard/academic/student" },
-        
+        { title: "Download Student", path: "/dashboard/academic/student" },
+
       ]
     },
 
-     {
-      title: "Account",
+    {
+      title: "Accounts",
       icon: "icon-park-outline:id-card",
       children: [
-        { title: "Role Master", path: "/dashboard/role-master" },
-
-        { title: "Employee Master", path: "/dashboard/employee-master" },
-        { title: "Academic Year Master", path: "/dashboard/academic-year-master" },
-        { title: "Class Master", path: "/dashboard/class-master" },
-        { title: "Division Master", path: "/dashboard/division-master" },
-        { title: "Cast Master", path: "/dashboard/cast-master" },
-        { title: "Add Declaration", path: "/dashboard/add-declaration" },
         {
-          title: "Document Master",
+          title: "Fee Master",
           children: [
-            { title: "Add Doucment", path: "/dashboard/document-master/add-document" },
-            { title: "Assign Doucment", path: "/dashboard/document-master/assign-document" }
+            { title: "Payment Setting", path: "/dashboard/accounts/fee-master/payment-setting" },
+            { title: "Payment Setting", path: "/dashboard/accounts/fee-master/fee-setting" },
+            { title: "bank", path: "/dashboard/accounts/fee-master/add-bank" },
+            { title: "Bank Detail", path: "/dashboard/accounts/fee-master/add-bank-detail" },
+            { title: "Fee Head", path: "/dashboard/accounts/fee-master/add-fee-head" },
+            { title: "Fee Group", path: "/dashboard/accounts/fee-master/add-fee-group" },
+            { title: "Fee report", path: "/dashboard/accounts/fee-master/fee_report" }
           ]
         },
-        { title: "Phisally Disable", path: "/dashboard/phisally-disable" },
+        {
+          title: "Admission Fee",
+          icon: "icon-park-outline:id-card",
+          children: [
+            { title: "Collect Admission Fee", path: "/dashboard/academic/student" },
+            { title: "Report-Online Admission Payment", path: "/dashboard/admission/online-admission-payment" },
+            { title: "Report-Offline Admission Payment", path: "/dashboard/admission/offline-admission-payment" },
+            { title: "Report-All Transaction Admission Payment", path: "/dashboard/admission/all-transaction-admission-payment" },
+            { title: "Report-Student Wise Admission Payment", path: "/dashboard/admission/student-wise-admission-payment" },
+
+          ]
+        },
 
         {
-          title: 'Admision Form master',
+          title: "Academic Fee",
+          icon: "icon-park-outline:id-card",
           children: [
-            { title: "Stages", path: "admission-form-master/stages" },
-            {
-              title: "Field Type",
-              path: "admission-form-master/filed-type"
+            { title: "Collect Academic Fee", path: "/dashboard/academic-fee/student" },
+            { title: "Report-Online Academic Payment", path: "/dashboard/academic-fee/online-academic-payment" },
+            { title: "Report-Offline Academic Payment", path: "/dashboard/academic-fee/offline-academic-payment" },
+            { title: "Report-All Transaction Academic Payment", path: "/dashboard/academic-fee/all-transaction-academic-payment" },
+            { title: "Report-Student Wise Academic Payment", path: "/dashboard/academic-fee/student" },
+            { title: "Student Transaction Detail Academic Payment", path: "/dashboard/academic-fee/student" },
+            { title: "Student Monthly Paid/Unpaid Academic Payment", path: "/dashboard/academic-fee/paid-and-unpaid-report" },
+            { title: "Fees Summary Academic Report", path: "/dashboard/academic-fee/fees-summary-academic-report" },
+            { title: "Student Head & Month Wise Paid/Unpaid Academic Payment", path: "/dashboard/academic-fee/student" },
+            { title: "Download Student Bulk Reciept Academic Payment", path: "/dashboard/academic-fee/download-student-bulk-reciept" },
 
+          ]
+        },
+         {
+          title: "Bus Fee",
+          icon: "icon-park-outline:id-card",
+          children: [
+            { title: "Collect Bus Fee", path: "/dashboard/bus-fee/collect-bus-fee" },
+            { title: "Report-Online Bus Payment", path: "/dashboard/bus-fee/online-bus-payment" },
+            { title: "Report-Offline Bus Payment", path: "/dashboard/bus-fee/offline-bus-payment" },
+            { title: "Report-All Transaction Bus Payment", path: "/dashboard/bus-fee/all-transaction-bus-payment" },
+            { title: "Report-Student Wise Bus Payment", path: "/dashboard/bus-fee/student-wise-bus-payment" },
 
-            },
-            { title: "Field", path: "admission-form-master/Field" },
-            { title: "drop-radio-values", path: "admission-form-master/field-values" },
-            { title: "class-filed", path: "admission-form-master/class-field" }
+          ]
+        },
+         {
+          title: "Canteen Fee",
+          icon: "icon-park-outline:id-card",
+          children: [
+            { title: "Collect Canteen Fee", path: "/dashboard/canteen-fee/collect-canteen-fee" },
+            { title: "Report-Online Canteen Payment", path: "/dashboard/canteen-fee/online-canteen-payment" },
+            { title: "Report-Offline Canteen Payment", path: "/dashboard/canteen-fee/offline-canteen-payment" },
+            { title: "Report-All Transaction Canteen Payment", path: "/dashboard/canteen-fee/all-transaction-canteen-payment" },
+            { title: "Report-Student Wise Canteen Payment", path: "/dashboard/canteen-fee/student-wise-canteen-payment" },
+
+          ]
+        },
+
+         {
+          title: "Other Fee",
+          icon: "icon-park-outline:id-card",
+          children: [
+            { title: "Collect Other Fee", path: "/dashboard/academic/student" },
+            { title: "Report-Other Fee", path: "/dashboard/academic/student" },
+           
           ]
         },
 
@@ -252,33 +298,35 @@ const MasterLayout = () => {
         { title: "Addmission Fee", path: "/dashboard/admission/fee" },
         { title: "Addmission Conform", path: "/dashboard/admission/form-conform" },
         { title: "Addmission Form Coupon", path: "/dashboard/admission/coupon" },
+        { title: "Download Student Data", path: "/dashboard/admission/student-data" },
       ]
     },
     {
       title: "Admission Report",
       icon: "icon-park-outline:id-card",
       children: [
-        { title: "Institute", path: "/dashboard/setting/institute" },
+        { title: "Form status report", path: "admission-report/form-status-report" },
+        { title: "Form accept report", path: "admission-report/form-accept-report" },
       ]
     },
 
-     {
+    {
       title: "Class wise Schools",
       icon: "icon-park-outline:id-card",
-      path: "/dashboard/class-wise-school" ,
+      path: "/dashboard/class-wise-school",
     },
-    
+
     {
       title: "Transport",
       icon: "icon-park-outline:id-card",
       children: [
         { title: "Add Route", path: "/dashboard/transport/add-route" },
         { title: "Assign Sub Route", path: "/dashboard/transport/assign-sub-route" },
-        
-        
+
+
       ]
     },
-    
+
     {
       title: "Setting",
       icon: "icon-park-outline:id-card",
