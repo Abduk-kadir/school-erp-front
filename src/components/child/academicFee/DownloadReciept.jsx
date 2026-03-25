@@ -321,26 +321,20 @@ const DownloadReciept = () => {
   return (
     <div className="fee-report-scope">
       <div className="fee-report-card card border-0">
-        {/* Header */}
-        <div
-          className="card-header border-0 d-flex align-items-center gap-3 py-3 px-4"
-          style={{
-            background: "linear-gradient(135deg, #198754 0%, #157347 100%)",
-          }}
-        >
-          <div
-            className="fee-report-icon-wrap"
-            style={{ background: "rgba(255,255,255,0.18)" }}
-          >
-            <Icon icon="solar:document-bold" style={{ fontSize: "1.35rem", color: "#fff" }} />
-          </div>
-          <div>
-            <h6 className="mb-0 text-white fw-bold" style={{ fontSize: "1.05rem" }}>
-              Download Receipt
-            </h6>
-            <small className="text-white-50" style={{ fontSize: "0.78rem" }}>
-              Select filters and download the fee receipt as PDF
-            </small>
+        {/* Header — same greenish pattern as online fee report (bg-success bg-opacity-10) */}
+        <div className="card-header border-0 bg-success bg-opacity-10 py-3 px-4">
+          <div className="d-flex align-items-center gap-3">
+            <span className="fee-report-icon-wrap bg-success text-white shadow-sm">
+              <Icon icon="solar:document-bold-duotone" className="fs-4" />
+            </span>
+            <div>
+              <h6 className="card-title mb-0 fw-semibold text-dark">
+                Download Receipt
+              </h6>
+              <p className="small text-muted mb-0 mt-1">
+                Select filters and download the fee receipt as PDF
+              </p>
+            </div>
           </div>
         </div>
 

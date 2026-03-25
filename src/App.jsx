@@ -55,6 +55,9 @@ const SeatAllotmentPage = lazy(() =>
 const StudentPage = lazy(() =>
   import("./pages/AdminPages/academic/StudentPage")
 );
+const StudentBulkUpdatePage=lazy(()=>
+import("./pages/AdminPages/academic/StudentBulkUpdatePage")
+);
 const DocumentStage = lazy(() => import("./components/child/DocumentStage"));
 const DeclarationStage = lazy(() =>
   import("./components/child/DeclarationStage")
@@ -301,6 +304,7 @@ function App() {
 
               <Route path="academic">
                 <Route path="student" element={<StudentPage />} />
+                <Route path="student-detail-bulk-update" element={<StudentBulkUpdatePage />} />
               </Route>
 
               <Route path="bus-fee">

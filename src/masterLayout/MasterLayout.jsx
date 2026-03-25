@@ -200,6 +200,7 @@ const MasterLayout = () => {
       children: [
         { title: "Student", path: "/dashboard/academic/student" },
         { title: "Download Student", path: "/dashboard/academic/student" },
+        {title:"Student Detail Bulk Update",path:"/dashboard/academic/student-detail-bulk-update"}
 
       ]
     },
