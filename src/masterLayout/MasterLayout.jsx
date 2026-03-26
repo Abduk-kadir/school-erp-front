@@ -225,11 +225,12 @@ const MasterLayout = () => {
           title: "Admission Fee",
           icon: "icon-park-outline:id-card",
           children: [
-            { title: "Collect Admission Fee", path: "/dashboard/academic/student" },
+            { title: "Collect Admission Fee", path: "/dashboard/accounts/admission/collect-admission-fee" },
             { title: "Report-Online Admission Payment", path: "/dashboard/admission/online-admission-payment" },
             { title: "Report-Offline Admission Payment", path: "/dashboard/admission/offline-admission-payment" },
             { title: "Report-All Transaction Admission Payment", path: "/dashboard/admission/all-transaction-admission-payment" },
             { title: "Report-Student Wise Admission Payment", path: "/dashboard/admission/student-wise-admission-payment" },
+            
 
           ]
         },
@@ -238,7 +239,7 @@ const MasterLayout = () => {
           title: "Academic Fee",
           icon: "icon-park-outline:id-card",
           children: [
-            { title: "Collect Academic Fee", path: "/dashboard/academic-fee/student" },
+            { title: "Collect Academic Fee", path: "/dashboard/academic-fee/collect-academic-fee" },
             { title: "Report-Online Academic Payment", path: "/dashboard/academic-fee/online-academic-payment" },
             { title: "Report-Offline Academic Payment", path: "/dashboard/academic-fee/offline-academic-payment" },
             { title: "Report-All Transaction Academic Payment", path: "/dashboard/academic-fee/all-transaction-academic-payment" },

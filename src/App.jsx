@@ -135,6 +135,11 @@ const AcademicSummaryFeeReportPage = lazy(() =>
 const AcademicAllFeeTransactionPage=lazy(() =>
   import("./pages/AdminPages/academifee/AcademicAllFeeTransactionPage")
 );
+const AcademicFeeCollectPage = lazy(() =>
+  import("./pages/AdminPages/academifee/AcademicFeeCollectPage")
+);
+
+
 const DownLoadRecieptPage=lazy(()=>
 import("./pages/AdminPages/academifee/DownLoadRecieptPage")
 );
@@ -352,6 +357,8 @@ function App() {
                 path="download-student-bulk-reciept"
                 element={<DownLoadRecieptPage/>}
                 />
+
+                <Route path="collect-academic-fee" element={<AcademicFeeCollectPage />} />
               </Route>
               <Route path="canteen-fee">
                 <Route
