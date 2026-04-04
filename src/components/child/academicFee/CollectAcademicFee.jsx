@@ -99,14 +99,24 @@ const monthTemplate = () => ({
   dec: { total: 0, paid: 0, due: 0 },
 });
 
-const INITIAL_FEES = [
-  { id: 1, fee_head: "lab fee", label: "total paying valance", ...monthTemplate() },
-  { id: 2, fee_head: "tution fee", label: "total paying valance", ...monthTemplate() },
-  { id: 3, fee_head: "library fee", label: "total paying valance", ...monthTemplate() },
-  { id: 4, fee_head: "transport fee", label: "total paying valance", ...monthTemplate() },
-  { id: 5, fee_head: "hostel fee", label: "total paying valance", ...monthTemplate() },
-  { id: 6, fee_head: "other fee", label: "total paying valance", ...monthTemplate() },
-];
+/** Build table rows from GET /api/fee-heads `data` array */
+function buildFeeRowsFromHeads(feeHeadItems) {
+  if (!Array.isArray(feeHeadItems) || feeHeadItems.length === 0) return [];
+  return feeHeadItems
+    .filter(
+      (h) =>
+        h &&
+        h.id != null &&
+        (!h.status || String(h.status).toLowerCase() === "active")
+    )
+    .sort((a, b) => Number(a.id) - Number(b.id))
+    .map((h) => ({
+      id: h.id,
+      fee_head_name: h.fee_head_name ?? "",
+      label: "total paying valance",
+      ...monthTemplate(),
+    }));
+}
 
 const parseNum = (v) => {
   const n = Number.parseFloat(String(v).replace(/,/g, ""));
@@ -127,13 +137,26 @@ function monthFromApiRecord(rec, monthKey) {
   };
 }
 
+/** Monthly fee-record rows include jan_total / jan_paid; fee-head master rows do not. */
+function isMonthlyFeeRecords(records) {
+  if (!Array.isArray(records) || records.length === 0) return false;
+  const r = records[0];
+  return r != null && typeof r === "object" && "jan_total" in r;
+}
+
+/** reg_no API: `data` may be the array, or `{ fee_records: [...] }`. */
+function normalizeRegNoFeeDataPayload(data) {
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === "object" && Array.isArray(data.fee_records)) return data.fee_records;
+  return [];
+}
+
 function mergeApiRecordsIntoRows(baseRows, records) {
   if (!Array.isArray(records) || records.length === 0) return baseRows;
 
-  // Match table rows only to feeHeadInfo.fee_head_name (not API fee_head),
-  // so a wrong top-level fee_head (e.g. "Lab Fee") cannot map to the wrong row.
+  // Match rows to feeHeadInfo.fee_head_name only (not top-level fee_head on the record).
   return baseRows.map((row) => {
-    const norm = normalizeFeeHead(row.fee_head);
+    const norm = normalizeFeeHead(row.fee_head_name);
     const match = records.find((r) => {
       const name = normalizeFeeHead(r.feeHeadInfo?.fee_head_name);
       if (!norm || !name) return false;
@@ -310,11 +333,39 @@ const CollectAcademicFee = () => {
   const [studentSearchLoading, setStudentSearchLoading] = useState(false);
   const [studentSearchError, setStudentSearchError] = useState(null);
 
-  const [rows, setRows] = useState(() => JSON.parse(JSON.stringify(INITIAL_FEES)));
+  const [rows, setRows] = useState([]);
+  const [feeHeads, setFeeHeads] = useState([]);
+  const [feeHeadsLoading, setFeeHeadsLoading] = useState(true);
+  const feeHeadsRef = useRef([]);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const selectAllRef = useRef(null);
 
+  useEffect(() => {
+    feeHeadsRef.current = feeHeads;
+  }, [feeHeads]);
+
   const [paymentInfo, setPaymentInfo] = useState(() => emptyPaymentInfo());
+
+  useEffect(() => {
+    const fetchFeeheads = async () => {
+      setFeeHeadsLoading(true);
+      try {
+        const { data } = await axios.get(`${baseURL}/api/fee-heads`);
+        const list = data?.data ?? data ?? [];
+        const arr = Array.isArray(list) ? list : [];
+        setFeeHeads(arr);
+        setRows(buildFeeRowsFromHeads(arr));
+        setSelectedIds(new Set());
+      } catch {
+        setFeeHeads([]);
+        setRows([]);
+        setSelectedIds(new Set());
+      } finally {
+        setFeeHeadsLoading(false);
+      }
+    };
+    fetchFeeheads();
+  }, []);
 
   useEffect(() => {
     if (!studentDetail) {
@@ -354,20 +405,29 @@ const CollectAcademicFee = () => {
         throw new Error(body?.message || "Could not load fee records.");
       }
 
-      const records = body?.data;
-      if (!Array.isArray(records) || records.length === 0) {
+      const records = normalizeRegNoFeeDataPayload(body?.data);
+      if (records.length === 0) {
         setStudentDetail(null);
-        setRows(JSON.parse(JSON.stringify(INITIAL_FEES)));
+        setRows(buildFeeRowsFromHeads(feeHeadsRef.current));
         throw new Error("No fee records for this registration number.");
       }
 
-      const first = records[0];
-      setStudentDetail(studentDetailFromFirstRecord(first, reg));
-
-      const base = JSON.parse(JSON.stringify(INITIAL_FEES));
-      setRows(mergeApiRecordsIntoRows(base, records));
+      if (isMonthlyFeeRecords(records)) {
+        const first = records[0];
+        setStudentDetail(studentDetailFromFirstRecord(first, reg));
+        const base = buildFeeRowsFromHeads(feeHeadsRef.current);
+        setRows(mergeApiRecordsIntoRows(base, records));
+      } else {
+        // Response is fee-head master list (same shape as /api/fee-heads): fill table from it
+        setFeeHeads(records);
+        setRows(buildFeeRowsFromHeads(records));
+        setSelectedIds(new Set());
+        setStudentDetail(studentDetailFromFirstRecord(records[0], reg));
+      }
     } catch (err) {
       setStudentDetail(null);
+      setRows(buildFeeRowsFromHeads(feeHeadsRef.current));
+      setSelectedIds(new Set());
       const msg =
         err?.response?.data?.message ??
         err?.response?.data?.error ??
@@ -611,7 +671,20 @@ const CollectAcademicFee = () => {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
+                {feeHeadsLoading ? (
+                  <tr>
+                    <td colSpan={15} className="text-center text-muted small py-4">
+                      Loading fee heads…
+                    </td>
+                  </tr>
+                ) : rows.length === 0 ? (
+                  <tr>
+                    <td colSpan={15} className="text-center text-muted small py-4">
+                      No fee heads to display. Check /api/fee-heads or activate fee heads in master data.
+                    </td>
+                  </tr>
+                ) : (
+                rows.map((row) => (
                   <tr
                     key={row.id}
                     className={selectedIds.has(row.id) ? "table-active" : undefined}
@@ -622,10 +695,10 @@ const CollectAcademicFee = () => {
                         className="form-check-input"
                         checked={selectedIds.has(row.id)}
                         onChange={() => toggleRow(row.id)}
-                        aria-label={`Select ${row.fee_head}`}
+                        aria-label={`Select ${row.fee_head_name}`}
                       />
                     </td>
-                    <td className="fw-medium">{row.fee_head}</td>
+                    <td className="fw-medium">{row.fee_head_name}</td>
                     <td>
                       <small className="text-secondary">{row.label}</small>
                     </td>
@@ -647,7 +720,7 @@ const CollectAcademicFee = () => {
                                 onChange={(e) =>
                                   updateMonthField(row.id, key, "total", e.target.value)
                                 }
-                                aria-label={`${row.fee_head} ${key} total`}
+                                aria-label={`${row.fee_head_name} ${key} total`}
                               />
                             </div>
                             <div>
@@ -663,7 +736,7 @@ const CollectAcademicFee = () => {
                                 onChange={(e) =>
                                   updateMonthField(row.id, key, "paid", e.target.value)
                                 }
-                                aria-label={`${row.fee_head} ${key} paid`}
+                                aria-label={`${row.fee_head_name} ${key} paid`}
                               />
                             </div>
                             <div>
@@ -679,7 +752,7 @@ const CollectAcademicFee = () => {
                                 onChange={(e) =>
                                   updateMonthField(row.id, key, "due", e.target.value)
                                 }
-                                aria-label={`${row.fee_head} ${key} due`}
+                                aria-label={`${row.fee_head_name} ${key} due`}
                               />
                             </div>
                           </div>
@@ -687,7 +760,8 @@ const CollectAcademicFee = () => {
                       );
                     })}
                   </tr>
-                ))}
+                ))
+                )}
               </tbody>
             </table>
           </div>

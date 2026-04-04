@@ -2,37 +2,55 @@ import React from "react";
 import AcademicUnpaidAndPaidDataTable from "../../../components/AcademicUnpaidAndPaidDataTable";
 import baseURL from "../../../utils/baseUrl";
 
+/** If `{month}_due` is 0 → show "Paid"; else show `{month}_paid` (not total). */
+function monthPaidOrPaidLabel(monthKey) {
+  return function (data, type, row) {
+    const dueRaw = row?.[`${monthKey}_due`];
+    const paidRaw = row?.[`${monthKey}_paid`];
+    const due =
+      dueRaw === "" || dueRaw == null ? NaN : Number(dueRaw);
+    const paidNum =
+      paidRaw === "" || paidRaw == null ? NaN : Number(paidRaw);
+
+    if (type === "sort" || type === "type" || type === "filter") {
+      if (Number.isFinite(due) && due === 0) return 0;
+      return Number.isFinite(paidNum) ? paidNum : 0;
+    }
+    if (Number.isFinite(due) && due === 0) return "Paid";
+    return paidRaw ?? "";
+  };
+}
+
+const MONTH_LABELS = [
+  ["jan", "January"],
+  ["feb", "February"],
+  ["mar", "March"],
+  ["apr", "April"],
+  ["may", "May"],
+  ["jun", "June"],
+  ["jul", "July"],
+  ["aug", "August"],
+  ["sep", "September"],
+  ["oct", "October"],
+  ["nov", "November"],
+  ["dec", "December"],
+];
+
 const feeReportColumns = [
-  { data: "reg_no", title: "Reg No", defaultContent: "" },
-  { data: "student_name", title: "Student Name", defaultContent: "" },
-  { data: "class_division_roll", title: "Class|Division|Roll NO", defaultContent: "" },
-  { data: "total_amount", title: "Total Amount", defaultContent: "" },
-  { data: "collected_amount", title: "Collected Amount", defaultContent: "" },
-  { data: "due_amount", title: "Due Amount", defaultContent: "" },
-  { data: "concession", title: "Concession", defaultContent: "" },
-  { data: "extra_amount", title: "Extra Amount", defaultContent: "" },
-  { data: "role_id", title: "Role ID", defaultContent: "" },
-  {
-    data: "date",
-    title: "Date",
+  { data: "student.first_name", title: "Student Name", defaultContent: "" },
+  { data: "feeHeadInfo.fee_head_name", title: "Fee Head", defaultContent: "" },
+  ...MONTH_LABELS.map(([key, title]) => ({
+    data: null,
+    title,
     defaultContent: "",
-    render: function (data, type) {
-      if (data == null || data === "") return "";
-      if (type === "sort" || type === "type") return data;
-      try {
-        return new Date(data).toLocaleString();
-      } catch {
-        return String(data);
-      }
-    },
-  },
-  { data: null, title: "Action", defaultContent: "", orderable: false },
+    render: monthPaidOrPaidLabel(key),
+  })),
 ];
 
 const AcademicUnpaidAndPaidReportPage = () => {
   return (
     <div>
-      <AcademicUnpaidAndPaidDataTable url={`${baseURL}/api/fees`} columns={feeReportColumns} />
+      <AcademicUnpaidAndPaidDataTable url={`${baseURL}/api/fee-record-monthly/latest-by-table`} columns={feeReportColumns} />
     </div>
   );
 };

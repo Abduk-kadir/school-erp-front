@@ -119,6 +119,11 @@ const FeeGroupPage = lazy(() =>
 const FeeHeadPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/feeHeadPage")
 );
+
+const FeeGroupPricingPage = lazy(() =>
+  import("./pages/AdminPages/feeMaster/FeeGroupPricingPage")
+);
+
 const AcacademicOnlineFeeReportPage = lazy(() =>
   import("./pages/AdminPages/academifee/AcacademicOnlineFeeReportPage")
 );
@@ -390,6 +395,7 @@ function App() {
                   <Route path="add-bank-detail" element={<BankDetailPage />} />
                   <Route path="add-fee-head" element={<FeeHeadPage />} />
                   <Route path="add-fee-group" element={<FeeGroupPage />} />
+                  <Route path="fee-group-pricing" element={<FeeGroupPricingPage />} />
                 </Route>
               </Route>
 

@@ -218,7 +218,7 @@ const MasterLayout = () => {
             { title: "Bank Detail", path: "/dashboard/accounts/fee-master/add-bank-detail" },
             { title: "Fee Head", path: "/dashboard/accounts/fee-master/add-fee-head" },
             { title: "Fee Group", path: "/dashboard/accounts/fee-master/add-fee-group" },
-            { title: "Fee report", path: "/dashboard/accounts/fee-master/fee_report" }
+            { title: "Fee Group Pricing", path: "/dashboard/accounts/fee-master/fee-group-pricing" }
           ]
         },
         {
