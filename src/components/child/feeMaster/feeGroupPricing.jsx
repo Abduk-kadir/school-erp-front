@@ -8,7 +8,7 @@ const initialForm = {
   feeGroupId: "",
   frequency: "",
   classId: "",
-  backwardClass: "",
+  backwardClass: false,
   gender: "",
 };
 
@@ -72,6 +72,7 @@ function mergeFeeArrays(...arrays) {
 
 const FeeGroupPricing = () => {
   const [feeheads, setFeeheads] = useState([]);
+  const [feegroup,setFeegroup]=useState([])
   const [classes, setClasses] = useState([]);
   const [form, setForm] = useState(initialForm);
   const [yearprice, setYearprice] = useState([]);
@@ -151,15 +152,17 @@ const FeeGroupPricing = () => {
   };
 
 
-  
+  console.log('feegroup',feegroup)
 
   useEffect(() => {
     const fetchFeeheads = async () => {
       try {
         const response = await axios.get(`${baseURL}/api/fee-heads`);
         const classesRes = await axios.get(`${baseURL}/api/classes`);
+        const feegroupRes=await axios.get(`${baseURL}/api/fee-groups`);
         setFeeheads(response.data.data ?? []);
         setClasses(classesRes.data.data ?? []);
+        setFeegroup(feegroupRes.data.data??[])
       } catch (error) {
         console.error("Error fetching fee heads:", error);
       }
@@ -185,23 +188,27 @@ const FeeGroupPricing = () => {
     e.preventDefault();
     try{
     let groupdetails={
-      feeGroupId: form.feeGroupId,
+      feegroupid: form.feeGroupId,
       frequency: form.frequency,
       classId: form.classId,
-      backwardClass: form.backwardClass,
+      isbackwardclass: form.backwardClass,
       gender: form.gender,}
        if(form.frequency=="Halfyearly"){
         let groupPricingRecord=mergeFeeArrays(halfyearprice1,halfyearprice2)
+        console.log('group details',groupdetails)
         console.log('group pricing record',groupPricingRecord)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord})
         
        }
        if(form.frequency=="Quaterly"){
         let groupPricingRecord=mergeFeeArrays(quaterprice1,quaterprice2,quaterprice3)
+        console.log('group details',groupdetails)
         console.log('group pricing record',groupPricingRecord)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord})
        }
-       if(form.frequency=="Yearly"){
+       if(form.frequency=="Monthly"){
+        console.log('group details',groupdetails)
+        console.log('year price is:',yearprice)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,yearprice})
 
        }
@@ -233,9 +240,9 @@ const FeeGroupPricing = () => {
                     onChange={updateField("feeGroupId")}
                   >
                     <option value="">Select Fee Group</option>
-                    {feeheads.map((feehead) => (
-                      <option key={feehead.id} value={feehead.id}>
-                        {feehead.fee_head_name}
+                    {feegroup.map((feegroup) => (
+                      <option key={feegroup.id} value={feegroup.id}>
+                        {feegroup.groupname}
                       </option>
                     ))}
                   </select>
@@ -294,8 +301,10 @@ const FeeGroupPricing = () => {
                       name="backwardClass"
                       id="backward-yes"
                       value="yes"
-                      checked={form.backwardClass === "yes"}
-                      onChange={updateField("backwardClass")}
+                      checked={form.backwardClass === true}
+                      onChange={() =>
+                        setForm((prev) => ({ ...prev, backwardClass: true }))
+                      }
                     />
                     <label className="form-check-label ms-3" htmlFor="backward-yes">
                       Yes
@@ -308,8 +317,10 @@ const FeeGroupPricing = () => {
                       name="backwardClass"
                       id="backward-no"
                       value="no"
-                      checked={form.backwardClass === "no"}
-                      onChange={updateField("backwardClass")}
+                      checked={form.backwardClass === false}
+                      onChange={() =>
+                        setForm((prev) => ({ ...prev, backwardClass: false }))
+                      }
                     />
                     <label className="form-check-label ms-3" htmlFor="backward-no">
                       No
