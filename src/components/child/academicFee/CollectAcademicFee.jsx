@@ -1,24 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import baseURL from "../../../utils/baseUrl";
 import "../../../assets/css/academicOfflineFeeReport.css";
 
 const displayVal = (v) => (v == null || v === "" ? "—" : String(v));
 
-const MONTH_PREFIXES = [
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec",
-  "jan",
-  "feb",
-  "mar",
-];
+
 
 const parseNum = (v) => {
   const n = Number.parseFloat(String(v ?? "").replace(/,/g, ""));
@@ -38,50 +25,136 @@ const CollectAcademicFee = () => {
   const [student, setStudent] = useState(null);
   const [allFeeheadspricing, setAllFeeheadspricing] = useState([]);
   const header = ["April", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March"]
+  const [fine, setFine] = useState(0);
+  const [consessionType, setConsessionType] = useState('')
+  const [typeoffeepayment, setTypeoffeepayment] = useState(0);
 
+  const [academicFee, setAcademicFee] = useState(0);
+  const [payableFee, setPayableFee] = useState(0);
+  const [remark, setRemark] = useState('');
+  const [paymentMode, setPaymentMode] = useState('');
+  const [transactionDate, setTransactionDate] = useState('');
+  const [extraAmount, setExtraAmount] = useState('');
+  const [feespaidType, setFeespaidType] = useState([{ type: "consession", value: 1 }, { type: "fee payment", value: 0 }])
+
+  let totalpaidfee = allFeeheadspricing.reduce((acc, item) => {
+    return acc + item.apr_new_paid + item.may_new_paid + item.jun_new_paid + item.jul_new_paid + item.aug_new_paid + item.sep_new_paid + item.oct_new_paid + item.nov_new_paid + item.dec_new_paid + item.jan_new_paid + item.feb_new_paid + item.mar_new_paid
+  }, 0)
+  console.log('totalpaidfee', totalpaidfee)
   const handleSearchStudent = async () => {
-    const { data } = await axios.get(
-      `${baseURL}/api/fee-groups/student/${reg_no}/assigned-fees`
-    );
-    setStudent(data?.data?.student ?? null);
+    const [feeRecordMonthlyPromise, feeGroupDetailPricesPromise] =
+      await Promise.allSettled([
+        axios.get(`${baseURL}/api/fee-record-monthly/reg_no/${reg_no}`),
+        axios.get(
+          `${baseURL}/api/fee-groups/student/${reg_no}/assigned-fees`
+        ),
+      ]);
 
-    const priceList = data?.data?.feeGroupDetailPrices;
-    const finalData = (Array.isArray(priceList) ? priceList : []).map((elem) => {
-      const row = {
-        ...elem,
+    if (feeRecordMonthlyPromise.status === "fulfilled") {
 
-        apr_paid: 0,
-        apr_due: 0,
-        may_paid: 0,
-        may_due: 0,
-        jun_paid: 0,
-        jun_due: 0,
-        jul_paid: 0,
-        jul_due: 0,
-        aug_paid: 0,
-        aug_due: 0,
-        sep_paid: 0,
-        sep_due: 0,
-        oct_paid: 0,
-        oct_due: 0,
-        nov_paid: 0,
-        nov_due: 0,
-        dec_paid: 0,
-        dec_due: 0,
-        jan_paid: 0,
-        jan_due: 0,
-        feb_paid: 0,
-        feb_due: 0,
-        mar_paid: 0,
-        mar_due: 0
-      };
-      MONTH_PREFIXES.forEach((p) => {
-        row[`${p}_due`] =
-          parseNum(row[`${p}_total`]) - parseNum(row[`${p}_paid`]);
-      });
-      return row;
-    })
-    setAllFeeheadspricing(finalData);
+
+      setStudent(feeRecordMonthlyPromise.value?.data?.data?.fee_records[0]?.student)
+      let priceList = feeRecordMonthlyPromise.value?.data?.data?.fee_records
+      let newpriceList = priceList.map((item) => {
+        return (
+          {
+            ...item,
+
+            apr_new_paid: 0,
+            may_new_paid: 0,
+            jun_new_paid: 0,
+            jul_new_paid: 0,
+            aug_new_paid: 0,
+            sep_new_paid: 0,
+            oct_new_paid: 0,
+            nov_new_paid: 0,
+            dec_new_paid: 0,
+            jan_new_paid: 0,
+            feb_new_paid: 0,
+            mar_new_paid: 0
+
+          }
+        )
+      })
+      setAllFeeheadspricing(newpriceList);
+      let { data } = await axios.get(`${baseURL}/api/fees/registration/${reg_no}`)
+      setAcademicFee(data?.data?.total)
+      setPayableFee(data?.data?.balance)
+    } else {
+      if (feeGroupDetailPricesPromise.status === "fulfilled") {
+        const { data } = feeGroupDetailPricesPromise.value;
+        setStudent(data?.data?.student ?? null);
+
+        const priceList = data?.data?.feeGroupDetailPrices;
+        const finalData = (Array.isArray(priceList) ? priceList : []).map(
+          (elem) => {
+            const row = {
+              ...elem,
+              apr_paid: 0,
+              apr_new_paid: 0,
+              apr_due: 0,
+              may_paid: 0,
+              may_new_paid: 0,
+              may_due: 0,
+              jun_paid: 0,
+              jun_new_paid: 0,
+              jun_due: 0,
+              jul_paid: 0,
+              jul_new_paid: 0,
+              jul_due: 0,
+              aug_paid: 0,
+              aug_new_paid: 0,
+              aug_due: 0,
+              sep_paid: 0,
+              sep_new_paid: 0,
+              sep_due: 0,
+              oct_paid: 0,
+              oct_new_paid: 0,
+              oct_due: 0,
+              nov_paid: 0,
+              nov_new_paid: 0,
+              nov_due: 0,
+              dec_paid: 0,
+              dec_new_paid: 0,
+              dec_due: 0,
+              jan_paid: 0,
+              jan_new_paid: 0,
+              jan_due: 0,
+              feb_paid: 0,
+              feb_new_paid: 0,
+              feb_due: 0,
+              mar_paid: 0,
+              mar_new_paid: 0,
+              mar_due: 0,
+              apr_new_paid: 0,
+              may_new_paid: 0,
+              jun_new_paid: 0,
+              jul_new_paid: 0,
+              aug_new_paid: 0,
+              sep_new_paid: 0,
+              oct_new_paid: 0,
+              nov_new_paid: 0,
+              dec_new_paid: 0,
+              jan_new_paid: 0,
+              feb_new_paid: 0,
+              mar_new_paid: 0
+            };
+
+            return row;
+          }
+        );
+        setAllFeeheadspricing(finalData);
+
+        let  academicdata=priceList.reduce((acc,item)=>{
+           return acc+Number(item.apr_total)+Number(item.may_total)+Number(item.jun_total)+Number(item.jul_total)+
+           Number(item.aug_total)+Number(item.sep_total)+Number(item.oct_total)+Number(item.nov_total)+Number(item.dec_total)+
+           Number(item.jan_total)+Number(item.feb_total)+Number(item.mar_total)
+
+        },0)
+        setAcademicFee(academicdata)
+        setPayableFee(academicdata)
+      }
+    }
   };
 
   const handleTotalChange = (e, rowId) => {
@@ -118,6 +191,7 @@ const CollectAcademicFee = () => {
           const p = m[1];
           next[`${p}_due`] =
             parseNum(next[`${p}_total`]) - parseNum(next[`${p}_paid`]);
+          next[`${p}_new_paid`] = num;
         }
         return next;
       })
@@ -159,10 +233,84 @@ const CollectAcademicFee = () => {
     ]
     : [];
 
-  const handlePayNow=()=>{
+  const handlePayNow = async () => {
     console.log('pay now is calling')
-    console.log('allFeeheadpricing is:',allFeeheadspricing)
-  }  
+    try {
+      let collectfeevalue = {
+        reg_no, total: academicFee,payment: typeoffeepayment==0?totalpaidfee:0, total_paid: academicFee - payableFee + totalpaidfee,
+        balance: payableFee - totalpaidfee, remark: remark, payment_mode: paymentMode, date: transactionDate, consessionamount:typeoffeepayment==1?totalpaidfee:0, consession: typeoffeepayment
+      }
+      console.log('collect fee value is:',collectfeevalue)
+      let { data } = await axios.post(`${baseURL}/api/fees`, collectfeevalue)
+      let id = data?.data?.id
+      console.log('id is:', id)
+
+      console.log('all fee head pricing is:', allFeeheadspricing)
+      let records = allFeeheadspricing.map((item) => {
+        return {
+          reg_no:reg_no,
+          feeheadid: item.feeheadid,
+          fee_table_id: id,
+          date: transactionDate,
+          apr_total: item.apr_total,
+          apr_paid: item.apr_paid,
+          apr_due: item.apr_due,
+
+          may_total: item.may_total,
+          may_paid: item.may_paid,
+          may_due: item.may_due,
+
+          jun_total: item.jun_total,
+          jun_paid: item.jun_paid,
+          jun_due: item.jun_due,
+
+          jul_total: item.jul_total,
+          jul_paid: item.jul_paid,
+          jul_due: item.jul_due,
+
+          aug_total: item.aug_total,
+          aug_paid: item.aug_paid,
+          aug_due: item.aug_due,
+
+          sep_total: item.sep_total,
+          sep_paid: item.sep_paid,
+          sep_due: item.sep_due,
+
+          oct_total: item.oct_total,
+          oct_paid: item.oct_paid,
+          oct_due: item.oct_due,
+
+          nov_total: item.nov_total,
+          nov_paid: item.nov_paid,
+          nov_due: item.nov_due,
+
+          dec_total: item.dec_total,
+          dec_paid: item.dec_paid,
+          dec_due: item.dec_due,
+
+          jan_total: item.jan_total,
+          jan_paid: item.jan_paid,
+          jan_due: item.jan_due,
+
+          feb_toal: item.feb_total,
+          feb_paid: item.feb_paid,
+          feb_due: item.feb_due,
+
+          mar_total: item.mar_total,
+          mar_paid: item.mar_paid,
+          mar_due: item.mar_due,
+
+
+        }
+      })
+
+      let { data2 } = await axios.post(`${baseURL}/api/fee-record-monthly/`, { records })
+      
+    } catch (error) {
+      alert('fee is not saved')
+    }
+
+  }
 
   return (
     <div className="container-fluid fee-report-scope py-3">
@@ -277,153 +425,246 @@ const CollectAcademicFee = () => {
 
       {allFeeheadspricing.length > 0 && (
         <div className="card mt-3">
-          <div className="card-header">
+          <div className="card-header border-0 py-3"
+            style={{
+              backgroundColor: "#d6eaff",
+              borderBottom: "1px solid rgba(13, 110, 253, 0.18)",
+            }}>
             <h6>Collect Fee</h6>
+
+
 
           </div>
 
           <div className="card-body">
 
             <div className="table-responsive">
-            <table
-              className="table table-bordered align-middle mb-0 text-wrap"
-              style={{ minWidth: "980px", tableLayout: "auto" }}
-            >
-              <thead>
-                <tr>
-                  <th
-                    className="small py-2 px-2"
-                    style={{
-                      minWidth: "6.5rem",
-                      maxWidth: "8rem",
-                      whiteSpace: "normal",
-                      backgroundColor: "#d8f0e0",
-                    }}
-                  >
-                    Fee Head
-                  </th>
-                  <th
-                    className="small py-2 px-2"
-                    style={{
-                      minWidth: "4.5rem",
-                      maxWidth: "5.5rem",
-                      whiteSpace: "normal",
-                      backgroundColor: "#d8f0e0",
-                    }}
-                  >
-                    Label
-                  </th>
-                  {header.map((item) => (
+              <table
+                className="table table-bordered align-middle mb-0 text-wrap"
+                style={{ minWidth: "980px", tableLayout: "auto" }}
+              >
+                <thead>
+                  <tr>
                     <th
-                      key={item}
-                      className="small py-2 px-1 text-center"
+                      className="small py-2 px-2"
                       style={{
-                        minWidth: "3rem",
-                        maxWidth: "3.75rem",
+                        minWidth: "6.5rem",
+                        maxWidth: "8rem",
                         whiteSpace: "normal",
                         backgroundColor: "#d8f0e0",
                       }}
                     >
-                      {item}
+                      Fee Head
                     </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-
-                {allFeeheadspricing.map((item) => (
-                  <tr key={getRowId(item)}>
-                    <td className="fw-bold align-top text-break" style={{ minWidth: "6.5rem", maxWidth: "8rem", whiteSpace: "normal" }}>
-                      {item?.feeHead?.fee_head_name}
-                    </td>
-                    <td className="semi-bold align-top text-break" style={{ minWidth: "4.5rem", maxWidth: "5.5rem", whiteSpace: "normal" }}>
-                      Total-<br /><br />
-                      Paid-<br />
-                      Due-<br />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="apr_total" value={item?.apr_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="apr_paid" value={item?.apr_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="apr_due" value={item?.apr_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="may_total" value={item?.may_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="may_paid" value={item?.may_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="may_due" value={item?.may_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="jun_total" value={item?.jun_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="jun_paid" value={item?.jun_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="jun_due" value={item?.jun_total - item?.jun_paid} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="jul_total" value={item?.jul_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="jul_paid" value={item?.jul_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="jul_due" value={item?.jul_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="aug_total" value={item?.aug_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="aug_paid" value={item?.aug_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="aug_due" value={item?.aug_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="sep_total" value={item?.sep_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="sep_paid" value={item?.sep_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="sep_due" value={item?.sep_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="oct_total" value={item?.oct_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="oct_paid" value={item?.oct_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="oct_due" value={item?.oct_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="nov_total" value={item?.nov_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="nov_paid" value={item?.nov_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="nov_due" value={item?.nov_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="dec_total" value={item?.dec_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="dec_paid" value={item?.dec_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="dec_due" value={item?.dec_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="jan_total" value={item?.jan_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="jan_paid" value={item?.jan_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="jan_due" value={item?.jan_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="feb_total" value={item?.feb_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="feb_paid" value={item?.feb_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="feb_due" value={item?.feb_total - item?.feb_paid} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                      <input className="form-control form-control-sm mb-1 w-100" name="mar_total" value={item?.mar_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="mar_paid" value={item?.mar_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
-                      <input className="form-control form-control-sm mb-1 w-100" name="mar_due" value={item?.mar_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
-                    </td>
-
-
-
+                    <th
+                      className="small py-2 px-2"
+                      style={{
+                        minWidth: "4.5rem",
+                        maxWidth: "5.5rem",
+                        whiteSpace: "normal",
+                        backgroundColor: "#d8f0e0",
+                      }}
+                    >
+                      Label
+                    </th>
+                    {header.map((item) => (
+                      <th
+                        key={item}
+                        className="small py-2 px-1 text-center"
+                        style={{
+                          minWidth: "3rem",
+                          maxWidth: "3.75rem",
+                          whiteSpace: "normal",
+                          backgroundColor: "#d8f0e0",
+                        }}
+                      >
+                        {item}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
+                </thead>
+                <tbody>
 
-            </table>
+                  {allFeeheadspricing.map((item) => (
+                    <tr key={getRowId(item)}>
+                      <td className="fw-bold align-top text-break" style={{ minWidth: "6.5rem", maxWidth: "8rem", whiteSpace: "normal" }}>
+                        {item?.feeHead?.fee_head_name}
+                      </td>
+                      <td className="semi-bold align-top text-break" style={{ minWidth: "4.5rem", maxWidth: "5.5rem", whiteSpace: "normal" }}>
+                        Total-<br /><br />
+                        Paid-<br />
+                        Due-<br />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="apr_total" value={item?.apr_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="apr_paid" value={item?.apr_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="apr_due" value={item?.apr_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="may_total" value={item?.may_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="may_paid" value={item?.may_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="may_due" value={item?.may_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="jun_total" value={item?.jun_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="jun_paid" value={item?.jun_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="jun_due" value={item?.jun_total - item?.jun_paid} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="jul_total" value={item?.jul_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="jul_paid" value={item?.jul_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="jul_due" value={item?.jul_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="aug_total" value={item?.aug_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="aug_paid" value={item?.aug_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="aug_due" value={item?.aug_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="sep_total" value={item?.sep_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="sep_paid" value={item?.sep_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="sep_due" value={item?.sep_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="oct_total" value={item?.oct_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="oct_paid" value={item?.oct_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="oct_due" value={item?.oct_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="nov_total" value={item?.nov_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="nov_paid" value={item?.nov_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="nov_due" value={item?.nov_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="dec_total" value={item?.dec_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="dec_paid" value={item?.dec_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="dec_due" value={item?.dec_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="jan_total" value={item?.jan_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="jan_paid" value={item?.jan_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="jan_due" value={item?.jan_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="feb_total" value={item?.feb_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="feb_paid" value={item?.feb_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="feb_due" value={item?.feb_total - item?.feb_paid} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+                      <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
+                        <input className="form-control form-control-sm mb-1 w-100" name="mar_total" value={item?.mar_total} onChange={(e) => handleTotalChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="mar_paid" value={item?.mar_paid} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                        <input className="form-control form-control-sm mb-1 w-100" name="mar_due" value={item?.mar_due} onChange={(e) => handleDueChange(e, getRowId(item))} />
+                      </td>
+
+
+
+                    </tr>
+                  ))}
+                </tbody>
+
+              </table>
             </div>
 
-            <div className='row'>
-              <div className='col-md-3'>
-                <button className='btn btn-primary'>pay and print</button>
-              </div>
-              <div className='col-md-3'>
-                <button className='btn btn-primary' onClick={handlePayNow}>pay now</button>
-              </div>
-            </div>
+
 
 
           </div>
         </div>
       )}
+
+      {student && <section className="card mt-3">
+        <div className='card-header py-3'>
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <h6 className="mb-0">Payment Information</h6>
+            <div className="d-flex flex-wrap align-items-center justify-content-end gap-3 ms-auto">
+              {feespaidType.map((item) => (
+                <div key={item.type} className="form-check form-check-inline mb-0">
+                  <input
+                    className="form-check-input mt-4 me-2"
+                    type="radio"
+                    name="typeoffeepayment"
+                    id={item.type}
+                    value={item.value}
+                    checked={typeoffeepayment === item.value}   // ✅ important
+                    onChange={(e) => setTypeoffeepayment(Number(e.target.value))} // ✅ important
+                  />
+                  <label className="form-check-label" htmlFor={item.type}>
+                    {item.type}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className='card-body'>
+          <div className='row g-3'>
+
+            <div className='col-md-3'>
+              <label className='form-label'>Fine</label>
+              <input className='form-control' placeholder='enter fine' value={fine} onChange={(e) => setFine(e.target.value === "" ? 0 : parseNum(e.target.value))} />
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Consession Type</label>
+              <select className='form-select' value={consessionType} onChange={(e) => setConsessionType(e.target.value)}>
+                <option value=''>—</option>
+                <option value='1'>SVP</option>
+                <option value='2'>Concession</option>
+                <option value='3'>Freeship</option>
+              </select>
+
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Consession</label>
+              <input className='form-control' placeholder='0' value={typeoffeepayment==1?totalpaidfee:0} onChange={(e) => setConcession(e.target.value === "" ? 0 : parseNum(e.target.value))} />
+            </div>
+
+            <div className='col-md-3'>
+              <label className='form-label'>Academic Fee</label>
+              <input className='form-control' placeholder='0' value={academicFee} onChange={(e) => setAcademicFee(e.target.value === "" ? 0 : parseNum(e.target.value))} />
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Payable Fee</label>
+              <input className='form-control' placeholder='0' value={payableFee} onChange={(e) => setPayableFee(e.target.value === "" ? 0 : parseNum(e.target.value))} />
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Fees plus fine</label>
+              <input className='form-control' placeholder='0' value={typeoffeepayment==0?totalpaidfee:0} />
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Balance</label>
+              <input className='form-control' placeholder='0' value={payableFee - totalpaidfee} onChange={(e) => setBalance(e.target.value === "" ? 0 : parseNum(e.target.value))} />
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Remark</label>
+              <textarea className='form-control' placeholder='enter remark' value={remark} onChange={(e) => setRemark(e.target.value)} />
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Payment Mode</label>
+              <select className='form-select' value={paymentMode} onChange={(e) => setPaymentMode(e.target.value)}>
+                <option value=''>—</option>
+                <option value='Cash'>Cash</option>
+                <option value='Card'>Card</option>
+                <option value='UPI'>UPI</option>
+              </select>
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Transaction Date</label>
+              <input type='date' className='form-control' value={transactionDate} onChange={(e) => setTransactionDate(e.target.value)} />
+            </div>
+            <div className='col-md-3'>
+              <label className='form-label'>Extra Amount</label>
+              <input type='number' className='form-control' placeholder='0' value={extraAmount} onChange={(e) => setExtraAmount(e.target.value)} />
+            </div>
+
+
+
+            <div className='col-12 d-flex justify-content-end gap-2 mt-2'>
+              <button type='button' className='btn btn-primary'>pay and print</button>
+              <button type='button' className='btn btn-primary' onClick={handlePayNow}>pay now</button>
+            </div>
+          </div>
+        </div>
+      </section>}
     </div>
   );
 };
