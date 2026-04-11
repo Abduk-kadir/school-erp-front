@@ -10,25 +10,38 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+/** API returns flat keys like "PeronalInformation.first_name" — not nested objects */
+const flat = (row, key) =>
+  row?.[key] ?? row?.[key.replace("PeronalInformation", "PersonalInformation")];
+
 const feeReportColumns = [
   { data: "reg_no", title: "Reg No", defaultContent: "" },
   { data: "client_txt_id", title: "Student ID", defaultContent: "" },
-  { data: "PeronalInformation.first_name", title: "Name", defaultContent: "" },
+  {
+    data: null,
+    title: "Name",
+    defaultContent: "",
+    render: function (_data, type, row) {
+      const fn = flat(row, "PeronalInformation.first_name");
+      const ln = flat(row, "PeronalInformation.last_name");
+      const full = [fn, ln].filter((v) => v != null && String(v).trim() !== "").join(" ").trim();
+      if (type === "sort" || type === "type") return full;
+      return full || "—";
+    },
+  },
   {
     data: null,
     title: "Class | Division | Roll No",
     defaultContent: "",
     orderable: false,
     render: function (_data, type, row) {
-      const pi = row?.PeronalInformation ?? row?.PersonalInformation;
-      const classInfo = pi?.classInfo ?? row?.classInfo;
       const cls =
-        classInfo?.class_name ??
-        classInfo?.class ??
-        classInfo?.name ??
+        flat(row, "PeronalInformation.classInfo.class_name") ||
+        flat(row, "PeronalInformation.class") ||
         "";
-      const div = pi?.division ?? row?.division_name ?? "";
-      const roll = pi?.roll_no ?? row?.roll_no ?? row?.roll_number ?? "";
+      const div = flat(row, "PeronalInformation.division") ?? row?.division_name ?? "";
+      const roll =
+        flat(row, "PeronalInformation.roll_no") ?? row?.roll_no ?? row?.roll_number ?? "";
       const plain = [cls, div, roll]
         .filter((v) => v != null && String(v).trim() !== "")
         .join(" | ");

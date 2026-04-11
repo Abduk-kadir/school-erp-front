@@ -5,8 +5,6 @@ import "../../../assets/css/academicOfflineFeeReport.css";
 
 const displayVal = (v) => (v == null || v === "" ? "—" : String(v));
 
-
-
 const parseNum = (v) => {
   const n = Number.parseFloat(String(v ?? "").replace(/,/g, ""));
   return Number.isFinite(n) ? n : 0;
@@ -22,6 +20,7 @@ const rowMatchesId = (row, rowId) =>
 
 const CollectAcademicFee = () => {
   const [reg_no, setReg_no] = useState("");
+  const [merit_reg_no,setMerit_reg_no]=useState("");
   const [student, setStudent] = useState(null);
   const [allFeeheadspricing, setAllFeeheadspricing] = useState([]);
   const header = ["April", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March"]
@@ -41,6 +40,8 @@ const CollectAcademicFee = () => {
     return acc + item.apr_new_paid + item.may_new_paid + item.jun_new_paid + item.jul_new_paid + item.aug_new_paid + item.sep_new_paid + item.oct_new_paid + item.nov_new_paid + item.dec_new_paid + item.jan_new_paid + item.feb_new_paid + item.mar_new_paid
   }, 0)
   console.log('totalpaidfee', totalpaidfee)
+
+
   const handleSearchStudent = async () => {
     const [feeRecordMonthlyPromise, feeGroupDetailPricesPromise] =
       await Promise.allSettled([
@@ -236,9 +237,13 @@ const CollectAcademicFee = () => {
   const handlePayNow = async () => {
     console.log('pay now is calling')
     try {
+      const paymentDateOnly =
+        transactionDate && String(transactionDate).length >= 10
+          ? String(transactionDate).slice(0, 10)
+          : transactionDate;
       let collectfeevalue = {
         reg_no, total: academicFee,payment: typeoffeepayment==0?totalpaidfee:0, total_paid: academicFee - payableFee + totalpaidfee,
-        balance: payableFee - totalpaidfee, remark: remark, payment_mode: paymentMode, date: transactionDate, consessionamount:typeoffeepayment==1?totalpaidfee:0, consession: typeoffeepayment
+        balance: payableFee - totalpaidfee, remark: remark, payment_mode: paymentMode, date: paymentDateOnly, consessionamount:typeoffeepayment==1?totalpaidfee:0, consession: typeoffeepayment
       }
       console.log('collect fee value is:',collectfeevalue)
       let { data } = await axios.post(`${baseURL}/api/fees`, collectfeevalue)
@@ -251,7 +256,7 @@ const CollectAcademicFee = () => {
           reg_no:reg_no,
           feeheadid: item.feeheadid,
           fee_table_id: id,
-          date: transactionDate,
+          date: paymentDateOnly,
           apr_total: item.apr_total,
           apr_paid: item.apr_paid,
           apr_due: item.apr_due,
@@ -332,6 +337,8 @@ const CollectAcademicFee = () => {
               </label>
               <input
                 type="text"
+                value={merit_reg_no}
+                onChange={(e)=>setMerit_reg_no(e.target.value)}
                 className="form-control form-control-sm"
                 placeholder="Merit list no. / rank…"
               />

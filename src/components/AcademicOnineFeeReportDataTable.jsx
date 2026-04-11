@@ -40,8 +40,13 @@ const AcademicOnlineFeeReportDataTable = ({
   const [syncLoading, setSyncLoading] = useState(false);
   const [exportingFormat, setExportingFormat] = useState(null);
 
-  const resolvedExportUrl =
-    exportBaseUrl ?? `${String(url).replace(/\/$/, "")}/export`;
+  /** Excel/CSV: base path only — filters are appended once in handleExportDownload (avoid double `?`). */
+  const getExportUrl = (format) => {
+    if (exportBaseUrl) return exportBaseUrl;
+    if (format === "excel") return `${baseURL}/api/fees/excel`;
+    if (format === "csv") return `${baseURL}/api/fees/csv`;
+    return `${String(url).replace(/\/$/, "")}/export`;
+  };
 
   // Refs to hold current filter values for DataTable ajax
   const classFilterRef = useRef("");
@@ -82,7 +87,7 @@ const AcademicOnlineFeeReportDataTable = ({
         const [res1, res2, res3] = await Promise.all([
           axios.get(`${baseURL}/api/classes`),
           axios.get(`${baseURL}/api/divisions`),
-          axios.get(`${baseURL}/api/academic-years`),
+         
         ]);
         setClasses(res1?.data?.data || []);
         setDivisions(res2?.data?.data || []);
@@ -141,14 +146,19 @@ const AcademicOnlineFeeReportDataTable = ({
     try {
       setExportingFormat(format);
       if (typeof loadingFun === "function") loadingFun(true);
-      const params = new URLSearchParams({
-        format,
-        ...getReportFiltersForExport(),
+      const filters = getReportFiltersForExport();
+      const dedicated = !exportBaseUrl && (format === "excel" || format === "csv");
+      const params = new URLSearchParams();
+      if (!dedicated) params.set("format", format);
+      Object.entries(filters).forEach(([key, value]) => {
+        const v = value == null ? "" : String(value).trim();
+        if (v !== "") params.set(key, v);
       });
-      const { data } = await axios.get(
-        `${resolvedExportUrl}?${params.toString()}`,
-        { responseType: "blob" }
-      );
+      const qs = params.toString();
+      const exportUrl = getExportUrl(format);
+      const { data } = await axios.get(qs ? `${exportUrl}?${qs}` : exportUrl, {
+        responseType: "blob",
+      });
       triggerFileDownload(data, filename);
     } catch (err) {
       console.error("Export failed:", err);
@@ -281,7 +291,7 @@ const AcademicOnlineFeeReportDataTable = ({
     }
 };
 
-  
+  console.log('all classes are:',classes);
 
 
 
