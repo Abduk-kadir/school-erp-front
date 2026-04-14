@@ -38,8 +38,14 @@ const AcadmicAllTransactionReportDataTable = ({
 
   const [exportingFormat, setExportingFormat] = useState(null);
 
-  const resolvedExportUrl =
-    exportBaseUrl ?? `${String(url).replace(/\/$/, "")}/export`;
+  /** Same as AcadmicOfflineFeeReportDataTable — dedicated paths; filters in query. */
+  const getExportUrl = (format) => {
+    if (exportBaseUrl) return exportBaseUrl;
+    if (format === "excel") return `${baseURL}/api/fees/excel`;
+    if (format === "csv") return `${baseURL}/api/fees/csv`;
+    if (format === "pdf") return `${baseURL}/api/fees/pdf`;
+    return `${String(url).replace(/\/$/, "")}/export`;
+  };
 
   // Refs to hold current filter values for DataTable ajax
   const classFilterRef = useRef("");
@@ -143,14 +149,21 @@ const AcadmicAllTransactionReportDataTable = ({
     try {
       setExportingFormat(format);
       if (typeof loadingFun === "function") loadingFun(true);
-      const params = new URLSearchParams({
-        format,
-        ...getReportFiltersForExport(),
+      const filters = getReportFiltersForExport();
+      const dedicated =
+        !exportBaseUrl &&
+        (format === "excel" || format === "csv" || format === "pdf");
+      const params = new URLSearchParams();
+      if (!dedicated) params.set("format", format);
+      Object.entries(filters).forEach(([key, value]) => {
+        const v = value == null ? "" : String(value).trim();
+        if (v !== "") params.set(key, v);
       });
-      const { data } = await axios.get(
-        `${resolvedExportUrl}?${params.toString()}`,
-        { responseType: "blob" }
-      );
+      const qs = params.toString();
+      const exportUrl = getExportUrl(format);
+      const { data } = await axios.get(qs ? `${exportUrl}?${qs}` : exportUrl, {
+        responseType: "blob",
+      });
       triggerFileDownload(data, filename);
     } catch (err) {
       console.error("Export failed:", err);

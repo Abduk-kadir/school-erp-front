@@ -35,11 +35,15 @@ const AcadmicOfflineFeeReportDataTable = ({
 
   const [exportingFormat, setExportingFormat] = useState(null);
 
-  /** Excel/CSV: base path only — filters are appended once in handleExportDownload (avoid double `?`). */
+  /**
+   * Base path only (no query string). Params are added in handleExportDownload via
+   * getReportFiltersForExport → URLSearchParams → axios.get(`${exportUrl}?${qs}`).
+   */
   const getExportUrl = (format) => {
     if (exportBaseUrl) return exportBaseUrl;
     if (format === "excel") return `${baseURL}/api/fees/excel`;
     if (format === "csv") return `${baseURL}/api/fees/csv`;
+    if (format === "pdf") return `${baseURL}/api/fees/pdf`;
     return `${String(url).replace(/\/$/, "")}/export`;
   };
 
@@ -82,7 +86,7 @@ const AcadmicOfflineFeeReportDataTable = ({
         const [res1, res2, res3] = await Promise.all([
           axios.get(`${baseURL}/api/classes`),
           axios.get(`${baseURL}/api/divisions`),
-         
+          axios.get(`${baseURL}/api/academic-years`),
         ]);
         setClasses(res1?.data?.data || []);
         setDivisions(res2?.data?.data || []);
@@ -128,7 +132,9 @@ const AcadmicOfflineFeeReportDataTable = ({
       setExportingFormat(format);
       if (typeof loadingFun === "function") loadingFun(true);
       const filters = getReportFiltersForExport();
-      const dedicated = !exportBaseUrl && (format === "excel" || format === "csv");
+      const dedicated =
+        !exportBaseUrl &&
+        (format === "excel" || format === "csv" || format === "pdf");
       const params = new URLSearchParams();
       if (!dedicated) params.set("format", format);
       Object.entries(filters).forEach(([key, value]) => {

@@ -234,6 +234,113 @@ const CollectAcademicFee = () => {
     ]
     : [];
 
+  const allpaidFeeHeadsFun = (fees) => {
+    const monthPrefixes = [
+      "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec", "jan", "feb", "mar",
+    ];
+    const hasAnyNewPaid = (item) =>
+      monthPrefixes.some((m) => Number(item[`${m}_new_paid`]) > 0);
+
+    console.log("fees is:", fees);
+    return fees.filter(hasAnyNewPaid).map((item) => {
+      const js = {
+        id: item.feeHead?.id,
+        fee_head_name: item.feeHead?.fee_head_name,
+      };
+      monthPrefixes.forEach((m) => {
+        const key = `${m}_new_paid`;
+        if (Number(item[key]) > 0) js[key] = item[key];
+      });
+      return js;
+    });
+  };
+  const handlePayAndPrint = async () => {
+    console.log('pay and print and save is calling')
+    try {
+      const paymentDateOnly =
+        transactionDate && String(transactionDate).length >= 10
+          ? String(transactionDate).slice(0, 10)
+          : transactionDate;
+      let collectfeevalue = {
+        reg_no, total: academicFee,payment: typeoffeepayment==0?totalpaidfee:0, total_paid: academicFee - payableFee + totalpaidfee,
+        balance: payableFee - totalpaidfee, remark: remark, payment_mode: paymentMode, date: paymentDateOnly, consessionamount:typeoffeepayment==1?totalpaidfee:0, consession: typeoffeepayment
+      }
+      console.log('collect fee value is:',collectfeevalue)
+     // let { data } = await axios.post(`${baseURL}/api/fees`, collectfeevalue)
+      //let id = data?.data?.id
+    
+
+      console.log('all fee head pricing is:', allFeeheadspricing)
+      let paidfeeheads=allpaidFeeHeadsFun(allFeeheadspricing)
+      console.log('paidfeeheads is:',paidfeeheads)
+      let records = allFeeheadspricing.map((item) => {
+        return {
+          reg_no:reg_no,
+          feeheadid: item.feeheadid,
+          fee_table_id: id,
+          date: paymentDateOnly,
+          apr_total: item.apr_total,
+          apr_paid: item.apr_paid,
+          apr_due: item.apr_due,
+
+          may_total: item.may_total,
+          may_paid: item.may_paid,
+          may_due: item.may_due,
+
+          jun_total: item.jun_total,
+          jun_paid: item.jun_paid,
+          jun_due: item.jun_due,
+
+          jul_total: item.jul_total,
+          jul_paid: item.jul_paid,
+          jul_due: item.jul_due,
+
+          aug_total: item.aug_total,
+          aug_paid: item.aug_paid,
+          aug_due: item.aug_due,
+
+          sep_total: item.sep_total,
+          sep_paid: item.sep_paid,
+          sep_due: item.sep_due,
+
+          oct_total: item.oct_total,
+          oct_paid: item.oct_paid,
+          oct_due: item.oct_due,
+
+          nov_total: item.nov_total,
+          nov_paid: item.nov_paid,
+          nov_due: item.nov_due,
+
+          dec_total: item.dec_total,
+          dec_paid: item.dec_paid,
+          dec_due: item.dec_due,
+
+          jan_total: item.jan_total,
+          jan_paid: item.jan_paid,
+          jan_due: item.jan_due,
+
+          feb_toal: item.feb_total,
+          feb_paid: item.feb_paid,
+          feb_due: item.feb_due,
+
+          mar_total: item.mar_total,
+          mar_paid: item.mar_paid,
+          mar_due: item.mar_due,
+
+
+        }
+      })
+      
+     // console.log('records is:',records)
+     // let { data2 } = await axios.post(`${baseURL}/api/fee-record-monthly/`, { records })
+      await axios.post(`${baseURL}/api/fees/fee-reciept-pdf`,{student,feerecords:allFeeheadspricing})
+      
+    } catch (error) {
+      alert('fee is not saved')
+    }
+
+  }
+
   const handlePayNow = async () => {
     console.log('pay now is calling')
     try {
@@ -248,7 +355,7 @@ const CollectAcademicFee = () => {
       console.log('collect fee value is:',collectfeevalue)
       let { data } = await axios.post(`${baseURL}/api/fees`, collectfeevalue)
       let id = data?.data?.id
-      console.log('id is:', id)
+    
 
       console.log('all fee head pricing is:', allFeeheadspricing)
       let records = allFeeheadspricing.map((item) => {
@@ -308,7 +415,8 @@ const CollectAcademicFee = () => {
 
         }
       })
-
+      console.log('student  is:',student)
+      console.log('records is:',records)
       let { data2 } = await axios.post(`${baseURL}/api/fee-record-monthly/`, { records })
       
     } catch (error) {
@@ -666,7 +774,7 @@ const CollectAcademicFee = () => {
 
 
             <div className='col-12 d-flex justify-content-end gap-2 mt-2'>
-              <button type='button' className='btn btn-primary'>pay and print</button>
+              <button type='button' className='btn btn-primary' onClick={handlePayAndPrint}>pay and print</button>
               <button type='button' className='btn btn-primary' onClick={handlePayNow}>pay now</button>
             </div>
           </div>

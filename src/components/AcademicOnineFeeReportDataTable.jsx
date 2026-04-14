@@ -40,11 +40,12 @@ const AcademicOnlineFeeReportDataTable = ({
   const [syncLoading, setSyncLoading] = useState(false);
   const [exportingFormat, setExportingFormat] = useState(null);
 
-  /** Excel/CSV: base path only — filters are appended once in handleExportDownload (avoid double `?`). */
+  /** Excel/CSV/PDF: dedicated paths — filters appended once in handleExportDownload. */
   const getExportUrl = (format) => {
     if (exportBaseUrl) return exportBaseUrl;
     if (format === "excel") return `${baseURL}/api/fees/excel`;
     if (format === "csv") return `${baseURL}/api/fees/csv`;
+    if (format === "pdf") return `${baseURL}/api/fees/pdf`;
     return `${String(url).replace(/\/$/, "")}/export`;
   };
 
@@ -147,7 +148,9 @@ const AcademicOnlineFeeReportDataTable = ({
       setExportingFormat(format);
       if (typeof loadingFun === "function") loadingFun(true);
       const filters = getReportFiltersForExport();
-      const dedicated = !exportBaseUrl && (format === "excel" || format === "csv");
+      const dedicated =
+        !exportBaseUrl &&
+        (format === "excel" || format === "csv" || format === "pdf");
       const params = new URLSearchParams();
       if (!dedicated) params.set("format", format);
       Object.entries(filters).forEach(([key, value]) => {

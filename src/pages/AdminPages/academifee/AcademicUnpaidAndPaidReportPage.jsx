@@ -37,8 +37,8 @@ const MONTH_LABELS = [
 ];
 
 const feeReportColumns = [
-  { data: "student.first_name", title: "Student Name", defaultContent: "" },
-  { data: "feeHead.fee_head_name", title: "Fee Head", defaultContent: "" },
+  { data: "first_name", title: "Student Name", defaultContent: "" },
+  { data: "fee_head_name", title: "Fee Head", defaultContent: "" },
   ...MONTH_LABELS.map(([key, title]) => ({
     data: null,
     title,

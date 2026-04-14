@@ -38,9 +38,11 @@ const AcademicUnpaidAndPaidDataTable = ({
   const getExportUrl = (format) => {
     if (exportBaseUrl) return exportBaseUrl;
     if (format === "excel")
-      return `${baseURL}/api/fee-record-monthly/latest-fee-excel?class_name=${classFilter}&paymentStatus=${paymentStatusFilter}&fromDate=${fromDate}&toDate=${toDate}`;
+      return `${baseURL}/api/fee-record-monthly/latest-fee-excel`;
     if (format === "csv")
-      return `${baseURL}/api/fee-record-monthly/latest-fee-csv?class_name=${classFilter}&paymentStatus=${paymentStatusFilter}&fromDate=${fromDate}&toDate=${toDate}`;
+      return `${baseURL}/api/fee-record-monthly/latest-fee-csv`;
+    if (format === "pdf")
+      return `${baseURL}/api/fee-record-monthly/latest-fee-pdf`;
     return `${String(url).replace(/\/$/, "")}/export`;
   };
 
@@ -130,7 +132,8 @@ const AcademicUnpaidAndPaidDataTable = ({
       if (typeof loadingFun === "function") loadingFun(true);
       const filters = getReportFiltersForExport();
       const dedicated =
-        !exportBaseUrl && (format === "excel" || format === "csv");
+        !exportBaseUrl &&
+        (format === "excel" || format === "csv" || format === "pdf");
       const params = new URLSearchParams();
       if (!dedicated) params.set("format", format);
       Object.entries(filters).forEach(([key, value]) => {
