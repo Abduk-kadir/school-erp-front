@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import baseURL from "../../../utils/baseUrl";
 import "../../../assets/css/academicOfflineFeeReport.css";
-
 const displayVal = (v) => (v == null || v === "" ? "—" : String(v));
-
 const parseNum = (v) => {
   const n = Number.parseFloat(String(v ?? "").replace(/,/g, ""));
   return Number.isFinite(n) ? n : 0;
@@ -27,7 +25,6 @@ const CollectAcademicFee = () => {
   const [fine, setFine] = useState(0);
   const [consessionType, setConsessionType] = useState('')
   const [typeoffeepayment, setTypeoffeepayment] = useState(0);
-
   const [academicFee, setAcademicFee] = useState(0);
   const [payableFee, setPayableFee] = useState(0);
   const [remark, setRemark] = useState('');
@@ -41,21 +38,15 @@ const CollectAcademicFee = () => {
   }, 0)
   console.log('totalpaidfee', totalpaidfee)
 
-
   const handleSearchStudent = async () => {
-    const [feeRecordMonthlyPromise, feeGroupDetailPricesPromise] =
-      await Promise.allSettled([
-        axios.get(`${baseURL}/api/fee-record-monthly/reg_no/${reg_no}`),
-        axios.get(
-          `${baseURL}/api/fee-groups/student/${reg_no}/assigned-fees`
-        ),
-      ]);
+   
 
-    if (feeRecordMonthlyPromise.status === "fulfilled") {
+    if (reg_no) {
+     let response= await axios.get(`${baseURL}/api/fee-record-monthly/reg_no/${reg_no}`)
 
-
-      setStudent(feeRecordMonthlyPromise.value?.data?.data?.fee_records[0]?.student)
-      let priceList = feeRecordMonthlyPromise.value?.data?.data?.fee_records
+      setStudent(response?.data?.data?.fee_records[0]?.student)
+      console.log('fee records is***********:',response?.data?.data)
+      let priceList = response?.data?.data?.fee_records
       let newpriceList = priceList.map((item) => {
         return (
           {
@@ -81,12 +72,15 @@ const CollectAcademicFee = () => {
       let { data } = await axios.get(`${baseURL}/api/fees/registration/${reg_no}`)
       setAcademicFee(data?.data?.total)
       setPayableFee(data?.data?.balance)
-    } else {
-      if (feeGroupDetailPricesPromise.status === "fulfilled") {
-        const { data } = feeGroupDetailPricesPromise.value;
-        setStudent(data?.data?.student ?? null);
-
-        const priceList = data?.data?.feeGroupDetailPrices;
+    }
+    
+     if (merit_reg_no) {
+     let response= await axios.get(
+        `${baseURL}/api/fee-groups/student/${merit_reg_no}/assigned-fees`
+      )
+      let data=response?.data?.data
+        setStudent(data?.student ?? null);
+        const priceList = data?.feeGroupDetailPrices;
         const finalData = (Array.isArray(priceList) ? priceList : []).map(
           (elem) => {
             const row = {
@@ -155,7 +149,7 @@ const CollectAcademicFee = () => {
         setAcademicFee(academicdata)
         setPayableFee(academicdata)
       }
-    }
+    
   };
 
   const handleTotalChange = (e, rowId) => {
@@ -271,6 +265,7 @@ const CollectAcademicFee = () => {
     
 
       console.log('all fee head pricing is:', allFeeheadspricing)
+      console.log('student is:',student)
       let paidfeeheads=allpaidFeeHeadsFun(allFeeheadspricing)
       console.log('paidfeeheads is:',paidfeeheads)
       let records = allFeeheadspricing.map((item) => {
@@ -333,7 +328,7 @@ const CollectAcademicFee = () => {
       
      // console.log('records is:',records)
      // let { data2 } = await axios.post(`${baseURL}/api/fee-record-monthly/`, { records })
-      await axios.post(`${baseURL}/api/fees/fee-reciept-pdf`,{student,feerecords:allFeeheadspricing})
+      await axios.post(`${baseURL}/api/fees/fee-reciept-pdf`,{student,feerecords:paidfeeheads})
       
     } catch (error) {
       alert('fee is not saved')
@@ -342,14 +337,14 @@ const CollectAcademicFee = () => {
   }
 
   const handlePayNow = async () => {
-    console.log('pay now is calling')
     try {
+      let common_reg_no=reg_no||merit_reg_no
       const paymentDateOnly =
         transactionDate && String(transactionDate).length >= 10
           ? String(transactionDate).slice(0, 10)
           : transactionDate;
       let collectfeevalue = {
-        reg_no, total: academicFee,payment: typeoffeepayment==0?totalpaidfee:0, total_paid: academicFee - payableFee + totalpaidfee,
+        reg_no:common_reg_no, total: academicFee,payment: typeoffeepayment==0?totalpaidfee:0, total_paid: academicFee - payableFee + totalpaidfee,
         balance: payableFee - totalpaidfee, remark: remark, payment_mode: paymentMode, date: paymentDateOnly, consessionamount:typeoffeepayment==1?totalpaidfee:0, consession: typeoffeepayment
       }
       console.log('collect fee value is:',collectfeevalue)
@@ -360,7 +355,7 @@ const CollectAcademicFee = () => {
       console.log('all fee head pricing is:', allFeeheadspricing)
       let records = allFeeheadspricing.map((item) => {
         return {
-          reg_no:reg_no,
+          reg_no:common_reg_no,
           feeheadid: item.feeheadid,
           fee_table_id: id,
           date: paymentDateOnly,
@@ -418,6 +413,9 @@ const CollectAcademicFee = () => {
       console.log('student  is:',student)
       console.log('records is:',records)
       let { data2 } = await axios.post(`${baseURL}/api/fee-record-monthly/`, { records })
+      if(merit_reg_no){
+        let response3=await axios.post(`${baseURL}/api/fees/student-copy-from-personal-to-par-personal`,{reg_no:merit_reg_no})
+      }
       
     } catch (error) {
       alert('fee is not saved')
@@ -426,7 +424,10 @@ const CollectAcademicFee = () => {
   }
 
   return (
-    <div className="container-fluid fee-report-scope py-3">
+    <div
+      className="container-fluid fee-report-scope py-3 mx-auto"
+      style={{ width: "90%", maxWidth: "90%" }}
+    >
       <div className="card fee-report-card border-0 mb-0">
         <div
           className="card-header border-0 py-3"
