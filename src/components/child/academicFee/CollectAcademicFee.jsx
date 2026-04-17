@@ -314,7 +314,7 @@ const CollectAcademicFee = () => {
           jan_paid: item.jan_paid,
           jan_due: item.jan_due,
 
-          feb_toal: item.feb_total,
+          feb_total: item.feb_total,
           feb_paid: item.feb_paid,
           feb_due: item.feb_due,
 
@@ -399,7 +399,7 @@ const CollectAcademicFee = () => {
           jan_paid: item.jan_paid,
           jan_due: item.jan_due,
 
-          feb_toal: item.feb_total,
+          feb_total: item.feb_total,
           feb_paid: item.feb_paid,
           feb_due: item.feb_due,
 

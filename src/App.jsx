@@ -20,6 +20,10 @@ const StagePage = lazy(() => import("./pages/stagePage"));
 const FiledTypePage = lazy(() => import("./pages/FieldTypePae"));
 const AllFiledPage = lazy(() => import("./pages/AllFieldPage"));
 const OptionValuePage = lazy(() => import("./pages/OptionValuePage"));
+
+const AdminDashBoardPage=lazy(()=>
+import("./pages/AdminPages/AdminDashBoardPage")
+);
 const PersonalInformationForm = lazy(() =>
   import("./components/child/PersonalInformationForm")
 );
@@ -84,6 +88,9 @@ const StudentLayout = lazy(() => import("./studentLayout/StudentLayout"));
 const StudentDashboard = lazy(() =>
   import("./pages/studentPages/StudentDashboardPage")
 );
+const StudentFee=lazy(()=>
+  import("./components/child/student/StudentFee")
+);
 const ClasswiseSchoolPage = lazy(() =>
   import("./pages/AdminPages/classwiseSchool/classwiseSchoolPage")
 );
@@ -93,6 +100,7 @@ const AllStageShown = lazy(() =>
 const StudentAdmissionStatus = lazy(() =>
   import("./components/child/student/StudentAdmissionStatus")
 );
+
 const AddmissionFormStatusReport = lazy(() =>
   import("./pages/AdminPages/admissionMaster/AddmissionFormStatusReport")
 );
@@ -195,7 +203,7 @@ const routeFallback = (
 );
 
 function App() {
-  let user = false;
+  let user =true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -235,7 +243,7 @@ function App() {
             <Route path="/complete-stage" element={<CompletedStage />} />
             <Route path="dashboard" element={<MasterLayout />}>
               {/*admin route*/}
-              <Route index element={<Dashboard />} />
+              <Route index element={<AdminDashBoardPage />} />
               <Route path="employee-master" element={<EmployeePage />} />
               <Route path="class-master" element={<ClassPage />} />
               <Route path="academic-year-master" element={<AcademicYearPage />} />
@@ -411,6 +419,11 @@ function App() {
                 path="admission-accept-status"
                 element={<StudentAdmissionStatus />}
               />
+              <Route
+                path="dues-fees"
+                element={<StudentFee />}
+              />
+             
 
               {/* student  route end*/}
             </Route>
