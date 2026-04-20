@@ -313,3 +313,235 @@
     font-size: 0.95rem;
   }
 }
+
+/* —— Transaction table (TransactionView in StudentFee.jsx) —— */
+.af-page .af-tx-table-panel {
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius);
+  box-shadow: var(--af-shadow);
+  overflow: hidden;
+  background: var(--af-surface);
+  margin-bottom: 0;
+}
+
+.af-tx-table-panel-head {
+  background: linear-gradient(135deg, #c2410c 0%, #ea580c 42%, #fb923c 100%);
+  color: #fffbeb;
+  padding: 1rem 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.af-tx-table-panel-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.af-tx-table-panel-title-icon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
+  opacity: 0.95;
+}
+
+.af-tx-table-responsive {
+  background: linear-gradient(180deg, #f0fdfa 0%, #f8fafc 35%, #ffffff 100%);
+  border-top: 1px solid rgba(13, 148, 136, 0.12);
+}
+
+.af-page .af-tx-table {
+  --af-tx-table-border: rgba(148, 163, 184, 0.35);
+  font-size: 0.875rem;
+  vertical-align: middle;
+  border-color: var(--af-tx-table-border);
+}
+
+.af-page .af-tx-table thead th {
+  border-bottom-width: 1px;
+}
+
+.af-page .af-tx-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.af-tx-th {
+  background: linear-gradient(180deg, #f0fdfa 0%, #e6fffa 100%);
+  color: #0f766e;
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.65rem 0.75rem;
+  border-color: var(--af-tx-table-border);
+  white-space: nowrap;
+}
+
+.af-tx-th--num {
+  width: 3rem;
+  text-align: center;
+}
+
+.af-tx-th--end .af-tx-th-inner {
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.af-tx-th-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.af-tx-th-icon {
+  font-size: 1.05rem;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+.af-tx-td {
+  padding: 0.6rem 0.75rem;
+  border-color: var(--af-tx-table-border);
+  color: #1e293b;
+}
+
+.af-tx-td--num {
+  text-align: center;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.af-tx-td--end {
+  text-align: right;
+}
+
+.af-tx-th--action,
+.af-tx-td--action {
+  text-align: center;
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.af-tx-download-btn {
+  padding: 0.35rem 0.55rem;
+  line-height: 1;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(13, 148, 136, 0.35);
+  background: linear-gradient(180deg, #f0fdfa 0%, #ccfbf1 100%);
+  color: #0f766e;
+}
+
+.af-tx-download-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ccfbf1 0%, #99f6e4 100%);
+  color: #115e59;
+}
+
+.af-tx-download-btn:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+.af-tx-download-btn-icon {
+  font-size: 1.15rem;
+  display: block;
+}
+
+.af-tx-download-spinner {
+  color: #0d9488;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-width: 0.15em;
+}
+
+.af-tx-tr:hover .af-tx-td {
+  background: rgba(240, 253, 250, 0.55);
+}
+
+.af-tx-cell--paid {
+  color: #047857;
+  font-weight: 700;
+}
+
+.af-tx-cell--due {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.af-tx-table-empty {
+  text-align: center;
+  padding: 2rem 1rem !important;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.af-tx-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.32rem;
+  box-sizing: border-box;
+  width: 10rem;
+  max-width: 100%;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.af-tx-status-badge-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.af-tx-status-badge.af-tx-status--paid {
+  background: linear-gradient(145deg, #ecfdf5 0%, #a7f3d0 100%);
+  border-color: #6ee7b7;
+  color: #065f46;
+}
+
+.af-tx-status-badge.af-tx-status--paid .af-tx-status-badge-icon {
+  color: #059669;
+}
+
+.af-tx-status-badge.af-tx-status--pending {
+  background: linear-gradient(145deg, #fff7ed 0%, #fed7aa 100%);
+  border-color: #fdba74;
+  color: #9a3412;
+}
+
+.af-tx-status-badge.af-tx-status--pending .af-tx-status-badge-icon {
+  color: #ea580c;
+}
+
+.af-tx-status-badge.af-tx-status--failed {
+  background: linear-gradient(145deg, #fef2f2 0%, #fecaca 100%);
+  border-color: #f87171;
+  color: #991b1b;
+}
+
+.af-tx-status-badge.af-tx-status--failed .af-tx-status-badge-icon {
+  color: #dc2626;
+}
+
+.af-tx-status-badge.af-tx-status--default {
+  background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.af-tx-status-badge.af-tx-status--default .af-tx-status-badge-icon {
+  color: #475569;
+}
+
+.af-tx-mono {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
