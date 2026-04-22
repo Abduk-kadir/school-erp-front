@@ -32,6 +32,7 @@ const CollectAcademicFee = () => {
   const [transactionDate, setTransactionDate] = useState('');
   const [extraAmount, setExtraAmount] = useState('');
   const [feespaidType, setFeespaidType] = useState([{ type: "consession", value: 1 }, { type: "fee payment", value: 0 }])
+  const [fines,setFines]=useState({jan:0,feb:0,mar:0,apr:0,may:0,jun:0,jul:0,aug:0,sep:0,oct:0,nov:0,dec:0,jan:0,feb:0,mar:0})
 
   let totalpaidfee = allFeeheadspricing.reduce((acc, item) => {
     return acc + item.apr_new_paid + item.may_new_paid + item.jun_new_paid + item.jul_new_paid + item.aug_new_paid + item.sep_new_paid + item.oct_new_paid + item.nov_new_paid + item.dec_new_paid + item.jan_new_paid + item.feb_new_paid + item.mar_new_paid
@@ -676,6 +677,30 @@ const CollectAcademicFee = () => {
 
                     </tr>
                   ))}
+                </tbody>
+
+              </table>
+
+              <table className="table table-bordered align-middle mb-0 text-wrap">
+                <tbody>
+                  <tr>
+                    <td className="fw-bold align-top text-break"  style={{ minWidth: "6.5rem", maxWidth: "8rem", whiteSpace: "normal" }}>Fine</td>
+                    <td className="semi-bold align-top text-break" style={{ minWidth: "4.5rem", maxWidth: "5.5rem", whiteSpace: "normal" }}>
+                    Total
+                    </td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.apr}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.may}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.jun}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.jul}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.aug}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.sep}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.oct}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.nov}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.dec}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.jan}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.feb}</td>
+                    <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>{fines.mar}</td>
+                  </tr>
                 </tbody>
 
               </table>

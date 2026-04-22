@@ -127,6 +127,12 @@ const FeeGroupPage = lazy(() =>
 const FeeHeadPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/feeHeadPage")
 );
+const FinePage = lazy(() =>
+  import("./pages/AdminPages/feeMaster/FinePage")
+);
+const AssignedFinedPage=lazy(()=>
+import("./pages/AdminPages/feeMaster/AssignedFinedPage")
+);
 
 const FeeGroupPricingPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/FeeGroupPricingPage")
@@ -194,6 +200,9 @@ const CanteenUnpaidAndPaidReportPage = lazy(() =>
 const CanteenAllFeeTransactionPage=lazy(() =>
   import("./pages/AdminPages/canteenfee/CanteenAllFeeTransactionPage")
 );
+
+const AcademicFinePage=lazy(()=>import("./pages/AdminPages/academifee/AcademicFinePage"))
+
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
     <div className="spinner-border text-primary" role="status">
@@ -203,7 +212,7 @@ const routeFallback = (
 );
 
 function App() {
-  let user =true;
+  let user =false;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -366,6 +375,7 @@ function App() {
                   path="all-transaction-academic-payment"
                   element={<AcademicAllFeeTransactionPage />}
                 />
+                <Route path="academic-fine" element={<AcademicFinePage />} />
                 <Route
                 path="download-student-bulk-reciept"
                 element={<DownLoadRecieptPage/>}
@@ -404,6 +414,8 @@ function App() {
                   <Route path="add-fee-head" element={<FeeHeadPage />} />
                   <Route path="add-fee-group" element={<FeeGroupPage />} />
                   <Route path="fee-group-pricing" element={<FeeGroupPricingPage />} />
+                  <Route path='fine' element={<FinePage/>}/>
+                  <Route path='assigned-fine' element={<AssignedFinedPage/>}/>
                 </Route>
               </Route>
 

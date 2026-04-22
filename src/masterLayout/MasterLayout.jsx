@@ -218,7 +218,9 @@ const MasterLayout = () => {
             { title: "Bank Detail", path: "/dashboard/accounts/fee-master/add-bank-detail" },
             { title: "Fee Head", path: "/dashboard/accounts/fee-master/add-fee-head" },
             { title: "Fee Group", path: "/dashboard/accounts/fee-master/add-fee-group" },
-            { title: "Fee Group Pricing", path: "/dashboard/accounts/fee-master/fee-group-pricing" }
+            { title: "Fee Group Pricing", path: "/dashboard/accounts/fee-master/fee-group-pricing" },
+            {title:"Fine", path: "/dashboard/accounts/fee-master/fine"},
+            {title:"Assigned Fine",path:"/dashboard/accounts/fee-master/assigned-fine"}
           ]
         },
         {
@@ -248,6 +250,7 @@ const MasterLayout = () => {
             { title: "Student Monthly Paid/Unpaid Academic Payment", path: "/dashboard/academic-fee/paid-and-unpaid-report" },
             { title: "Fees Summary Academic Report", path: "/dashboard/academic-fee/fees-summary-academic-report" },
             { title: "Student Head & Month Wise Paid/Unpaid Academic Payment", path: "/dashboard/academic-fee/student" },
+            {title:"Academic Fine",path:"/dashboard/academic-fee/academic-fine"},
             { title: "Download Student Bulk Reciept Academic Payment", path: "/dashboard/academic-fee/download-student-bulk-reciept" },
 
           ]
