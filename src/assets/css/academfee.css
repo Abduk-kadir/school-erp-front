@@ -545,3 +545,38 @@
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
+
+/* CollectAcadmicFee2 — student details */
+.af-page .af-student-details .af-student-details__row {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.af-page .af-student-details .af-student-details__label {
+  color: var(--af-muted);
+  font-weight: 600;
+}
+
+.af-page .af-student-details .af-student-details__value {
+  color: #0f172a;
+  min-width: 0;
+  word-break: break-word;
+}
+
+/* CollectAcadmicFee2 — month header checkbox */
+.af-month-th {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  line-height: 1.05;
+}
+
+.af-month-th__checkbox {
+  margin: 0;
+}
+
+.af-month-th__label {
+  cursor: pointer;
+  user-select: none;
+}

@@ -1,0 +1,311 @@
+/* Error log table — warm / orange header, light surfaces (no black) */
+
+.error-log-scope {
+  --el-warm-page: #fffbf7;
+  --el-card: #ffffff;
+  --el-border: #fed7aa;
+  --el-border-soft: #ffedd5;
+  --el-text: #334155;
+  --el-text-muted: #64748b;
+  --el-header-orange: #ea580c;
+  --el-header-orange-mid: #f97316;
+  --el-header-orange-light: #fb923c;
+  --el-accent: #c2410c;
+}
+
+.error-log-hero {
+  background: linear-gradient(
+    125deg,
+    #c2410c 0%,
+    var(--el-header-orange) 35%,
+    var(--el-header-orange-mid) 65%,
+    var(--el-header-orange-light) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.9rem;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 6px 22px rgba(234, 88, 12, 0.22);
+}
+
+.error-log-hero h6 {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #fffef8;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.error-log-hero p {
+  color: rgba(255, 252, 245, 0.92);
+  font-size: 0.72rem;
+  line-height: 1.3;
+  max-width: 42rem;
+  margin-bottom: 0;
+  margin-top: 0.1rem;
+}
+
+.error-log-hero-icon {
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #fffef8;
+}
+
+.error-log-refresh {
+  color: #9a3412;
+  background: #fff7ed;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  font-weight: 600;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  line-height: 1.2;
+  font-size: 0.8rem;
+}
+
+.error-log-refresh:hover:not(:disabled) {
+  color: #7c2d12;
+  background: #fff;
+  border-color: #fff;
+}
+
+.error-log-refresh:disabled {
+  opacity: 0.85;
+}
+
+.error-log-card {
+  background: var(--el-card);
+  border: 1px solid var(--el-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(234, 88, 12, 0.08);
+}
+
+.error-log-card .table-responsive {
+  max-height: min(70vh, 56rem);
+  overflow: auto;
+}
+
+.error-log-table {
+  margin-bottom: 0;
+  color: var(--el-text);
+  font-size: 0.875rem;
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--el-border-soft);
+}
+
+.error-log-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%) !important;
+  color: #7c2d12;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--el-border) !important;
+  white-space: nowrap;
+  padding: 0.75rem 0.9rem;
+}
+
+.error-log-table tbody tr {
+  transition: background 0.15s ease;
+  background: var(--el-card) !important;
+}
+
+.error-log-table tbody tr:hover {
+  background: #fff7ed !important;
+}
+
+.error-log-table td {
+  padding: 0.65rem 0.9rem;
+  vertical-align: middle;
+  border-color: var(--el-border-soft) !important;
+}
+
+.error-log-table .cell-message {
+  max-width: 14rem;
+}
+
+@media (min-width: 1200px) {
+  .error-log-table .cell-message {
+    max-width: 22rem;
+  }
+}
+
+.error-log-table .text-truncate-custom {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+  color: var(--el-text);
+}
+
+.error-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.error-pill-type {
+  background: #ffedd5;
+  color: #9a3412;
+  border: 1px solid #fdba74;
+}
+
+.error-pill-method {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.error-status-badge {
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.error-code-5xx {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca !important;
+}
+
+.error-code-4xx {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+}
+
+.error-code-2xx,
+.error-code-3xx {
+  background: #d1fae5 !important;
+  color: #047857 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+.error-code-unknown {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.error-url-path {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8rem;
+  color: #b45309;
+  word-break: break-all;
+}
+
+.error-time-text {
+  color: var(--el-text-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.error-expand-btn {
+  color: #c2410c;
+  border: 1px solid #fdba74;
+  background: #fff7ed;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  line-height: 1;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.error-expand-btn:hover {
+  color: #9a3412;
+  border-color: #f97316;
+  background: #ffedd5;
+}
+
+.error-detail-row td {
+  background: #fffbf5 !important;
+  border-top: none !important;
+  padding: 0 !important;
+}
+
+.error-detail-inner {
+  padding: 1rem 1.25rem 1.25rem 2.5rem;
+  border-top: 1px dashed var(--el-border);
+}
+
+.error-detail-block {
+  margin-bottom: 1rem;
+}
+
+.error-detail-block:last-child {
+  margin-bottom: 0;
+}
+
+.error-detail-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--el-accent);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.error-stack-pre,
+.error-body-pre {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 0.5rem;
+  color: #1e293b;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 18rem;
+  overflow-y: auto;
+}
+
+.error-body-null {
+  color: var(--el-text-muted);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.error-state-panel {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--el-text-muted);
+  background: var(--el-warm-page);
+}
+
+.error-state-panel .error-state-icon {
+  font-size: 3rem;
+  color: #fb923c;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+.error-state-title {
+  color: var(--el-text);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+
+.error-spin {
+  color: #ea580c;
+  border-color: #fdba74 !important;
+}

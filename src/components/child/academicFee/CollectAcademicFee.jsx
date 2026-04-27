@@ -22,7 +22,7 @@ const CollectAcademicFee = () => {
   const [student, setStudent] = useState(null);
   const [allFeeheadspricing, setAllFeeheadspricing] = useState([]);
   const header = ["April", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March"]
-  const [fine, setFine] = useState(0);
+  
   const [consessionType, setConsessionType] = useState('')
   const [typeoffeepayment, setTypeoffeepayment] = useState(0);
   const [academicFee, setAcademicFee] = useState(0);
@@ -32,21 +32,69 @@ const CollectAcademicFee = () => {
   const [transactionDate, setTransactionDate] = useState('');
   const [extraAmount, setExtraAmount] = useState('');
   const [feespaidType, setFeespaidType] = useState([{ type: "consession", value: 1 }, { type: "fee payment", value: 0 }])
-  const [fines,setFines]=useState({jan:0,feb:0,mar:0,apr:0,may:0,jun:0,jul:0,aug:0,sep:0,oct:0,nov:0,dec:0,jan:0,feb:0,mar:0})
+  const [fines,setFines]=useState({jan:0,jan_new_paid:0,feb:0,feb_new_paid:0,mar:0,mar_new_paid:0,apr:0,apr_new_paid:0,may:0,may_new_paid:0,jun:0,jun_new_paid:0,jul:0,jul_new_paid:0,aug:0,aug_new_paid:0,sep:0,sep_new_paid:0,oct:0,oct_new_paid:0,nov:0,nov_new_paid:0,dec:0,dec_new_paid:0})
 
   let totalpaidfee = allFeeheadspricing.reduce((acc, item) => {
     return acc + item.apr_new_paid + item.may_new_paid + item.jun_new_paid + item.jul_new_paid + item.aug_new_paid + item.sep_new_paid + item.oct_new_paid + item.nov_new_paid + item.dec_new_paid + item.jan_new_paid + item.feb_new_paid + item.mar_new_paid
   }, 0)
+  let totalfine=0;
+  //calulating total fine
+  allFeeheadspricing.forEach((item=>{
+    if(item?.apr_new_paid>0){
+      totalfine+=fines?.apr
+    }
+    if(item?.may_new_paid>0){
+      totalfine+=fines?.may
+    }
+    if(item?.jun_new_paid>0){
+      totalfine+=fines?.jun
+    }
+    if(item?.jul_new_paid>0){
+      totalfine+=fines?.jul
+    }
+    if(item?.aug_new_paid>0){
+      totalfine+=fines?.aug
+    }
+    if(item?.sep_new_paid>0){
+      totalfine+=fines?.sep
+    }
+    if(item?.oct_new_paid>0){
+      totalfine+=fines?.oct
+    }
+    if(item?.nov_new_paid>0){
+      totalfine+=fines?.nov
+    }
+    if(item?.dec_new_paid>0){
+      totalfine+=fines?.dec
+    }
+    if(item?.jan_new_paid>0){
+      totalfine+=fines?.jan
+    }
+    if(item?.feb_new_paid>0){
+      totalfine+=fines?.feb
+    }
+    if(item?.mar_new_paid>0){
+      totalfine+=fines?.mar
+    }
+  }))
+  //end here fine calculation
   console.log('totalpaidfee', totalpaidfee)
+  console.log('fines is*************:',fines)
 
   const handleSearchStudent = async () => {
    
-
     if (reg_no) {
      let response= await axios.get(`${baseURL}/api/fee-record-monthly/reg_no/${reg_no}`)
-
+     let fineresponse=await axios.post(`${baseURL}/api/fines/calculate-fine`,{class_id:response?.data?.data?.fee_records[0]?.student?.class})
+     console.log('fineresponse is************************** :',fineresponse?.data?.data)
       setStudent(response?.data?.data?.fee_records[0]?.student)
-      console.log('fee records is***********:',response?.data?.data)
+      let finejs={...fines}
+        fineresponse?.data?.data?.forEach(item=>{
+          finejs[item?.fine_for_month]=item?.finalFine||0
+        })
+        setFines(finejs)
+
+
       let priceList = response?.data?.data?.fee_records
       let newpriceList = priceList.map((item) => {
         return (
@@ -80,7 +128,15 @@ const CollectAcademicFee = () => {
         `${baseURL}/api/fee-groups/student/${merit_reg_no}/assigned-fees`
       )
       let data=response?.data?.data
+      let fineresponse=await axios.post(`${baseURL}/api/fines/calculate-fine`,{class_id:data?.student?.class})
+      console.log('fineresponse is************************** :',fineresponse?.data?.data)
         setStudent(data?.student ?? null);
+        let finejs={...fines}
+        fineresponse?.data?.data?.forEach(item=>{
+          finejs[item?.fine_for_month]=item?.finalFine||0
+        })
+        setFines(finejs)
+
         const priceList = data?.feeGroupDetailPrices;
         const finalData = (Array.isArray(priceList) ? priceList : []).map(
           (elem) => {
@@ -174,6 +230,20 @@ const CollectAcademicFee = () => {
   };
 
   const handlePaidChange = (e, rowId) => {
+   
+    if(e.target.name=='apr_paid'&&Number(e.target.value)>0){setFines({...fines,apr_new_paid:fines?.apr})}
+    if(e.target.name=='may_paid'&&Number(e.target.value)>0){setFines({...fines,may_new_paid:fines?.may})}
+    if(e.target.name=='jun_paid'&&Number(e.target.value)>0){setFines({...fines,jun_new_paid:fines?.jun})}
+    if(e.target.name=='jul_paid'&&Number(e.target.value)>0){setFines({...fines,jul_new_paid:fines?.jul})}
+    if(e.target.name=='aug_paid'&&Number(e.target.value)>0){setFines({...fines,aug_new_paid:fines?.aug})}
+    if(e.target.name=='sep_paid'&&Number(e.target.value)>0){setFines({...fines,sep_new_paid:fines?.sep})}
+    if(e.target.name=='oct_paid'&&Number(e.target.value)>0){setFines({...fines,oct_new_paid:fines?.oct})}
+    if(e.target.name=='nov_paid'&&Number(e.target.value)>0){setFines({...fines,nov_new_paid:fines?.nov})}
+    if(e.target.name=='dec_paid'&&Number(e.target.value)>0){setFines({...fines,dec_new_paid:fines?.dec})}
+    if(e.target.name=='jan_paid'&&Number(e.target.value)>0){setFines({...fines,jan_new_paid:fines?.jan})}
+    if(e.target.name=='feb_paid'&&Number(e.target.value)>0){setFines({...fines,feb_new_paid:fines?.feb})}
+    if(e.target.name=='mar_paid'&&Number(e.target.value)>0){setFines({...fines,mar_new_paid:fines?.mar})}
+
     const name = e.target.name;
     const num = e.target.value === "" ? 0 : parseNum(e.target.value);
     setAllFeeheadspricing((prev) =>
@@ -206,7 +276,10 @@ const CollectAcademicFee = () => {
   };
 
   console.log("student", student);
-  console.log("allFeeheadspricing", allFeeheadspricing);
+  console.log('all head pricing is:',allFeeheadspricing)
+  console.log('academic fee is:',academicFee)
+  console.log('payable fee is:',payableFee)
+  
 
   const fullName = student
     ? [student.first_name, student.last_name].filter(Boolean).join(" ").trim()
@@ -236,7 +309,7 @@ const CollectAcademicFee = () => {
     const hasAnyNewPaid = (item) =>
       monthPrefixes.some((m) => Number(item[`${m}_new_paid`]) > 0);
 
-    console.log("fees is:", fees);
+   
     return fees.filter(hasAnyNewPaid).map((item) => {
       const js = {
         id: item.feeHead?.id,
@@ -250,7 +323,7 @@ const CollectAcademicFee = () => {
     });
   };
   const handlePayAndPrint = async () => {
-    console.log('pay and print and save is calling')
+   
     try {
       const paymentDateOnly =
         transactionDate && String(transactionDate).length >= 10
@@ -348,12 +421,12 @@ const CollectAcademicFee = () => {
         reg_no:common_reg_no, total: academicFee,payment: typeoffeepayment==0?totalpaidfee:0, total_paid: academicFee - payableFee + totalpaidfee,
         balance: payableFee - totalpaidfee, remark: remark, payment_mode: paymentMode, date: paymentDateOnly, consessionamount:typeoffeepayment==1?totalpaidfee:0, consession: typeoffeepayment
       }
-      console.log('collect fee value is:',collectfeevalue)
+      
       let { data } = await axios.post(`${baseURL}/api/fees`, collectfeevalue)
       let id = data?.data?.id
     
 
-      console.log('all fee head pricing is:', allFeeheadspricing)
+    
       let records = allFeeheadspricing.map((item) => {
         return {
           reg_no:common_reg_no,
@@ -414,12 +487,25 @@ const CollectAcademicFee = () => {
       console.log('student  is:',student)
       console.log('records is:',records)
       let { data2 } = await axios.post(`${baseURL}/api/fee-record-monthly/`, { records })
+
+      
+      //making fines records to save
+      const monthPrefixes = [
+        "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec", "jan", "feb", "mar",
+      ];
+      let finesrecords=[]
+      monthPrefixes.forEach((item)=>{
+        if(fines[`${item}_new_paid`]>0){finesrecords.push({reg_no:common_reg_no,class:student?.class,fee_table_id:id,month:item,paidfineamount:fines[`${item}_new_paid`]})}
+        
+      })
+      //end here fines records to save
+      let {data3}=await axios.post(`${baseURL}/api/student-fines/bulk`, { records:finesrecords })
       if(merit_reg_no){
         let response3=await axios.post(`${baseURL}/api/fees/student-copy-from-personal-to-par-personal`,{reg_no:merit_reg_no})
       }
       
     } catch (error) {
-      alert('fee is not saved')
+      alert(error)
     }
 
   }
@@ -742,7 +828,7 @@ const CollectAcademicFee = () => {
 
             <div className='col-md-3'>
               <label className='form-label'>Fine</label>
-              <input className='form-control' placeholder='enter fine' value={fine} onChange={(e) => setFine(e.target.value === "" ? 0 : parseNum(e.target.value))} />
+              <input className='form-control' placeholder='fine' value={totalfine} />
             </div>
             <div className='col-md-3'>
               <label className='form-label'>Consession Type</label>

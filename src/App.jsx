@@ -202,6 +202,7 @@ const CanteenAllFeeTransactionPage=lazy(() =>
 );
 
 const AcademicFinePage=lazy(()=>import("./pages/AdminPages/academifee/AcademicFinePage"))
+const ErrorPage=lazy(()=>import("./pages/AdminPages/error/ErrorPage"))
 
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
@@ -418,6 +419,8 @@ function App() {
                   <Route path='assigned-fine' element={<AssignedFinedPage/>}/>
                 </Route>
               </Route>
+
+              <Route path="error-logs" element={<ErrorPage />} />
 
               {/*admin route end*/}
             </Route>

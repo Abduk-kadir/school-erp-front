@@ -331,6 +331,13 @@ const MasterLayout = () => {
 
       ]
     },
+    {
+      title: "Error Logs",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Error Logs", path: "/dashboard/error-logs" },
+      ]
+    },
 
     {
       title: "Setting",
