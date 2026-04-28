@@ -277,8 +277,6 @@ const CollectAcademicFee = () => {
 
   console.log("student", student);
   console.log('all head pricing is:',allFeeheadspricing)
-  console.log('academic fee is:',academicFee)
-  console.log('payable fee is:',payableFee)
   
 
   const fullName = student

@@ -92,20 +92,56 @@ const CollectAcadmicFee2 = () => {
                     Number(item.jan_total)+Number(item.feb_total)+Number(item.mar_total)
          
                  },0)
+                let payableFee= allFeeheadspricing.reduce((acc,item)=>{
+                    return acc+Number(item.apr_total_paid)+Number(item.may_total_paid)+Number(item.jun_total_paid)+Number(item.jul_total_paid)+Number(item.aug_total_paid)+Number(item.sep_total_paid)+Number(item.oct_total_paid)+Number(item.nov_total_paid)+Number(item.dec_total_paid)+Number(item.jan_total_paid)+Number(item.feb_total_paid)+Number(item.mar_total_paid)
+                },0) 
                  setAcademicFee(academicdata)
-                 setPayableFee(academicdata)
+                 setPayableFee(academicdata-payableFee)
             }
             else if (reg_no) {
                 let response = await axios.get(`${baseURL}/api/parmanent-personal-information/reg/${reg_no}`)
+                let response2 = await axios.get(`${baseURL}/api/fee-groups/student/${reg_no}/assigned-fees`)
+                let allFeeheadspricing = response2?.data?.data
+                allFeeheadspricing=allFeeheadspricing.map((elem)=>{
+                    return{
+                        ...elem,
+                        apr_paid:+elem?.apr_total-elem?.apr_total_paid,
+                        may_paid:+elem?.may_total-elem?.may_total_paid,
+                        jun_paid:+elem?.jun_total-elem?.jun_total_paid,
+                        jul_paid:+elem?.jul_total-elem?.jul_total_paid,
+                        aug_paid:+elem?.aug_total-elem?.aug_total_paid,
+                        sep_paid:+elem?.sep_total-elem?.sep_total_paid,
+                        oct_paid:+elem?.oct_total-elem?.oct_total_paid,
+                        nov_paid:+elem?.nov_total-elem?.nov_total_paid,
+                        dec_paid:+elem?.dec_total-elem?.dec_total_paid,
+                        jan_paid:+elem?.jan_total-elem?.jan_total_paid,
+                        feb_paid:+elem?.feb_total-elem?.feb_total_paid,
+                        mar_paid:+elem?.mar_total-elem?.mar_total_paid
+                    }
+                })
                 let student = response?.data?.data
                 setStudent({
-                    ...student,
+
                     class: student?.class,
                     division: student?.division,
                     roll_no: student?.roll_no,
+                    gr_no: student?.gr_no,
                     email: student?.email,
                     contact_number: student?.contact_number,
                 })
+                setAllFeeheadspricing(allFeeheadspricing)
+
+                let  academicdata=allFeeheadspricing.reduce((acc,item)=>{
+                    return acc+Number(item.apr_total)+Number(item.may_total)+Number(item.jun_total)+Number(item.jul_total)+
+                    Number(item.aug_total)+Number(item.sep_total)+Number(item.oct_total)+Number(item.nov_total)+Number(item.dec_total)+
+                    Number(item.jan_total)+Number(item.feb_total)+Number(item.mar_total)
+         
+                 },0)
+                let payableFee= allFeeheadspricing.reduce((acc,item)=>{
+                    return acc+Number(item.apr_total_paid)+Number(item.may_total_paid)+Number(item.jun_total_paid)+Number(item.jul_total_paid)+Number(item.aug_total_paid)+Number(item.sep_total_paid)+Number(item.oct_total_paid)+Number(item.nov_total_paid)+Number(item.dec_total_paid)+Number(item.jan_total_paid)+Number(item.feb_total_paid)+Number(item.mar_total_paid)
+                },0) 
+                 setAcademicFee(academicdata)
+                 setPayableFee(academicdata-payableFee)
             }
         }
         catch (error) {
@@ -122,8 +158,99 @@ const CollectAcadmicFee2 = () => {
       }
     
       const handlePayNow = async () => {
+        let common_reg_no=merit_reg_no||reg_no
+        try{
         let filteredstudentfees=allFeeheadspricing.filter((elem)=>checkedFeeheads.includes(String(elem.id)))
-        console.log('filteredstudentfees',filteredstudentfees)
+        filteredstudentfees = filteredstudentfees.map((elem)=>{
+            const next = { ...elem };
+            if(checkedMonths.includes('Apr')){
+                next.apr_total_paid=parseNum(next.apr_total_paid)+parseNum(next.apr_paid)
+                next.apr_total_due=parseNum(next.apr_total)-parseNum(next.apr_total_paid)
+            }
+            if(checkedMonths.includes('May')){
+                next.may_total_paid=parseNum(next.may_total_paid)+parseNum(next.may_paid)
+                next.may_total_due=parseNum(next.may_total)-parseNum(next.may_total_paid)
+            }
+            if(checkedMonths.includes('Jun')){
+                next.jun_total_paid=parseNum(next.jun_total_paid)+parseNum(next.jun_paid)
+                next.jun_total_due=parseNum(next.jun_total)-parseNum(next.jun_total_paid)
+            }
+            if(checkedMonths.includes('Jul')){
+                next.jul_total_paid=parseNum(next.jul_total_paid)+parseNum(next.jul_paid)
+                next.jul_total_due=parseNum(next.jul_total)-parseNum(next.jul_total_paid)
+            }
+            if(checkedMonths.includes('Aug')){
+                next.aug_total_paid=parseNum(next.aug_total_paid)+parseNum(next.aug_paid)
+                next.aug_total_due=parseNum(next.aug_total)-parseNum(next.aug_total_paid)
+            }
+            if(checkedMonths.includes('Sep')){
+                next.sep_total_paid=parseNum(next.sep_total_paid)+parseNum(next.sep_paid)
+                next.sep_total_due=parseNum(next.sep_total)-parseNum(next.sep_total_paid)
+            }
+            if(checkedMonths.includes('Oct')){
+                next.oct_total_paid=parseNum(next.oct_total_paid)+parseNum(next.oct_paid)
+                next.oct_total_due=parseNum(next.oct_total)-parseNum(next.oct_total_paid)
+            }
+            if(checkedMonths.includes('Nov')){
+                next.nov_total_paid=parseNum(next.nov_total_paid)+parseNum(next.nov_paid)
+                next.nov_total_due=parseNum(next.nov_total)-parseNum(next.nov_total_paid)
+            }
+            if(checkedMonths.includes('Dec')){
+                next.dec_total_paid=parseNum(next.dec_total_paid)+parseNum(next.dec_paid)
+                next.dec_total_due=parseNum(next.dec_total)-parseNum(next.dec_total_paid)
+            }
+            if(checkedMonths.includes('Jan')){
+                next.jan_total_paid=parseNum(next.jan_total_paid)+parseNum(next.jan_paid)
+                next.jan_total_due=parseNum(next.jan_total)-parseNum(next.jan_total_paid)
+            }
+            if(checkedMonths.includes('Feb')){
+                next.feb_total_paid=parseNum(next.feb_total_paid)+parseNum(next.feb_paid)
+                next.feb_total_due=parseNum(next.feb_total)-parseNum(next.feb_total_paid)
+            }
+            if(checkedMonths.includes('Mar')){
+                next.mar_total_paid=parseNum(next.mar_total_paid)+parseNum(next.mar_paid)
+                next.mar_total_due=parseNum(next.mar_total)-parseNum(next.mar_total_paid)
+            }
+            return next;
+        })
+      
+        let feerecordmothlydata=filteredstudentfees.map(({ createdAt, updatedAt, ...rest }) => rest)
+        feerecordmothlydata=feerecordmothlydata.map((elem)=>{
+            let js={...elem}
+            js.apr_paid = checkedMonths.includes('Apr') ? parseNum(elem.apr_paid) : 0
+            js.may_paid = checkedMonths.includes('May') ? parseNum(elem.may_paid) : 0
+            js.jun_paid = checkedMonths.includes('Jun') ? parseNum(elem.jun_paid) : 0
+            js.jul_paid = checkedMonths.includes('Jul') ? parseNum(elem.jul_paid) : 0
+            js.aug_paid = checkedMonths.includes('Aug') ? parseNum(elem.aug_paid) : 0
+            js.sep_paid = checkedMonths.includes('Sep') ? parseNum(elem.sep_paid) : 0
+            js.oct_paid = checkedMonths.includes('Oct') ? parseNum(elem.oct_paid) : 0
+            js.nov_paid = checkedMonths.includes('Nov') ? parseNum(elem.nov_paid) : 0
+            js.dec_paid = checkedMonths.includes('Dec') ? parseNum(elem.dec_paid) : 0
+            js.jan_paid = checkedMonths.includes('Jan') ? parseNum(elem.jan_paid) : 0
+            js.feb_paid = checkedMonths.includes('Feb') ? parseNum(elem.feb_paid) : 0
+            js.mar_paid = checkedMonths.includes('Mar') ? parseNum(elem.mar_paid) : 0
+            return js
+        })
+        filteredstudentfees=feerecordmothlydata.map(({apr_paid,may_paid,jun_paid,jul_paid,aug_paid,sep_paid,oct_paid,nov_paid,dec_paid,jan_paid,feb_paid,mar_paid,...rest})=>rest)
+        console.log('filtedstudentfees',filteredstudentfees)
+        console.log('feerecordmothlydata',feerecordmothlydata)
+
+
+        let feecollection = {
+            reg_no:common_reg_no,total: academicFee,payment: typeoffeepayment==0?totalpaid:0, total_paid:academicFee-payableFee+totalpaid,
+            balance:payableFee-totalpaid, remark: remark, payment_mode: paymentMode, date: transactionDate, consessionamount:typeoffeepayment==1?totalpaid:0, consession: typeoffeepayment
+          }
+       let {data}=await axios.post(`${baseURL}/api/student-fees/fee-collection`,{feecollection,filteredstudentfees,feerecordmothlydata})
+       if(merit_reg_no){
+        let response3=await axios.post(`${baseURL}/api/fees/student-copy-from-personal-to-par-personal`,{reg_no:merit_reg_no})
+      }
+      // console.log('data is:',data)
+       alert('fee is saved successfully')
+        }
+        catch(error){
+            console.log('error is:',error)
+            alert('error is:',error?.response?.data?.message)
+        }
        
     
       }
@@ -134,8 +261,26 @@ const CollectAcadmicFee2 = () => {
    // console.log('allFeeheadspricing', allFeeheadspricing)
    // console.log('checkedmonths',checkedMonths)
    console.log('checkedfeeheads',checkedFeeheads)
-   // console.log('academic fee is:',academicFee)
+   console.log('checkedmonths',checkedMonths)
+   let totalpaidarray=allFeeheadspricing.filter((elem)=>checkedFeeheads.includes(String(elem.id)))
+   let totalpaid=totalpaidarray.reduce((acc,elem)=>{
+     checkedMonths.includes('Apr')?acc+=parseNum(elem.apr_paid):0
+     checkedMonths.includes('May')?acc+=parseNum(elem.may_paid):0
+     checkedMonths.includes('Jun')?acc+=parseNum(elem.jun_paid):0
+     checkedMonths.includes('Jul')?acc+=parseNum(elem.jul_paid):0
+     checkedMonths.includes('Aug')?acc+=parseNum(elem.aug_paid):0
+     checkedMonths.includes('Sep')?acc+=parseNum(elem.sep_paid):0
+     checkedMonths.includes('Oct')?acc+=parseNum(elem.oct_paid):0
+     checkedMonths.includes('Nov')?acc+=parseNum(elem.nov_paid):0
+     checkedMonths.includes('Dec')?acc+=parseNum(elem.dec_paid):0
+     checkedMonths.includes('Jan')?acc+=parseNum(elem.jan_paid):0
+     checkedMonths.includes('Feb')?acc+=parseNum(elem.feb_paid):0
+     checkedMonths.includes('Mar')?acc+=parseNum(elem.mar_paid):0
+     return acc
+   },0)
+   // console.log('academic fee is:',academicFee 
   //console.log('payable fee is:',payableFee)
+  console.log('totalpaid********:**:',totalpaid)
 
     const handleMonthCheckboxChange = (month) => {
         setCheckedMonths((prev) =>
@@ -560,11 +705,11 @@ const CollectAcadmicFee2 = () => {
             </div>
             <div className='col-md-3'>
               <label className='form-label'>Fees plus fine</label>
-              <input className='form-control' placeholder='0'  />
+              <input className='form-control' placeholder='0' value={totalpaid}  />
             </div>
             <div className='col-md-3'>
               <label className='form-label'>Balance</label>
-              <input className='form-control' placeholder='0' value={payableFee} onChange={(e) => setBalance(e.target.value === "" ? 0 : parseNum(e.target.value))} />
+              <input className='form-control' placeholder='0' value={payableFee-totalpaid} onChange={(e) => setBalance(e.target.value === "" ? 0 : parseNum(e.target.value))} />
             </div>
             <div className='col-md-3'>
               <label className='form-label'>Remark</label>
