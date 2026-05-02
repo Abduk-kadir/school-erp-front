@@ -134,6 +134,10 @@ const AssignedFinedPage=lazy(()=>
 import("./pages/AdminPages/feeMaster/AssignedFinedPage")
 );
 
+const FeeSplitPage=lazy(()=>
+import("./pages/AdminPages/feeMaster/FeeSplitPage")
+);
+
 const FeeGroupPricingPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/FeeGroupPricingPage")
 );
@@ -213,7 +217,7 @@ const routeFallback = (
 );
 
 function App() {
-  let user =false;
+  let user =true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -417,6 +421,7 @@ function App() {
                   <Route path="fee-group-pricing" element={<FeeGroupPricingPage />} />
                   <Route path='fine' element={<FinePage/>}/>
                   <Route path='assigned-fine' element={<AssignedFinedPage/>}/>
+                  <Route path='online-fee-breakup' element={<FeeSplitPage/>}/>
                 </Route>
               </Route>
 

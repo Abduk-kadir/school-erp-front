@@ -206,6 +206,18 @@ const MasterLayout = () => {
     },
 
     {
+      title: "Staff",
+      icon: "icon-park-outline:id-card",
+      children: [
+        { title: "Staff Master", path: "/dashboard/staff-master" },
+       
+
+
+
+      ]
+    },
+
+    {
       title: "Accounts",
       icon: "icon-park-outline:id-card",
       children: [
@@ -220,7 +232,8 @@ const MasterLayout = () => {
             { title: "Fee Group", path: "/dashboard/accounts/fee-master/add-fee-group" },
             { title: "Fee Group Pricing", path: "/dashboard/accounts/fee-master/fee-group-pricing" },
             {title:"Fine", path: "/dashboard/accounts/fee-master/fine"},
-            {title:"Assigned Fine",path:"/dashboard/accounts/fee-master/assigned-fine"}
+            {title:"Assigned Fine",path:"/dashboard/accounts/fee-master/assigned-fine"},
+            {title:"Online Fee Breakup",path:"/dashboard/accounts/fee-master/online-fee-breakup"}
           ]
         },
         {
