@@ -10,63 +10,18 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
-/** API returns flat keys like "PeronalInformation.first_name" — not nested objects */
-const flat = (row, key) =>
-  row?.[key] ?? row?.[key.replace("PeronalInformation", "PersonalInformation")];
+
 
 const feeReportColumns = [
   { data: "reg_no", title: "Reg No", defaultContent: "" },
   { data: "client_txt_id", title: "Student ID", defaultContent: "" },
   {
-    data: null,
+    data: "first_name",
     title: "Name",
     defaultContent: "",
-    render: function (_data, type, row) {
-      const fn = flat(row, "PeronalInformation.first_name");
-      const ln = flat(row, "PeronalInformation.last_name");
-      const full = [fn, ln].filter((v) => v != null && String(v).trim() !== "").join(" ").trim();
-      if (type === "sort" || type === "type") return full;
-      return full || "—";
-    },
+   
   },
-  {
-    data: null,
-    title: "Class | Division | Roll No",
-    defaultContent: "",
-    orderable: false,
-    render: function (_data, type, row) {
-      const cls =
-        flat(row, "PeronalInformation.classInfo.class_name") ||
-        flat(row, "PeronalInformation.class") ||
-        "";
-      const div = flat(row, "PeronalInformation.division") ?? row?.division_name ?? "";
-      const roll =
-        flat(row, "PeronalInformation.roll_no") ?? row?.roll_no ?? row?.roll_number ?? "";
-      const plain = [cls, div, roll]
-        .filter((v) => v != null && String(v).trim() !== "")
-        .join(" | ");
-      if (type === "sort" || type === "type") return plain;
-
-      const chips = [];
-      if (String(cls).trim() !== "") {
-        chips.push(
-          `<span class="badge rounded-pill text-bg-primary me-1">${escapeHtml(cls)}</span>`
-        );
-      }
-      if (String(div).trim() !== "") {
-        chips.push(
-          `<span class="badge rounded-pill text-bg-success me-1">${escapeHtml(div)}</span>`
-        );
-      }
-      if (String(roll).trim() !== "") {
-        chips.push(
-          `<span class="badge rounded-pill text-bg-warning text-dark">${escapeHtml(roll)}</span>`
-        );
-      }
-      if (!chips.length) return "—";
-      return `<span class="d-inline-flex flex-wrap align-items-center gap-1">${chips.join("")}</span>`;
-    },
-  },
+  {data:"className",title:"Class Name"},
 
   { data: "reciept_no", title: "Receipt No", defaultContent: "" },
   { data: "transaction_no", title: "Transaction No", defaultContent: "" },

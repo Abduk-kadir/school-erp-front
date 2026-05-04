@@ -10,6 +10,8 @@ const AssignSubject = () => {
     const [sujects, setSubjects] = useState([])
     const [programs, setPrograms] = useState([])
     const [electiveBasket, setElectiveBasket] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    const [studentTypesArr,setStudentTypesArr]=useState(['added','unadded','both'])
+    const [studenttype,setStudenttype]=useState('')
     const [semester, setSemester] = useState([1, 2, 3, 4, 5, 6])
 
     const initialValues = {
@@ -18,6 +20,7 @@ const AssignSubject = () => {
         program_id: "",
         semester: "",
         is_optional: "",
+        studenttype: "",
         no_of_optional: "",
         is_multiple_choice: "",
         optional_subject: [{}],
@@ -78,6 +81,8 @@ const AssignSubject = () => {
                         elective['classId'] = Number(values.class_id)||null
                         elective['semester'] = Number(values.semester)||null,
                         elective['exactChoices'] = Number(values.no_of_optional)||null
+                        elective['studenttype']=values.studenttype||null
+                        console.log('elective is*******************:',elective)
                         let { data } = await axios.post(`${baseURL}/api/elective-baskets`, elective)
                         let id = data?.data?.id
                         values.optional_subject.map(elem => {
@@ -231,6 +236,23 @@ const AssignSubject = () => {
                                 </Field>
                                 <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
                             </div>
+
+                            {values?.is_optional == 'Yes' && <div className="col-md-4">
+                                <label className="form-label">Select type of student</label>
+                                <Field as="select" name="studenttype" className="form-select">
+                                    <option value="">Select</option>
+                                    {
+                                        studentTypesArr.map(elem => (
+                                            <option value={elem}>{elem}</option>
+
+                                        ))
+                                    }
+
+
+                                </Field>
+                                <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
+                            </div>}
+
 
                             {values?.is_optional == 'Yes' && <div className="col-md-4">
                                 <label className="form-label">Number of optional Subject</label>

@@ -13,47 +13,8 @@ function escapeHtml(value) {
 const feeReportColumns = [
   { data: "reg_no", title: "Reg No", defaultContent: "" },
   { data: "client_txt_id", title: "Client Text Id", defaultContent: "" },
-  { data: "PeronalInformation.first_name", title: "Name", defaultContent: "" },
-  {
-    data: null,
-    title: "Class | Division | Roll No",
-    defaultContent: "",
-    orderable: false,
-    render: function (_data, type, row) {
-      const pi = row?.PeronalInformation ?? row?.PersonalInformation;
-      const classInfo = pi?.classInfo ?? row?.classInfo;
-      const cls =
-        classInfo?.class_name ??
-        classInfo?.class ??
-        classInfo?.name ??
-        "";
-      const div = pi?.division ?? row?.division_name ?? "";
-      const roll = pi?.roll_no ?? row?.roll_no ?? row?.roll_number ?? "";
-      const plain = [cls, div, roll]
-        .filter((v) => v != null && String(v).trim() !== "")
-        .join(" | ");
-      if (type === "sort" || type === "type") return plain;
-
-      const chips = [];
-      if (String(cls).trim() !== "") {
-        chips.push(
-          `<span class="badge rounded-pill text-bg-primary me-1">${escapeHtml(cls)}</span>`
-        );
-      }
-      if (String(div).trim() !== "") {
-        chips.push(
-          `<span class="badge rounded-pill text-bg-success me-1">${escapeHtml(div)}</span>`
-        );
-      }
-      if (String(roll).trim() !== "") {
-        chips.push(
-          `<span class="badge rounded-pill text-bg-warning text-dark">${escapeHtml(roll)}</span>`
-        );
-      }
-      if (!chips.length) return "—";
-      return `<span class="d-inline-flex flex-wrap align-items-center gap-1">${chips.join("")}</span>`;
-    },
-  },
+  { data: "first_name", title: "Name", defaultContent: "" },
+  { data: "className", title: "Class", defaultContent: "" },
 
   { data: "reciept_no", title: "Receipt No", defaultContent: "" },
   { data: "transaction_no", title: "Transaction No", defaultContent: "" },

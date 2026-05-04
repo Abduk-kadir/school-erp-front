@@ -195,9 +195,11 @@
 .login-container .carousel-image {
   height: 100%;
   width: 100%;
-  background-size: cover;
+  /* Use contain so image is not cropped */ 
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: #0f172a;
   transform: scale(1.04);
   transition: transform 8s ease-out;
 }

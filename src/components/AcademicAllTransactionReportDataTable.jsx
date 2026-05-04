@@ -95,11 +95,8 @@ const AcadmicAllTransactionReportDataTable = ({
       try {
         const [res1, res2, res3, resDiscount] = await Promise.all([
           axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`),
-          axios.get(`${baseURL}/api/academic-years`),
-          axios.get(`${baseURL}/api/discount-types`).catch(() => ({
-            data: { data: [] },
-          })),
+          axios.get(`${baseURL}/api/divisions`)
+         
         ]);
         setClasses(res1?.data?.data || []);
         setDivisions(res2?.data?.data || []);

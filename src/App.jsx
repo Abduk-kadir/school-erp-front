@@ -21,8 +21,11 @@ const FiledTypePage = lazy(() => import("./pages/FieldTypePae"));
 const AllFiledPage = lazy(() => import("./pages/AllFieldPage"));
 const OptionValuePage = lazy(() => import("./pages/OptionValuePage"));
 
-const AdminDashBoardPage=lazy(()=>
-import("./pages/AdminPages/AdminDashBoardPage")
+const StaffRegistrationPage = lazy(() => import("./pages/AdminPages/staff/staffRegistrationPage"));
+const AllStaffPage = lazy(() => import("./pages/AdminPages/staff/AllStaffPage"));
+
+const AdminDashBoardPage = lazy(() =>
+  import("./pages/AdminPages/AdminDashBoardPage")
 );
 const PersonalInformationForm = lazy(() =>
   import("./components/child/PersonalInformationForm")
@@ -59,8 +62,8 @@ const SeatAllotmentPage = lazy(() =>
 const StudentPage = lazy(() =>
   import("./pages/AdminPages/academic/StudentPage")
 );
-const StudentBulkUpdatePage=lazy(()=>
-import("./pages/AdminPages/academic/StudentBulkUpdatePage")
+const StudentBulkUpdatePage = lazy(() =>
+  import("./pages/AdminPages/academic/StudentBulkUpdatePage")
 );
 const DocumentStage = lazy(() => import("./components/child/DocumentStage"));
 const DeclarationStage = lazy(() =>
@@ -88,7 +91,7 @@ const StudentLayout = lazy(() => import("./studentLayout/StudentLayout"));
 const StudentDashboard = lazy(() =>
   import("./pages/studentPages/StudentDashboardPage")
 );
-const StudentFee=lazy(()=>
+const StudentFee = lazy(() =>
   import("./components/child/student/StudentFee")
 );
 const ClasswiseSchoolPage = lazy(() =>
@@ -130,12 +133,12 @@ const FeeHeadPage = lazy(() =>
 const FinePage = lazy(() =>
   import("./pages/AdminPages/feeMaster/FinePage")
 );
-const AssignedFinedPage=lazy(()=>
-import("./pages/AdminPages/feeMaster/AssignedFinedPage")
+const AssignedFinedPage = lazy(() =>
+  import("./pages/AdminPages/feeMaster/AssignedFinedPage")
 );
 
-const FeeSplitPage=lazy(()=>
-import("./pages/AdminPages/feeMaster/FeeSplitPage")
+const FeeSplitPage = lazy(() =>
+  import("./pages/AdminPages/feeMaster/FeeSplitPage")
 );
 
 const FeeGroupPricingPage = lazy(() =>
@@ -155,7 +158,7 @@ const AcademicUnpaidAndPaidReportPage = lazy(() =>
 const AcademicSummaryFeeReportPage = lazy(() =>
   import("./pages/AdminPages/academifee/AcademicSummaryFeeReportPage")
 );
-const AcademicAllFeeTransactionPage=lazy(() =>
+const AcademicAllFeeTransactionPage = lazy(() =>
   import("./pages/AdminPages/academifee/AcademicAllFeeTransactionPage")
 );
 const AcademicFeeCollectPage = lazy(() =>
@@ -163,8 +166,8 @@ const AcademicFeeCollectPage = lazy(() =>
 );
 
 
-const DownLoadRecieptPage=lazy(()=>
-import("./pages/AdminPages/academifee/DownLoadRecieptPage")
+const DownLoadRecieptPage = lazy(() =>
+  import("./pages/AdminPages/academifee/DownLoadRecieptPage")
 );
 
 const AdmissionOnlineFeeReportPage = lazy(() =>
@@ -189,7 +192,7 @@ const TransportOfflinePaymentReportPage = lazy(() =>
 const TransportUnpaidAndPaidReportPage = lazy(() =>
   import("./pages/AdminPages/transportfee/TransportUnpaidAndPaidReportPage")
 );
-const TransportAllFeeTransactionPage=lazy(() =>
+const TransportAllFeeTransactionPage = lazy(() =>
   import("./pages/AdminPages/transportfee/TransportAllFeeTransactionPage")
 );
 const CanteenOfflinePaymentReportPage = lazy(() =>
@@ -201,12 +204,12 @@ const CanteenOnlineFeeReportPage = lazy(() =>
 const CanteenUnpaidAndPaidReportPage = lazy(() =>
   import("./pages/AdminPages/canteenfee/CanteenUnpaidAndPaidReportPage")
 );
-const CanteenAllFeeTransactionPage=lazy(() =>
+const CanteenAllFeeTransactionPage = lazy(() =>
   import("./pages/AdminPages/canteenfee/CanteenAllFeeTransactionPage")
 );
 
-const AcademicFinePage=lazy(()=>import("./pages/AdminPages/academifee/AcademicFinePage"))
-const ErrorPage=lazy(()=>import("./pages/AdminPages/error/ErrorPage"))
+const AcademicFinePage = lazy(() => import("./pages/AdminPages/academifee/AcademicFinePage"))
+const ErrorPage = lazy(() => import("./pages/AdminPages/error/ErrorPage"))
 
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
@@ -217,7 +220,7 @@ const routeFallback = (
 );
 
 function App() {
-  let user =true;
+  let user = true;
   return (
     <BrowserRouter>
       <RouteScrollToTop />
@@ -231,6 +234,7 @@ function App() {
               }
             />
             <Route path="/registration" element={<Registration />} />
+            <Route path="/staff-registration" element={<StaffRegistrationPage />} />
             <Route
               path="/personal-information"
               element={<PersonalInformationForm />}
@@ -382,8 +386,8 @@ function App() {
                 />
                 <Route path="academic-fine" element={<AcademicFinePage />} />
                 <Route
-                path="download-student-bulk-reciept"
-                element={<DownLoadRecieptPage/>}
+                  path="download-student-bulk-reciept"
+                  element={<DownLoadRecieptPage />}
                 />
 
                 <Route path="collect-academic-fee" element={<AcademicFeeCollectPage />} />
@@ -411,7 +415,7 @@ function App() {
                 <Route path="assign-sub-route" element={<SubRoutePage />} />
               </Route>
               <Route path="class-wise-school" element={<ClasswiseSchoolPage />} />
-
+              <Route path="staff-master" element={<AllStaffPage />} />
               <Route path="accounts">
                 <Route path="fee-master">
                   <Route path="add-bank" element={<AddBankPage />} />
@@ -419,9 +423,9 @@ function App() {
                   <Route path="add-fee-head" element={<FeeHeadPage />} />
                   <Route path="add-fee-group" element={<FeeGroupPage />} />
                   <Route path="fee-group-pricing" element={<FeeGroupPricingPage />} />
-                  <Route path='fine' element={<FinePage/>}/>
-                  <Route path='assigned-fine' element={<AssignedFinedPage/>}/>
-                  <Route path='online-fee-breakup' element={<FeeSplitPage/>}/>
+                  <Route path='fine' element={<FinePage />} />
+                  <Route path='assigned-fine' element={<AssignedFinedPage />} />
+                  <Route path='online-fee-breakup' element={<FeeSplitPage />} />
                 </Route>
               </Route>
 
@@ -443,7 +447,7 @@ function App() {
                 path="dues-fees"
                 element={<StudentFee />}
               />
-             
+
 
               {/* student  route end*/}
             </Route>

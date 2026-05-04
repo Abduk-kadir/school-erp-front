@@ -85,8 +85,8 @@ const AcadmicOfflineFeeReportDataTable = ({
       try {
         const [res1, res2, res3] = await Promise.all([
           axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`),
-          axios.get(`${baseURL}/api/academic-years`),
+          axios.get(`${baseURL}/api/divisions`)
+          
         ]);
         setClasses(res1?.data?.data || []);
         setDivisions(res2?.data?.data || []);

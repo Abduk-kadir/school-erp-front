@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Carousel, Card, Form, Button, Row, Col } from 'react-bootstrap';
 import { Formik, Field, ErrorMessage, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { Router, useNavigate } from 'react-router-dom';
 import '../assets/css/loginpage.css';
 import { useEffect } from 'react';
 import axios from 'axios';
@@ -11,6 +11,9 @@ import baseUrl from '../utils/baseUrl'
 import { useDispatch, useSelector } from 'react-redux';
 import { setRegistrationNo } from '../redux/slices/registrationNo';
 import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personalInfoFormSlice';
+import banner1 from '../assets/images/banners/image1.jpg';
+import banner2 from '../assets/images/banners/image2.jpg';
+import banner3 from '../assets/images/banners/image3.jpg';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -40,12 +43,16 @@ const LoginPage = () => {
 
   const carouselImages = [
     {
-      src: 'https://images.pexels.com/photos/20853049/pexels-photo-20853049/free-photo-of-university-building-in-india-in-sunlight.jpeg',
-      alt: 'Modern Indian university building in sunlight',
+      src: banner1,
+      alt: 'School banner 1',
     },
     {
-      src: 'https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      alt: 'School campus entrance',
+      src: banner2,
+      alt: 'School banner 2',
+    },
+    {
+      src: banner3,
+      alt: 'School banner 3',
     },
   ];
 
@@ -102,71 +109,80 @@ const LoginPage = () => {
                // validationSchema={loginSchema}
                 onSubmit={async (values, { setSubmitting, resetForm }) => {
 
-                  console.log('login is called')
+                  console.log('user is:',values.loginAs)
                   try{
+                 if(values.loginAs=='Parent'){
                   let res=await axios.post(`${baseUrl}/api/personal-information/all`,{email:values.email})
-                   setPersonalInformations(res.data.data)
-                   console.log('form value is:',values)
-                   if(personalInformations.length>0){
-                  let {data}=await axios.post(`${baseUrl}/api/personal-information/login`,{email:values.email,reg_no:values.reg_no})
-                  alert('login successfully')
-                  let reg_no=data?.reg_no 
-                  let token=data?.token
-                  localStorage.setItem("token",token)
-                  localStorage.setItem("reg_no",reg_no)
-                  let res2=await axios.get(`${baseUrl}/api/form-status/${values.reg_no}`)
-                  dispatch(setRegistrationNo({ reg_no:values.reg_no }))
-                  let current_step=res2?.data?.data?.current_step
-                  let status=res2?.data?.data?.form_status
-                  console.log('current step',current_step)
-                  switch(current_step){
-                    case 1:
-                      navigate(`/registration?step=${current_step}&reg_no=${reg_no}`);
-                      break;
-                    case 2:
-                      navigate(`personal-information?step=${current_step}&reg_no=${reg_no}`)
+                  setPersonalInformations(res.data.data)
+                  console.log('form value is:',values)
+                  if(personalInformations.length>0){
+                 let {data}=await axios.post(`${baseUrl}/api/personal-information/login`,{email:values.email,reg_no:values.reg_no})
+                 alert('login successfully')
+                 let reg_no=data?.reg_no 
+                 let token=data?.token
+                 localStorage.setItem("token",token)
+                 localStorage.setItem("reg_no",reg_no)
+                 let res2=await axios.get(`${baseUrl}/api/form-status/${values.reg_no}`)
+                 dispatch(setRegistrationNo({ reg_no:values.reg_no }))
+                 let current_step=res2?.data?.data?.current_step
+                 let status=res2?.data?.data?.form_status
+                 console.log('current step',current_step)
+                 switch(current_step){
+                   case 1:
+                     navigate(`/registration?step=${current_step}&reg_no=${reg_no}`);
+                     break;
+                   case 2:
+                     navigate(`personal-information?step=${current_step}&reg_no=${reg_no}`)
+                     break; 
+                      case 3:
+                     navigate(`/educational-detail-stage?step=${current_step}&reg_no=${reg_no}`);
+                     break;
+                   case 4:
+                     navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`)
+                     break; 
+                      case 5:
+                      navigate(`/parent-particular-stage?step=${current_step}&reg_no=${reg_no}`)
+                     break;
+                   case 6:
+                     navigate(`/transport-detail-stage?step=${current_step}&reg_no=${reg_no}`)
+                     break; 
+                     case 7:
+                     navigate(`/other-information-stage?step=${current_step}&reg_no=${reg_no}`)
+                     break; 
+                     case 8:
+                     navigate(`/declaration-stage?step=${current_step}&reg_no=${reg_no}`)
+                     break; 
+                      case 9:
+                     navigate(`/document-stage?step=${current_step}&reg_no=${reg_no}`)
+                     break;  
                       break; 
-                       case 3:
-                      navigate(`/educational-detail-stage?step=${current_step}&reg_no=${reg_no}`);
-                      break;
-                    case 4:
-                      navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`)
-                      break; 
-                       case 5:
-                       navigate(`/parent-particular-stage?step=${current_step}&reg_no=${reg_no}`)
-                      break;
-                    case 6:
-                      navigate(`/transport-detail-stage?step=${current_step}&reg_no=${reg_no}`)
-                      break; 
-                      case 7:
-                      navigate(`/other-information-stage?step=${current_step}&reg_no=${reg_no}`)
-                      break; 
-                      case 8:
-                      navigate(`/declaration-stage?step=${current_step}&reg_no=${reg_no}`)
-                      break; 
-                       case 9:
-                      navigate(`/document-stage?step=${current_step}&reg_no=${reg_no}`)
-                      break;  
-                       break; 
-                       case 10:
-                        if(Number(status)==1){
-                          navigate(`/studentdashboard?reg_no=${reg_no}`)
-                        }
-                        else{
-                          navigate(`/studentdashboard/admission-accept-status?reg_no=${reg_no}`)
-                        }
-                     
-                      break;  
+                      case 10:
+                       if(Number(status)==1){
+                         navigate(`/studentdashboard?reg_no=${reg_no}`)
+                       }
+                       else{
+                         navigate(`/studentdashboard/admission-accept-status?reg_no=${reg_no}`)
+                       }
+                    
+                     break;  
+                 }
+
                   }
 
-                   }
+                 }
+                 else if(values.loginAs=='Staff'){
+                  let res=await axios.post(`${baseUrl}/api/staff/login`,{email:values.email,password:values.password})
+                  navigate('/dashboard')
+                  console.log('staff is login successfully',res?.data?.data)
+
+                 }
                   
             
                    
 
                   }
                   catch(err){
-                    alert(err)
+                    alert(err?.response?.data?.message)
                   }
                  
 

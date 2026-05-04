@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
+import axios from "axios";
+import baseURL from "../utils/baseUrl";
 
 
 // ── Recursive Sidebar Menu Item Component ────────────────────────────────
@@ -10,7 +12,6 @@ function SidebarMenuItem({ item, level = 0 }) {
   const [open, setOpen] = useState(false);
   const hasChildren = !!item.children?.length;
   const location = useLocation();
-
   // Auto open when child/grandchild route is active
   useEffect(() => {
     if (hasChildren) {
@@ -69,6 +70,19 @@ function SidebarMenuItem({ item, level = 0 }) {
 const MasterLayout = () => {
   const [sidebarActive, setSidebarActive] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [instituteLogo, setInstituteLogo] = useState(null);
+
+  useEffect(() => {
+    let fetchData = async () => {
+      try {
+        const { data } = await axios.get(`${baseURL}/api/institute`);
+        setInstituteLogo(data?.data[0]?.logo);
+      } catch (error) {
+
+      }
+    };
+    fetchData();
+  }, []);
 
   const sidebarControl = () => setSidebarActive(!sidebarActive);
   const mobileMenuControl = () => setMobileMenu(!mobileMenu);
@@ -385,14 +399,14 @@ const MasterLayout = () => {
 
         <div>
           <Link to="/" className="sidebar-logo">
-            <img src="assets/images/logo.png" alt="logo" className="light-logo" />
+            <img src={instituteLogo} alt="logo" className="light-logo" />
             <img
-              src="assets/images/logo-light.png"
+              src={instituteLogo}
               alt="logo"
               className="dark-logo"
             />
             <img
-              src="assets/images/logo-icon.png"
+              src={instituteLogo}
               alt="logo icon"
               className="logo-icon"
             />
