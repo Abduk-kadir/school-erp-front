@@ -22,7 +22,6 @@ const feeReportColumns = [
    
   },
   {data:"className",title:"Class Name"},
-
   { data: "reciept_no", title: "Receipt No", defaultContent: "" },
   { data: "transaction_no", title: "Transaction No", defaultContent: "" },
   { data: "failure_message", title: "Failure Message", defaultContent: "" },

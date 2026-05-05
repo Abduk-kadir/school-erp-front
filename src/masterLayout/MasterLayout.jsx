@@ -242,6 +242,7 @@ const MasterLayout = () => {
             { title: "Payment Setting", path: "/dashboard/accounts/fee-master/fee-setting" },
             { title: "bank", path: "/dashboard/accounts/fee-master/add-bank" },
             { title: "Bank Detail", path: "/dashboard/accounts/fee-master/add-bank-detail" },
+            { title: "Fees Type", path: "/dashboard/accounts/fee-master/add-fees-type" },
             { title: "Fee Head", path: "/dashboard/accounts/fee-master/add-fee-head" },
             { title: "Fee Group", path: "/dashboard/accounts/fee-master/add-fee-group" },
             { title: "Fee Group Pricing", path: "/dashboard/accounts/fee-master/fee-group-pricing" },

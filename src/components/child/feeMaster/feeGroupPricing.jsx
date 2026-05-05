@@ -7,9 +7,13 @@ import baseURL from "../../../utils/baseUrl";
 const initialForm = {
   feeGroupId: "",
   frequency: "",
+  fee_for:"",
+  isAdded_student:"no",
   classId: "",
   backwardClass: false,
-  gender: "",
+  gender: "both",
+  is_elective:"no",
+  subject_id:null,
 };
 
 const priceRowFromFeehead = (feehead) => ({
@@ -73,7 +77,9 @@ function mergeFeeArrays(...arrays) {
 const FeeGroupPricing = () => {
   const [feeheads, setFeeheads] = useState([]);
   const [feegroup,setFeegroup]=useState([])
+  const [feesType,setFeesType]=useState([])
   const [classes, setClasses] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [form, setForm] = useState(initialForm);
   const [yearprice, setYearprice] = useState([]);
   const [halfyearprice1, setHalfyearprice1] = useState([]);
@@ -157,12 +163,14 @@ const FeeGroupPricing = () => {
   useEffect(() => {
     const fetchFeeheads = async () => {
       try {
-        const response = await axios.get(`${baseURL}/api/fee-heads`);
+        const feesTypeRes = await axios.get(`${baseURL}/api/fees-types`);
         const classesRes = await axios.get(`${baseURL}/api/classes`);
         const feegroupRes=await axios.get(`${baseURL}/api/fee-groups`);
-        setFeeheads(response.data.data ?? []);
+        const subjectsRes=await axios.get(`${baseURL}/api/subjects`);
+        setFeesType(feesTypeRes.data.data ?? []);
         setClasses(classesRes.data.data ?? []);
         setFeegroup(feegroupRes.data.data??[])
+        setSubjects(subjectsRes.data.data ?? []);
       } catch (error) {
         console.error("Error fetching fee heads:", error);
       }
@@ -179,7 +187,20 @@ const FeeGroupPricing = () => {
     setQuaterprice3(feeheads.map(priceRowFromFeehead));
   }, [feeheads]);
 
+  useEffect(() => {
+    const fetchFeeheads = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/api/fee-groups/fee-heads/${form.feeGroupId}`);
+        setFeeheads(response.data.data ?? []);
+      } catch (error) {
+        console.error("Error fetching fee heads:", error);
+      }
+    };
+    fetchFeeheads();
+  }, [form.feeGroupId]);
+
   const updateField = (field) => (e) => {
+   
     const value = e.target.value;
     setForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -192,7 +213,12 @@ const FeeGroupPricing = () => {
       frequency: form.frequency,
       classId: form.classId,
       isbackwardclass: form.backwardClass,
-      gender: form.gender,}
+      gender: form.gender,
+      fee_for: form.fee_for,
+      isAdded_student: form.isAdded_student,
+      is_elective: form.is_elective,
+      subject_id: form.subject_id,
+    }
        if(form.frequency=="Halfyearly"){
         let groupPricingRecord=mergeFeeArrays(halfyearprice1,halfyearprice2)
         console.log('group details',groupdetails)
@@ -209,11 +235,12 @@ const FeeGroupPricing = () => {
        if(form.frequency=="Monthly"){
         console.log('group details',groupdetails)
         console.log('year price is:',yearprice)
-        await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,yearprice})
+        await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord:yearprice})
 
        }
+       alert('Fee group pricing added successfully')
   }catch(error){
-
+    alert(error?.response?.data?.message||'failed to add fee group pricing')
   }
      
 
@@ -228,6 +255,28 @@ const FeeGroupPricing = () => {
           </div>
           <div className="card-body p-4">
             <form onSubmit={handleSubmit}>
+
+              <div className="row mb-3 align-items-center">
+                <label htmlFor="fee-for" className="col-sm-4 col-md-3 col-form-label text-sm-start">
+                  Fee Type
+                </label>
+                <div className="col-sm-8 col-md-6">
+                  <select
+                    id="fee-for"
+                    className="form-select"
+                    value={form.fee_for}
+                    onChange={updateField("fee_for")}
+                  >
+                    <option value="">Select Fee For</option>
+                    {feesType.map((feesType) => (
+                      <option key={feesType.id} value={feesType.id}>
+                        {feesType.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className="row mb-3 align-items-center">
                 <label htmlFor="fee-group" className="col-sm-4 col-md-3 col-form-label text-sm-start">
                   Fee Group
@@ -236,6 +285,7 @@ const FeeGroupPricing = () => {
                   <select
                     id="fee-group"
                     className="form-select"
+                   
                     value={form.feeGroupId}
                     onChange={updateField("feeGroupId")}
                   >
@@ -376,6 +426,102 @@ const FeeGroupPricing = () => {
                   </div>
                 </div>
               </div>
+
+
+              <div className="row mb-3 align-items-center">
+                <div className="col-sm-4 col-md-3 col-form-label text-sm-start">Is Added Student</div>
+                <div className="col-sm-8 col-md-6">
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="isAdded_student"
+                      id="isAdded_student-yes"
+                      value="yes"
+                      checked={form.isAdded_student === "yes"}
+                      onChange={updateField("isAdded_student")}
+                    />
+                    <label className="form-check-label ms-3" htmlFor="gender-male">
+                      Yes
+                    </label>
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="isAdded_student"
+                      id="isAdded_student-no"
+                      value="no"
+                      checked={form.isAdded_student === "no"}
+                      onChange={updateField("isAdded_student")}
+                    />
+                    <label className="form-check-label ms-3 " htmlFor="isAdded_student-no">
+                      No
+                    </label>
+                  </div>
+                  
+                </div>
+              </div>
+
+              <div className="row mb-3 align-items-center">
+                <div className="col-sm-4 col-md-3 col-form-label text-sm-start">Is Elective</div>
+                <div className="col-sm-8 col-md-6">
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="is_elective"
+                      id="is_elective-yes"
+                      value="yes"
+                      checked={form.is_elective === "yes"}
+                      onChange={updateField("is_elective")}
+                    />
+                    <label className="form-check-label ms-3" htmlFor="is_elective-yes">
+                      Yes
+                    </label>
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="is_elective"
+                      id="is_elective-no"
+                      value="no"
+                      checked={form.is_elective === "no"}
+                      onChange={updateField("is_elective")}
+                    />
+                    <label className="form-check-label ms-3 " htmlFor="is_elective-no">
+                      No
+                    </label>
+                  </div>
+                  
+                </div>
+              </div>
+              {form.is_elective === "yes" && (
+                <div className="row mb-3 align-items-center">
+                  <div className="col-sm-4 col-md-3 col-form-label text-sm-start">
+                    Subject
+                  </div>
+                  <div className="col-sm-8 col-md-6">
+                    <select
+                      id="subject-select"
+                      className="form-select"
+                      value={form.subject_id}
+                      onChange={updateField("subject_id")}
+                    >
+                      <option value="">Select Subject</option>
+                      {subjects.map((subject) => (
+                        <option key={subject.id} value={subject.id}>
+                          {subject.value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              
+
 
               <div className="row mt-4 pt-2 border-top">
                 <div className="col-12 d-flex justify-content-end">
