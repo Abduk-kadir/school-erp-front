@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
+import "../../../assets/css/mastercom.css";
 
 const MONTHS = [
     { value: "apr", label: "Apr" },
@@ -98,136 +100,192 @@ const AddFine = () => {
     };
 
     return (
-        <div className="card shadow mb-3">
-            <div className="card-header py-2 bg-primary-subtle text-primary border-bottom border-primary border-opacity-25">
-                <h6 className="mb-0 fw-semibold">Add Fine</h6>
-            </div>
-
-            <div className="card-body py-2">
-                {classesError && (
-                    <div className="alert alert-warning py-2 mb-2" role="alert">
-                        {classesError}
+        <div className="chfi-wrapper mb-3">
+            <div className="chfi-card">
+                <div className="card-header">
+                    <div className="header-row">
+                        <span className="header-icon">
+                            <Icon icon="solar:bill-cross-bold-duotone" width="24" />
+                        </span>
+                        <div>
+                            <h5 className="card-title">Add Fine</h5>
+                        </div>
                     </div>
-                )}
+                </div>
 
-                {submitSuccess && (
-                    <div className="alert alert-success py-2 mb-2" role="alert">
-                        {submitSuccess}
-                    </div>
-                )}
+                <div className="card-body">
+                    {classesError && (
+                        <div className="alert alert-warning py-2 mb-2" role="alert">
+                            {classesError}
+                        </div>
+                    )}
 
-                {submitError && (
-                    <div className="alert alert-danger py-2 mb-2" role="alert">
-                        {submitError}
-                    </div>
-                )}
+                    {submitSuccess && (
+                        <div className="alert alert-success py-2 mb-2" role="alert">
+                            {submitSuccess}
+                        </div>
+                    )}
 
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
-                >
-                    {({ isSubmitting }) => (
-                        <Form>
-                            <div className="row justify-content-start">
-                                <div className="col-12 col-md-8 col-lg-6">
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Class</label>
-                                        <Field
-                                            as="select"
-                                            name="class_id"
-                                            className="form-select form-select-sm"
-                                            disabled={classesLoading}
-                                        >
-                                            <option value="">
-                                                {classesLoading ? "Loading classes..." : "Select class"}
-                                            </option>
-                                            {classes.map((c) => {
-                                                const v = classOptionValue(c);
-                                                if (v === "" || v == null) return null;
-                                                return (
-                                                    <option key={String(v)} value={String(v)}>
-                                                        {classOptionLabel(c)}
+                    {submitError && (
+                        <div className="alert alert-danger py-2 mb-2" role="alert">
+                            {submitError}
+                        </div>
+                    )}
+
+                    <div className="form-area">
+                        <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={handleSubmit}
+                        >
+                            {({ isSubmitting, resetForm }) => (
+                                <Form className="chfi-root">
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Class
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:square-academic-cap-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                as="select"
+                                                name="class_id"
+                                                className="form-select"
+                                                disabled={classesLoading}
+                                            >
+                                                <option value="">
+                                                    {classesLoading ? "Loading classes..." : "Select class"}
+                                                </option>
+                                                {classes.map((c) => {
+                                                    const v = classOptionValue(c);
+                                                    if (v === "" || v == null) return null;
+                                                    return (
+                                                        <option key={String(v)} value={String(v)}>
+                                                            {classOptionLabel(c)}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </Field>
+                                        </div>
+                                        <ErrorMessage name="class_id" component="div" className="text-danger field-error" />
+                                    </div>
+
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Month
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:calendar-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name="fine_for_month" className="form-select">
+                                                <option value="">Select month</option>
+                                                {MONTHS.map((m) => (
+                                                    <option key={m.value} value={m.value}>
+                                                        {m.label}
                                                     </option>
-                                                );
-                                            })}
-                                        </Field>
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="class_id" />
+                                                ))}
+                                            </Field>
                                         </div>
+                                        <ErrorMessage name="fine_for_month" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Month</label>
-                                        <Field as="select" name="fine_for_month" className="form-select form-select-sm">
-                                            <option value="">Select month</option>
-                                            {MONTHS.map((m) => (
-                                                <option key={m.value} value={m.value}>
-                                                    {m.label}
-                                                </option>
-                                            ))}
-                                        </Field>
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="fine_for_month" />
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Fine type
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:bookmark-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name="fine_type" className="form-select">
+                                                <option value="">Select fine type</option>
+                                                {FINE_TYPES.map((t) => (
+                                                    <option key={t.value} value={t.value}>
+                                                        {t.label}
+                                                    </option>
+                                                ))}
+                                            </Field>
                                         </div>
+                                        <ErrorMessage name="fine_type" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Fine type</label>
-                                        <Field as="select" name="fine_type" className="form-select form-select-sm">
-                                            <option value="">Select fine type</option>
-                                            {FINE_TYPES.map((t) => (
-                                                <option key={t.value} value={t.value}>
-                                                    {t.label}
-                                                </option>
-                                            ))}
-                                        </Field>
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="fine_type" />
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Fine start date
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:calendar-date-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                type="date"
+                                                name="fine_start_date"
+                                                className="form-control"
+                                            />
                                         </div>
+                                        <ErrorMessage name="fine_start_date" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Fine start date</label>
-                                        <Field
-                                            type="date"
-                                            name="fine_start_date"
-                                            className="form-control form-control-sm"
-                                        />
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="fine_start_date" />
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Fine amount
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:wallet-money-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                type="number"
+                                                name="fine_amount"
+                                                className="form-control"
+                                                placeholder="Enter amount"
+                                                min="0"
+                                                step="any"
+                                            />
                                         </div>
+                                        <ErrorMessage name="fine_amount" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Fine amount</label>
-                                        <Field
-                                            type="number"
-                                            name="fine_amount"
-                                            className="form-control form-control-sm"
-                                            placeholder="Enter amount"
-                                            min="0"
-                                            step="any"
-                                        />
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="fine_amount" />
-                                        </div>
-                                    </div>
-
-                                    <div className="text-start pt-1">
+                                    <div className="actions">
                                         <button
-                                            type="submit"
-                                            className="btn btn-success btn-sm"
+                                            type="button"
+                                            className="btn btn-reset"
+                                            onClick={() => resetForm()}
                                             disabled={isSubmitting || classesLoading}
                                         >
-                                            Save
+                                            <Icon icon="solar:restart-bold-duotone" width="16" />
+                                            Reset
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-submit"
+                                            disabled={isSubmitting || classesLoading}
+                                        >
+                                            {isSubmitting ? (
+                                                <>
+                                                    <Icon icon="line-md:loading-loop" width="16" />
+                                                    Saving...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Icon icon="solar:check-circle-bold-duotone" width="18" />
+                                                    Save
+                                                </>
+                                            )}
                                         </button>
                                     </div>
-                                </div>
-                            </div>
-                        </Form>
-                    )}
-                </Formik>
+                                </Form>
+                            )}
+                        </Formik>
+                    </div>
+                </div>
             </div>
         </div>
     );

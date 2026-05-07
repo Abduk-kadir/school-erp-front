@@ -8,12 +8,14 @@ const initialForm = {
   feeGroupId: "",
   frequency: "",
   fee_for:"",
-  isAdded_student:"no",
+  isAdded_student:"unAdded",
   classId: "",
   backwardClass: false,
   gender: "both",
   is_elective:"no",
   subject_id:null,
+  start_month:""
+  
 };
 
 const priceRowFromFeehead = (feehead) => ({
@@ -87,23 +89,55 @@ const FeeGroupPricing = () => {
   const [quaterprice1, setQuaterprice1] = useState([]);
   const [quaterprice2, setQuaterprice2] = useState([]);
   const [quaterprice3, setQuaterprice3] = useState([]);
-  const frequencies = ["Monthly", "Quaterly", "Yearly", "One Time","Halfyearly","Four Monthly"];
-  const tableHeads = [
+  const [quaterprice4,setQuaterprice4]=useState([])
+  
+  const frequencies = ["Monthly", "Quaterly","Halfyearly",];
+  let tableHeads = [
     "Fee Head",
-    "April",
+    "Apr",
     "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-    "January",
-    "February",
-    "March",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
   ];
 
+
+   //this is for sortin the table header base on the selected month
+  function sortMonthsFrom(month) {
+    const feeHead = tableHeads[0];
+    const months = tableHeads.slice(1); // only months
+  
+    const index = months.indexOf(month);
+  
+    if (index === -1) return tableHeads;
+  
+    const sortedMonths = [
+      ...months.slice(index),
+      ...months.slice(0, index),
+    ];
+  
+    return [feeHead, ...sortedMonths];
+  }
+   tableHeads=form?.start_month==""?tableHeads:sortMonthsFrom(form?.start_month)
+
+   //this is for sortin tabel fields based on the selected month
+  const sortedMonthFields = (() => {
+    if (!form?.start_month) return MONTH_TOTAL_FIELDS;
+    const startField = `${form.start_month.toLowerCase()}_total`;
+    const startIdx = MONTH_TOTAL_FIELDS.indexOf(startField);
+    if (startIdx === -1) return MONTH_TOTAL_FIELDS;
+    return [
+      ...MONTH_TOTAL_FIELDS.slice(startIdx),
+      ...MONTH_TOTAL_FIELDS.slice(0, startIdx),
+    ];
+  })();
   const updatePriceRow = (setRows, feeheadId, field, e) => {
     const raw = e.target.value;
     const parsed = raw === "" ? 0 : Number(raw);
@@ -139,7 +173,7 @@ const FeeGroupPricing = () => {
                 <th scope="row" className="small fw-medium text-nowrap bg-white px-2 py-2">
                   {item.feehead_name}
                 </th>
-                {MONTH_TOTAL_FIELDS.map((field) => (
+                {sortedMonthFields.map((field) => (
                   <td key={field} className="p-1">
                     <input
                      
@@ -158,7 +192,7 @@ const FeeGroupPricing = () => {
   };
 
 
-  console.log('feegroup',feegroup)
+ // console.log('feegroup',feegroup)
 
   useEffect(() => {
     const fetchFeeheads = async () => {
@@ -185,7 +219,47 @@ const FeeGroupPricing = () => {
     setQuaterprice1(feeheads.map(priceRowFromFeehead));
     setQuaterprice2(feeheads.map(priceRowFromFeehead));
     setQuaterprice3(feeheads.map(priceRowFromFeehead));
+    setQuaterprice4(feeheads.map(priceRowFromFeehead));
   }, [feeheads]);
+
+
+  //this useeffect is use for sorting the table fields base on the selected mont
+  useEffect(() => {
+    if (!form?.start_month) return;
+
+    const startField = `${form.start_month.toLowerCase()}_total`;
+    const startIdx = MONTH_TOTAL_FIELDS.indexOf(startField);
+    if (startIdx === -1) return;
+
+    const sortedFields = [
+      ...MONTH_TOTAL_FIELDS.slice(startIdx),
+      ...MONTH_TOTAL_FIELDS.slice(0, startIdx),
+    ];
+
+    const sortRows = (rows) =>
+      rows.map((row) => {
+        const sorted = {
+          feehead: row.feehead,
+          feehead_name: row.feehead_name,
+        };
+        sortedFields.forEach((field) => {
+          sorted[field] = row[field];
+        });
+        return sorted;
+      });
+
+    setYearprice((prev) => sortRows(prev));
+    setHalfyearprice1((prev) => sortRows(prev));
+    setHalfyearprice2((prev) => sortRows(prev));
+    setQuaterprice1((prev) => sortRows(prev));
+    setQuaterprice2((prev) => sortRows(prev));
+    setQuaterprice3((prev) => sortRows(prev));
+    setQuaterprice4((prev) => sortRows(prev));
+  }, [form?.start_month]);
+
+ console.log('halfyearprice1',halfyearprice1)
+ console.log('halfyearprice2',halfyearprice2)
+
 
   useEffect(() => {
     const fetchFeeheads = async () => {
@@ -221,20 +295,20 @@ const FeeGroupPricing = () => {
     }
        if(form.frequency=="Halfyearly"){
         let groupPricingRecord=mergeFeeArrays(halfyearprice1,halfyearprice2)
-        console.log('group details',groupdetails)
-        console.log('group pricing record',groupPricingRecord)
+        //console.log('group details',groupdetails)
+        //console.log('group pricing record',groupPricingRecord)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord})
         
        }
        if(form.frequency=="Quaterly"){
-        let groupPricingRecord=mergeFeeArrays(quaterprice1,quaterprice2,quaterprice3)
-        console.log('group details',groupdetails)
-        console.log('group pricing record',groupPricingRecord)
+        let groupPricingRecord=mergeFeeArrays(quaterprice1,quaterprice2,quaterprice3,quaterprice4)
+        //console.log('group details',groupdetails)
+        //console.log('group pricing record',groupPricingRecord)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord})
        }
        if(form.frequency=="Monthly"){
-        console.log('group details',groupdetails)
-        console.log('year price is:',yearprice)
+       // console.log('group details',groupdetails)
+        //console.log('year price is:',yearprice)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord:yearprice})
 
        }
@@ -429,7 +503,7 @@ const FeeGroupPricing = () => {
 
 
               <div className="row mb-3 align-items-center">
-                <div className="col-sm-4 col-md-3 col-form-label text-sm-start">Is Added Student</div>
+                <div className="col-sm-4 col-md-3 col-form-label text-sm-start">Student Type</div>
                 <div className="col-sm-8 col-md-6">
                   <div className="form-check form-check-inline">
                     <input
@@ -437,12 +511,12 @@ const FeeGroupPricing = () => {
                       type="radio"
                       name="isAdded_student"
                       id="isAdded_student-yes"
-                      value="yes"
-                      checked={form.isAdded_student === "yes"}
+                      value="added"
+                      checked={form.isAdded_student === "added"}
                       onChange={updateField("isAdded_student")}
                     />
                     <label className="form-check-label ms-3" htmlFor="gender-male">
-                      Yes
+                      added
                     </label>
                   </div>
                   <div className="form-check form-check-inline">
@@ -451,12 +525,12 @@ const FeeGroupPricing = () => {
                       type="radio"
                       name="isAdded_student"
                       id="isAdded_student-no"
-                      value="no"
-                      checked={form.isAdded_student === "no"}
+                      value="unAdded"
+                      checked={form.isAdded_student === "unAdded"}
                       onChange={updateField("isAdded_student")}
                     />
                     <label className="form-check-label ms-3 " htmlFor="isAdded_student-no">
-                      No
+                      unAdded
                     </label>
                   </div>
                   
@@ -520,6 +594,26 @@ const FeeGroupPricing = () => {
                 </div>
               )}
 
+              <div className="row mb-3 align-items-center">
+                <label htmlFor="class-select" className="col-sm-4 col-md-3 col-form-label text-sm-start">
+                  Selected Month
+                </label>
+                <div className="col-sm-8 col-md-6">
+                  <select
+                    id="class-select"
+                    className="form-select"
+                    value={form?.start_month}
+                    onChange={updateField("start_month")}
+                  >
+                    <option value="">Select Month</option>
+                    {[...tableHeads.slice(1)].map((month) => (
+                      <option key={month} value={month}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
               
 
 
@@ -536,6 +630,7 @@ const FeeGroupPricing = () => {
                   {makeTable(quaterprice1, setQuaterprice1)}
                   {makeTable(quaterprice2, setQuaterprice2)}
                   {makeTable(quaterprice3, setQuaterprice3)}
+                  {makeTable(quaterprice4, setQuaterprice4)}
                 </>
               )}
               {form.frequency === "Halfyearly" && (

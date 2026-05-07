@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import Loader from "../../../helper/Loader";
+import "../../../assets/css/mastercom.css";
 
 const AddFeeHead = () => {
     const [loading, setLoading] = useState(false);
@@ -71,112 +73,165 @@ const AddFeeHead = () => {
     };
 
     return (
-        <div className="card shadow">
-            <div className="card-header ">
-                <h6 className="mb-0">Add Bank Account Detail</h6>
-            </div>
-
-            <div className="card-body">
-                {successMsg && (
-                    <div className="alert alert-success alert-dismissible fade show" role="alert">
-                        {successMsg}
-                        <button
-                            type="button"
-                            className="btn-close"
-                            onClick={() => setSuccessMsg("")}
-                        ></button>
+        <div className="chfi-wrapper mb-3">
+            <div className="chfi-card">
+                <div className="card-header">
+                    <div className="header-row">
+                        <span className="header-icon">
+                            <Icon icon="solar:wallet-money-bold-duotone" width="24" />
+                        </span>
+                        <div>
+                            <h5 className="card-title">Add Fee Head</h5>
+                        </div>
                     </div>
-                )}
+                </div>
 
-                {errorMsg && (
-                    <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                        {errorMsg}
-                        <button
-                            type="button"
-                            className="btn-close"
-                            onClick={() => setErrorMsg("")}
-                        ></button>
-                    </div>
-                )}
-
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
-                >
-                    {({ isSubmitting }) => (
-                        <Form>
-                            {loading && <Loader message="Saving bank detail..." />}
-
-                            {/* IFSC Code */}
-                            <div className="col-6">
-                                <label className="form-label fw-bold">Fee Head</label>
-                                <Field
-                                    type="text"
-                                    name="fee_head_name"
-                                    className="form-control"
-                                    placeholder="enter fee head"
-                                   
-                                />
-                                <ErrorMessage name="fee_head_name" component="div" className="text-danger small mt-1" />
-                            </div>
-
-                            {/* Bank Selection */}
-                            <div className="col-6">
-                                <label className="form-label fw-bold">Bank</label>
-                                <Field as="select" name="bank_id" className="form-select">
-                                    <option value="">-- Select Bank --</option>
-                                    {banks.map((bank) => (
-                                        <option key={bank.id} value={bank.id}>
-                                            {bank.bank_name} {bank.short_name ? `(${bank.short_name})` : ""}
-                                        </option>
-                                    ))}
-                                </Field>
-                                <ErrorMessage name="bank_id" component="div" className="text-danger small mt-1" />
-                            </div>
-
-                            {/*refundable section*/}
-                            <div className="col-6">
-                                <label className="form-label">Is Refundable</label>
-                                <Field as="select" name="is_refundable" className="form-select">
-                                    <option value="">Is refundable</option>
-                                    <option value="yes">Yes</option>
-                                    <option value="no">NO</option>
-                                </Field>
-
-                                <div className="text-danger">
-                                    <ErrorMessage name="is_refundable" />
-                                </div>
-                            </div>
-
-                            {/* Status */}
-
-                            <div className="col-6 mb-3">
-                                <label className="form-label">Status</label>
-                                <Field as="select" name="status" className="form-select">
-                                    <option value="">Select Status</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </Field>
-
-                                <div className="text-danger">
-                                    <ErrorMessage name="status" />
-                                </div>
-                            </div>
-
-
-
-
+                <div className="card-body">
+                    {successMsg && (
+                        <div className="alert alert-success alert-dismissible fade show" role="alert">
+                            {successMsg}
                             <button
-                                type="submit"
-                                className="btn btn-success px-4"
-                                disabled={isSubmitting || loading}
-                            >
-                                {isSubmitting || loading ? "Saving..." : "Save Head"}
-                            </button>
-                        </Form>
+                                type="button"
+                                className="btn-close"
+                                onClick={() => setSuccessMsg("")}
+                            ></button>
+                        </div>
                     )}
-                </Formik>
+
+                    {errorMsg && (
+                        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                            {errorMsg}
+                            <button
+                                type="button"
+                                className="btn-close"
+                                onClick={() => setErrorMsg("")}
+                            ></button>
+                        </div>
+                    )}
+
+                    <div className="form-area">
+                        <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={handleSubmit}
+                        >
+                            {({ isSubmitting, resetForm }) => (
+                                <Form className="chfi-root">
+                                    {loading && <Loader message="Saving bank detail..." />}
+
+                                    {/* IFSC Code */}
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Fee Head
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:tag-price-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                type="text"
+                                                name="fee_head_name"
+                                                className="form-control"
+                                                placeholder="enter fee head"
+                                            />
+                                        </div>
+                                        <ErrorMessage name="fee_head_name" component="div" className="text-danger field-error" />
+                                    </div>
+
+                                    {/* Bank Selection */}
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Bank
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:card-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name="bank_id" className="form-select">
+                                                <option value="">-- Select Bank --</option>
+                                                {banks.map((bank) => (
+                                                    <option key={bank.id} value={bank.id}>
+                                                        {bank.bank_name} {bank.short_name ? `(${bank.short_name})` : ""}
+                                                    </option>
+                                                ))}
+                                            </Field>
+                                        </div>
+                                        <ErrorMessage name="bank_id" component="div" className="text-danger field-error" />
+                                    </div>
+
+                                    {/*refundable section*/}
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Is Refundable
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:refresh-circle-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name="is_refundable" className="form-select">
+                                                <option value="">Is refundable</option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">NO</option>
+                                            </Field>
+                                        </div>
+                                        <ErrorMessage name="is_refundable" component="div" className="text-danger field-error" />
+                                    </div>
+
+                                    {/* Status */}
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Status
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:shield-check-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name="status" className="form-select">
+                                                <option value="">Select Status</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </Field>
+                                        </div>
+                                        <ErrorMessage name="status" component="div" className="text-danger field-error" />
+                                    </div>
+
+                                    <div className="actions">
+                                        <button
+                                            type="button"
+                                            className="btn btn-reset"
+                                            onClick={() => resetForm()}
+                                            disabled={isSubmitting || loading}
+                                        >
+                                            <Icon icon="solar:restart-bold-duotone" width="16" />
+                                            Reset
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-submit"
+                                            disabled={isSubmitting || loading}
+                                        >
+                                            {isSubmitting || loading ? (
+                                                <>
+                                                    <Icon icon="line-md:loading-loop" width="16" />
+                                                    Saving...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Icon icon="solar:check-circle-bold-duotone" width="18" />
+                                                    Save Head
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </Form>
+                            )}
+                        </Formik>
+                    </div>
+                </div>
             </div>
         </div>
     );

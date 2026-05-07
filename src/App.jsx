@@ -45,9 +45,11 @@ const AssignDocumentPage = lazy(() =>
 const ProgramPage = lazy(() =>
   import("./pages/AdminPages/SubjectMaster/ProgramPage")
 );
-const DeclarationStatement = lazy(() =>
-  import("./components/child/master/Declaration/DeclarationStatement")
+
+const DeclarationPage = lazy(() =>
+  import("./pages/DeclarationPage")
 );
+
 const InstitutePage = lazy(() =>
   import("./pages/AdminPages/setting/InstitutePage")
 );
@@ -270,7 +272,7 @@ function App() {
               <Route path="division-master" element={<DivisionPage />} />
               <Route path="cast-master" element={<CastPage />} />
               <Route path="role-master" element={<RolePage />} />
-              <Route path="add-declaration" element={<DeclarationStatement />} />
+              <Route path="add-declaration" element={<DeclarationPage />} />
               <Route path="phisally-disable" element={<PhisallyDisablePage />} />
               <Route
                 path="admission-form-master/stages"

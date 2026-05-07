@@ -2,7 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
+import "../../../assets/css/mastercom.css";
 
 const MONTHS = [
     { value: "apr", label: "Apr" },
@@ -127,195 +129,263 @@ const AssignedFined = () => {
     };
 
     return (
-        <div className="card shadow mb-2">
-            <div className="card-header py-2 bg-primary-subtle text-primary border-bottom border-primary border-opacity-25">
-                <h6 className="mb-0 fw-semibold">Assigned Fine</h6>
-            </div>
-
-            <div className="card-body py-2">
-                {classesError && (
-                    <div className="alert alert-warning py-2 mb-2" role="alert">
-                        {classesError}
+        <div className="chfi-wrapper mb-3">
+            <div className="chfi-card">
+                <div className="card-header">
+                    <div className="header-row">
+                        <span className="header-icon">
+                            <Icon icon="solar:bill-list-bold-duotone" width="24" />
+                        </span>
+                        <div>
+                            <h5 className="card-title">Assigned Fine</h5>
+                        </div>
                     </div>
-                )}
+                </div>
 
-                {submitSuccess && (
-                    <div className="alert alert-success py-2 mb-2" role="alert">
-                        {submitSuccess}
-                    </div>
-                )}
+                <div className="card-body">
+                    {classesError && (
+                        <div className="alert alert-warning py-2 mb-2" role="alert">
+                            {classesError}
+                        </div>
+                    )}
 
-                {submitError && (
-                    <div className="alert alert-danger py-2 mb-2" role="alert">
-                        {submitError}
-                    </div>
-                )}
+                    {submitSuccess && (
+                        <div className="alert alert-success py-2 mb-2" role="alert">
+                            {submitSuccess}
+                        </div>
+                    )}
 
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
-                >
-                    {({ isSubmitting, values, setFieldValue }) => (
-                        <Form>
-                            <div className="row justify-content-start">
-                                <div className="col-12 col-md-8 col-lg-6">
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Class</label>
-                                        <Field name="class_id">
-                                            {({ field }) => (
-                                                <select
-                                                    {...field}
-                                                    className="form-select form-select-sm"
-                                                    disabled={classesLoading}
-                                                    onChange={(e) => {
-                                                        const v = e.target.value;
-                                                        setFieldValue("class_id", v);
-                                                        setFieldValue("student_reg_no", "");
-                                                        fetchStudents(v);
-                                                    }}
-                                                >
-                                                    <option value="">
-                                                        {classesLoading
-                                                            ? "Loading classes..."
-                                                            : "Select class"}
-                                                    </option>
-                                                    {classes.map((c) => {
-                                                        const cv = classOptionValue(c);
-                                                        if (cv === "" || cv == null) return null;
-                                                        return (
-                                                            <option key={String(cv)} value={String(cv)}>
-                                                                {classOptionLabel(c)}
-                                                            </option>
-                                                        );
-                                                    })}
-                                                </select>
-                                            )}
-                                        </Field>
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="class_id" />
+                    {submitError && (
+                        <div className="alert alert-danger py-2 mb-2" role="alert">
+                            {submitError}
+                        </div>
+                    )}
+
+                    <div className="form-area">
+                        <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={handleSubmit}
+                        >
+                            {({ isSubmitting, values, setFieldValue, resetForm }) => (
+                                <Form className="chfi-root">
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Class
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:square-academic-cap-bold-duotone" width="18" />
+                                            </span>
+                                            <Field name="class_id">
+                                                {({ field }) => (
+                                                    <select
+                                                        {...field}
+                                                        className="form-select"
+                                                        disabled={classesLoading}
+                                                        onChange={(e) => {
+                                                            const v = e.target.value;
+                                                            setFieldValue("class_id", v);
+                                                            setFieldValue("student_reg_no", "");
+                                                            fetchStudents(v);
+                                                        }}
+                                                    >
+                                                        <option value="">
+                                                            {classesLoading
+                                                                ? "Loading classes..."
+                                                                : "Select class"}
+                                                        </option>
+                                                        {classes.map((c) => {
+                                                            const cv = classOptionValue(c);
+                                                            if (cv === "" || cv == null) return null;
+                                                            return (
+                                                                <option key={String(cv)} value={String(cv)}>
+                                                                    {classOptionLabel(c)}
+                                                                </option>
+                                                            );
+                                                        })}
+                                                    </select>
+                                                )}
+                                            </Field>
                                         </div>
+                                        <ErrorMessage name="class_id" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Student</label>
-                                        <Field
-                                            as="select"
-                                            name="student_reg_no"
-                                            className="form-select form-select-sm"
-                                            disabled={
-                                                !values.class_id ||
-                                                studentsLoading ||
-                                                students.length === 0
-                                            }
-                                        >
-                                            <option value="">
-                                                {!values.class_id
-                                                    ? "Select class first"
-                                                    : studentsLoading
-                                                      ? "Loading students..."
-                                                      : students.length === 0
-                                                        ? "No students in this class"
-                                                        : "Select student"}
-                                            </option>
-                                            {students.map((s) => {
-                                                const reg = s?.reg_no;
-                                                if (reg === "" || reg == null) return null;
-                                                const label = [s.first_name, s.last_name]
-                                                    .filter(Boolean)
-                                                    .join(" ")
-                                                    .trim();
-                                                return (
-                                                    <option key={s.id ?? reg} value={String(reg)}>
-                                                        {label || `Reg ${reg}`} ({reg})
-                                                    </option>
-                                                );
-                                            })}
-                                        </Field>
-                                        {studentsError && (
-                                            <div className="text-warning small">{studentsError}</div>
-                                        )}
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="student_reg_no" />
-                                        </div>
-                                    </div>
-
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Fine for month</label>
-                                        <Field
-                                            as="select"
-                                            name="fine_for_month"
-                                            className="form-select form-select-sm"
-                                        >
-                                            <option value="">Select month</option>
-                                            {MONTHS.map((m) => (
-                                                <option key={m.value} value={m.value}>
-                                                    {m.label}
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Student
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:user-id-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                as="select"
+                                                name="student_reg_no"
+                                                className="form-select"
+                                                disabled={
+                                                    !values.class_id ||
+                                                    studentsLoading ||
+                                                    students.length === 0
+                                                }
+                                            >
+                                                <option value="">
+                                                    {!values.class_id
+                                                        ? "Select class first"
+                                                        : studentsLoading
+                                                          ? "Loading students..."
+                                                          : students.length === 0
+                                                            ? "No students in this class"
+                                                            : "Select student"}
                                                 </option>
-                                            ))}
-                                        </Field>
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="fine_for_month" />
+                                                {students.map((s) => {
+                                                    const reg = s?.reg_no;
+                                                    if (reg === "" || reg == null) return null;
+                                                    const label = [s.first_name, s.last_name]
+                                                        .filter(Boolean)
+                                                        .join(" ")
+                                                        .trim();
+                                                    return (
+                                                        <option key={s.id ?? reg} value={String(reg)}>
+                                                            {label || `Reg ${reg}`} ({reg})
+                                                        </option>
+                                                    );
+                                                })}
+                                            </Field>
                                         </div>
+                                        {studentsError && (
+                                            <div className="text-warning small" style={{ gridColumn: 2 }}>
+                                                {studentsError}
+                                            </div>
+                                        )}
+                                        <ErrorMessage name="student_reg_no" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Fine amount</label>
-                                        <Field
-                                            type="number"
-                                            name="fine_amount"
-                                            className="form-control form-control-sm"
-                                            placeholder="Enter amount"
-                                            min="0"
-                                            step="any"
-                                        />
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="fine_amount" />
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Fine for month
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:calendar-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                as="select"
+                                                name="fine_for_month"
+                                                className="form-select"
+                                            >
+                                                <option value="">Select month</option>
+                                                {MONTHS.map((m) => (
+                                                    <option key={m.value} value={m.value}>
+                                                        {m.label}
+                                                    </option>
+                                                ))}
+                                            </Field>
                                         </div>
+                                        <ErrorMessage name="fine_for_month" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Fine pay till date</label>
-                                        <Field
-                                            type="date"
-                                            name="fine_pay_till_date"
-                                            className="form-control form-control-sm"
-                                        />
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="fine_pay_till_date" />
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Fine amount
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:wallet-money-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                type="number"
+                                                name="fine_amount"
+                                                className="form-control"
+                                                placeholder="Enter amount"
+                                                min="0"
+                                                step="any"
+                                            />
                                         </div>
+                                        <ErrorMessage name="fine_amount" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="mb-2">
-                                        <label className="form-label mb-1">Remark</label>
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Fine pay till date
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:calendar-date-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                type="date"
+                                                name="fine_pay_till_date"
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <ErrorMessage name="fine_pay_till_date" component="div" className="text-danger field-error" />
+                                    </div>
+
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Remark
+                                        </label>
                                         <Field
                                             as="textarea"
                                             name="remark"
-                                            className="form-control form-control-sm"
+                                            className="form-control"
                                             rows={2}
                                             placeholder="enter remark"
+                                            style={{
+                                                borderRadius: 10,
+                                                fontSize: "0.88rem",
+                                                border: "1px solid rgba(148,163,184,0.45)",
+                                                padding: "8px 12px",
+                                            }}
                                         />
-                                        <div className="text-danger small">
-                                            <ErrorMessage name="remark" />
-                                        </div>
+                                        <ErrorMessage name="remark" component="div" className="text-danger field-error" />
                                     </div>
 
-                                    <div className="text-start pt-1">
+                                    <div className="actions">
+                                        <button
+                                            type="button"
+                                            className="btn btn-reset"
+                                            onClick={() => {
+                                                resetForm();
+                                                setStudents([]);
+                                            }}
+                                            disabled={isSubmitting || classesLoading || studentsLoading}
+                                        >
+                                            <Icon icon="solar:restart-bold-duotone" width="16" />
+                                            Reset
+                                        </button>
                                         <button
                                             type="submit"
-                                            className="btn btn-success btn-sm"
+                                            className="btn btn-submit"
                                             disabled={
                                                 isSubmitting || classesLoading || studentsLoading
                                             }
                                         >
-                                            Save
+                                            {isSubmitting ? (
+                                                <>
+                                                    <Icon icon="line-md:loading-loop" width="16" />
+                                                    Saving...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Icon icon="solar:check-circle-bold-duotone" width="18" />
+                                                    Save
+                                                </>
+                                            )}
                                         </button>
                                     </div>
-                                </div>
-                            </div>
-                        </Form>
-                    )}
-                </Formik>
+                                </Form>
+                            )}
+                        </Formik>
+                    </div>
+                </div>
             </div>
         </div>
     );

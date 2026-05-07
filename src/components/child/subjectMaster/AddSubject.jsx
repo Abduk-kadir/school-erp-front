@@ -3,8 +3,10 @@ import { useEffect, useMemo } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { PenNibStraight } from "@phosphor-icons/react";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import axios from "axios";
+import "../../../assets/css/mastercom.css";
 const AddSubject = () => {
 
 
@@ -28,115 +30,166 @@ const AddSubject = () => {
 
 
     return (
-        <div className="container mt-5 mb-5">
-
-            <h3 className="mb-4">Add Subject</h3>
-
-            <Formik
-                initialValues={initialValues}
-                enableReinitialize={true}
-                validationSchema={validationSchema}
-                onSubmit={async (values, { resetForm }) => {
-                    console.log('selected value:', values);
-                    await axios.post(`${baseURL}/api/subjects`, values)
-                    alert("Form submitted successfully!");
-                    resetForm();
-                }}
-            >
-                {({ isSubmitting }) => (
-                    <Form>
-                        <div className="row">
-                            <div className="col-6 mb-1">
-                                <label className="form-label">Subject Name</label>
-                                <Field name="value" type="text" className='form-control' />
-                                <ErrorMessage
-                                    name="value"
-                                    component="div"
-                                    className="text-danger mt-1"
-                                />
-
-                            </div>
-                            <div className="col-6 mb-1">
-                                <label className="form-label">Subject Code</label>
-                                <Field name="subject_code" type="text" className='form-control' />
-
-                                <ErrorMessage
-                                    name="subject_code"
-                                    component="div"
-                                    className="text-danger mt-1"
-                                />
-
-                            </div>
-                            <div className="col-6 mb-1">
-                                <label className="form-label">Abbreviation Name</label>
-                                <Field name="abbreviation_name" type="text" className='form-control' />
-
-                                <ErrorMessage
-                                    name="abbreviation_name"
-                                    component="div"
-                                    className="text-danger mt-1"
-                                />
-
-                            </div>
-                            <div className="col-6 mb-1">
-                                <label className="form-label">Subject Pattern</label>
-                                <Field as="select" name='subject_pattern' className="form-select">
-                                    <option value="">Select pattern</option>
-
-                                    <option value='Annual'>
-                                        Annual
-                                    </option>
-
-                                    <option value='Semester'>
-                                        Semester
-                                    </option>
-
-                                </Field>
-                                <ErrorMessage
-                                    name="subject_pattern"
-                                    component="div"
-                                    className="text-danger mt-1"
-                                />
-
-                            </div>
-                              <div className="col-6 mb-1">
-                                <label className="form-label">Status</label>
-                                <Field as="select" name='status' className="form-select">
-                                    <option value="">Select Status</option>
-
-                                    <option value='Active'>
-                                        Active
-                                    </option>
-
-                                    <option value='In Active'>
-                                        In Active
-                                    </option>
-
-                                </Field>
-                                <ErrorMessage
-                                    name="status"
-                                    component="div"
-                                    className="text-danger mt-1"
-                                />
-
-                            </div>
-                            
-
+        <div className="chfi-wrapper mb-3">
+            <div className="chfi-card">
+                <div className="card-header">
+                    <div className="header-row">
+                        <span className="header-icon">
+                            <Icon icon="solar:book-bookmark-bold-duotone" width="24" />
+                        </span>
+                        <div>
+                            <h5 className="card-title">Add Subject</h5>
                         </div>
+                    </div>
+                </div>
 
-                        <div className="d-flex justify-content-end">
-                            <button
-                                type="submit"
-                                className="btn btn-primary mt-1 px-5"
-                                disabled={isSubmitting}
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    </Form>
-                )}
-            </Formik>
+                <div className="card-body">
+                    <div className="form-area">
+                        <Formik
+                            initialValues={initialValues}
+                            enableReinitialize={true}
+                            validationSchema={validationSchema}
+                            onSubmit={async (values, { resetForm }) => {
+                                console.log('selected value:', values);
+                                await axios.post(`${baseURL}/api/subjects`, values)
+                                alert("Form submitted successfully!");
+                                resetForm();
+                            }}
+                        >
+                            {({ isSubmitting, resetForm }) => (
+                                <Form className="chfi-root">
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Subject Name
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:notebook-bookmark-bold-duotone" width="18" />
+                                            </span>
+                                            <Field name="value" type="text" className='form-control' placeholder="Enter Subject Name" />
+                                        </div>
+                                        <ErrorMessage
+                                            name="value"
+                                            component="div"
+                                            className="text-danger field-error"
+                                        />
+                                    </div>
 
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Subject Code
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:hashtag-square-bold-duotone" width="18" />
+                                            </span>
+                                            <Field name="subject_code" type="text" className='form-control' placeholder="Enter Subject Code" />
+                                        </div>
+                                        <ErrorMessage
+                                            name="subject_code"
+                                            component="div"
+                                            className="text-danger field-error"
+                                        />
+                                    </div>
+
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Abbreviation Name
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:text-bold-duotone" width="18" />
+                                            </span>
+                                            <Field name="abbreviation_name" type="text" className='form-control' placeholder="Enter Abbreviation" />
+                                        </div>
+                                        <ErrorMessage
+                                            name="abbreviation_name"
+                                            component="div"
+                                            className="text-danger field-error"
+                                        />
+                                    </div>
+
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Subject Pattern
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:calendar-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name='subject_pattern' className="form-select">
+                                                <option value="">Select pattern</option>
+                                                <option value='Annual'>Annual</option>
+                                                <option value='Semester'>Semester</option>
+                                            </Field>
+                                        </div>
+                                        <ErrorMessage
+                                            name="subject_pattern"
+                                            component="div"
+                                            className="text-danger field-error"
+                                        />
+                                    </div>
+
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Status
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:shield-check-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name='status' className="form-select">
+                                                <option value="">Select Status</option>
+                                                <option value='Active'>Active</option>
+                                                <option value='In Active'>In Active</option>
+                                            </Field>
+                                        </div>
+                                        <ErrorMessage
+                                            name="status"
+                                            component="div"
+                                            className="text-danger field-error"
+                                        />
+                                    </div>
+
+                                    <div className="actions">
+                                        <button
+                                            type="button"
+                                            className="btn btn-reset"
+                                            onClick={() => resetForm()}
+                                            disabled={isSubmitting}
+                                        >
+                                            <Icon icon="solar:restart-bold-duotone" width="16" />
+                                            Reset
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-submit"
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting ? (
+                                                <>
+                                                    <Icon icon="line-md:loading-loop" width="16" />
+                                                    Submitting...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Icon icon="solar:check-circle-bold-duotone" width="18" />
+                                                    Submit
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </Form>
+                            )}
+                        </Formik>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

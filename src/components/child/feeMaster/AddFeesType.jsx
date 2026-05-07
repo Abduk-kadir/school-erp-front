@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import Loader from "../../../helper/Loader";
+import "../../../assets/css/mastercom.css";
 
 const initialValues = { name: "" };
 
@@ -43,109 +45,117 @@ const AddFeesType = ({ className = "" }) => {
   };
 
   return (
-    <div className={`fees-type-root card shadow ${className}`.trim()}>
-      <style>
-        {`
-          .fees-type-root{
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(148,163,184,0.18);
-            margin-bottom: 1rem;
-          }
-          .fees-type-root .card-header{
-            border: 0;
-            padding: 14px 18px;
-            background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(34,197,94,0.12), rgba(20,184,166,0.12));
-          }
-          .fees-type-root .card-body{ padding: 18px; }
-          .fees-type-root{
-            --ft-control-h: 44px;
-          }
-          .fees-type-root .form-control{
-            height: var(--ft-control-h);
-          }
-          .fees-type-root .btn-match-input{
-            height: var(--ft-control-h);
-            padding-top: 0;
-            padding-bottom: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-          }
-        `}
-      </style>
-
-      <div className="card-header">
-        <h6 className="mb-0">Add fees type</h6>
-      </div>
-
-      <div className="card-body">
-        {successMsg && (
-          <div className="alert alert-success alert-dismissible fade show" role="alert">
-            {successMsg}
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setSuccessMsg("")}
-              aria-label="Close"
-            />
+    <div className={`chfi-wrapper mb-3 ${className}`.trim()}>
+      <div className="chfi-card">
+        <div className="card-header">
+          <div className="header-row">
+            <span className="header-icon">
+              <Icon icon="solar:tag-price-bold-duotone" width="24" />
+            </span>
+            <div>
+              <h5 className="card-title">Add Fees Type</h5>
+            </div>
           </div>
-        )}
+        </div>
 
-        {errorMsg && (
-          <div className="alert alert-danger alert-dismissible fade show" role="alert">
-            {errorMsg}
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setErrorMsg("")}
-              aria-label="Close"
-            />
-          </div>
-        )}
-
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting }) => (
-            <Form>
-              {loading && <Loader message="Saving fees type…" />}
-
-              <div className="row g-3 align-items-end">
-                <div className="col-md-8 col-lg-6">
-                  <label className="form-label fw-bold" htmlFor="fees-type-name">
-                    Name
-                  </label>
-                  <Field
-                    id="fees-type-name"
-                    type="text"
-                    name="name"
-                    className="form-control"
-                    placeholder="e.g. Tuition"
-                    autoComplete="off"
-                  />
-                  <ErrorMessage name="name" component="div" className="text-danger small mt-1" />
-                </div>
-
-                <div className="col-md-4 col-lg-3 d-flex justify-content-md-start justify-content-lg-start">
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-sm px-5 btn-match-input"
-                    disabled={isSubmitting || loading}
-                  >
-                    {isSubmitting || loading ? "Saving…" : "Save"}
-                  </button>
-                </div>
-              </div>
-            </Form>
+        <div className="card-body">
+          {successMsg && (
+            <div className="alert alert-success alert-dismissible fade show" role="alert">
+              {successMsg}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setSuccessMsg("")}
+                aria-label="Close"
+              />
+            </div>
           )}
-        </Formik>
+
+          {errorMsg && (
+            <div className="alert alert-danger alert-dismissible fade show" role="alert">
+              {errorMsg}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setErrorMsg("")}
+                aria-label="Close"
+              />
+            </div>
+          )}
+
+          <div className="form-area">
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({ isSubmitting, resetForm }) => (
+                <Form className="chfi-root">
+                  {loading && <Loader message="Saving fees type…" />}
+
+                  <div className="field-row">
+                    <label className="form-label" htmlFor="fees-type-name">
+                      <span className="label-dot" />
+                      Name
+                    </label>
+
+                    <div className="cast-inline">
+                      <div className="cast-input">
+                        <div className="icon-field">
+                          <span className="icon">
+                            <Icon icon="solar:tag-price-bold-duotone" width="18" />
+                          </span>
+                          <Field
+                            id="fees-type-name"
+                            type="text"
+                            name="name"
+                            className="form-control"
+                            placeholder="e.g. Tuition"
+                            autoComplete="off"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="actions actions-inline">
+                        <button
+                          type="button"
+                          className="btn btn-reset"
+                          onClick={() => resetForm()}
+                          disabled={isSubmitting || loading}
+                        >
+                          <Icon icon="solar:restart-bold-duotone" width="16" />
+                          Reset
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn btn-submit"
+                          disabled={isSubmitting || loading}
+                        >
+                          {isSubmitting || loading ? (
+                            <>
+                              <Icon icon="line-md:loading-loop" width="16" />
+                              Saving…
+                            </>
+                          ) : (
+                            <>
+                              <Icon icon="solar:check-circle-bold-duotone" width="18" />
+                              Save
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <ErrorMessage name="name" component="div" className="text-danger field-error" />
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default AddFeesType;
-

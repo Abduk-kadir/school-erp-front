@@ -1,14 +1,13 @@
 import MasterLayout from "../masterLayout/MasterLayout";
 import Breadcrumb from "../components/Breadcrumb";
 import GenericTableDataLayer from "../components/GenericTable";
-import ClassHorizontalInputFormWithIcons from "../components/child/ClassHorizontalInputFormWithIcons";
+import AddClass from "../components/child/AddClass";
 
 const ClassPage = () => {
   return (
     <>
 
-      <ClassHorizontalInputFormWithIcons/>
-
+      <AddClass/>
        <GenericTableDataLayer
                        url={'http://localhost:5000/api/classes'}
                         columns={[

@@ -1,9 +1,11 @@
 import React,{useState} from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import axios from "axios";
 import Loader from "../../../helper/Loader";
+import "../../../assets/css/mastercom.css";
 
 
 const AddBank = () => {
@@ -40,64 +42,105 @@ const AddBank = () => {
   };
 
     return (
-       
-         
-            <div className="card shadow">
+        <div className="chfi-wrapper mb-3">
+            <div className="chfi-card">
                 <div className="card-header">
-                    <h6 className="mb-0">Add Bank</h6>
+                    <div className="header-row">
+                        <span className="header-icon">
+                            <Icon icon="solar:bank-bold-duotone" width="24" />
+                        </span>
+                        <div>
+                            <h5 className="card-title">Add Bank</h5>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="card-body">
-                    <Formik
-                        initialValues={initialValues}
-                        validationSchema={validationSchema}
-                        onSubmit={handleSubmit}
-                    >
-                        <Form>
+                    <div className="form-area">
+                        <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={handleSubmit}
+                        >
+                            {({ isSubmitting, resetForm }) => (
+                                <Form className="chfi-root">
+                                    {loading && <Loader message={message} />}
 
-                            {/* Bank Name */}
-                            <div className="row">
-                                   {loading && <Loader message={message} />}
-                                <div className="col-6">
-                                    <label className="form-label">Bank Name</label>
-                                    <Field
-                                        type="text"
-                                        name="bank_name"
-                                        className="form-control"
-                                        placeholder="Enter bank name"
-                                    />
-                                    <div className="text-danger">
-                                        <ErrorMessage name="bank_name" />
+                                    {/* Bank Name */}
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Bank Name
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:bank-bold-duotone" width="18" />
+                                            </span>
+                                            <Field
+                                                type="text"
+                                                name="bank_name"
+                                                className="form-control"
+                                                placeholder="Enter bank name"
+                                            />
+                                        </div>
+                                        <ErrorMessage name="bank_name" component="div" className="text-danger field-error" />
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* Status */}
-                            <div className="row mb-3">
-                                <div className="col-6">
-                                    <label className="form-label">Status</label>
-                                    <Field as="select" name="status" className="form-select">
-                                        <option value="">Select Status</option>
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
-                                    </Field>
-
-                                    <div className="text-danger">
-                                        <ErrorMessage name="status" />
+                                    {/* Status */}
+                                    <div className="field-row">
+                                        <label className="form-label">
+                                            <span className="label-dot" />
+                                            Status
+                                        </label>
+                                        <div className="icon-field">
+                                            <span className="icon">
+                                                <Icon icon="solar:shield-check-bold-duotone" width="18" />
+                                            </span>
+                                            <Field as="select" name="status" className="form-select">
+                                                <option value="">Select Status</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </Field>
+                                        </div>
+                                        <ErrorMessage name="status" component="div" className="text-danger field-error" />
                                     </div>
-                                </div>
-                            </div>
 
-                            {/* Submit Button */}
-                            <button type="submit" className="btn btn-success">
-                                Save Bank
-                            </button>
-
-                        </Form>
-                    </Formik>
+                                    {/* Submit Button */}
+                                    <div className="actions">
+                                        <button
+                                            type="button"
+                                            className="btn btn-reset"
+                                            onClick={() => resetForm()}
+                                            disabled={isSubmitting || loading}
+                                        >
+                                            <Icon icon="solar:restart-bold-duotone" width="16" />
+                                            Reset
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="btn btn-submit"
+                                            disabled={isSubmitting || loading}
+                                        >
+                                            {isSubmitting || loading ? (
+                                                <>
+                                                    <Icon icon="line-md:loading-loop" width="16" />
+                                                    Saving...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Icon icon="solar:check-circle-bold-duotone" width="18" />
+                                                    Save Bank
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </Form>
+                            )}
+                        </Formik>
+                    </div>
                 </div>
             </div>
-       
+        </div>
     );
 };
 

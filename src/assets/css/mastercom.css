@@ -1,0 +1,298 @@
+/* =====================================================================
+ * mastercom.css
+ * Shared styles for "Master" form components (Add Class, Add Cast,
+ * Add Division, etc.).
+ *
+ * Usage:
+ *   import "src/assets/css/mastercom.css";
+ *
+ * Class hooks:
+ *   .chfi-wrapper      -> outermost wrapper that scopes the styles
+ *   .chfi-card         -> card container
+ *   .form-area         -> half-width form area inside the card
+ *   .chfi-root         -> applied on the <Form> element (Formik)
+ *   .field-row         -> wrapper for label + input
+ *   .icon-field        -> input wrapper with leading icon
+ *   .actions           -> button group (block layout)
+ *   .actions-inline    -> button group beside an input (inline layout)
+ *   .cast-inline       -> single-row layout (input + buttons in same line)
+ *   .btn-submit        -> green primary button
+ *   .btn-reset         -> outlined reset button
+ * ===================================================================== */
+
+.chfi-wrapper {
+  width: 100%;
+}
+
+.chfi-wrapper .chfi-card {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  box-shadow: 0 12px 28px -18px rgba(30, 64, 175, 0.3);
+  background: #ffffff;
+}
+
+/* ---------- Header ---------- */
+.chfi-wrapper .chfi-card .card-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #38bdf8 100%);
+  color: #ffffff;
+  border-bottom: 0;
+  padding: 6px 14px;
+  min-height: 0;
+}
+
+.chfi-wrapper .chfi-card .card-header .header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chfi-wrapper .chfi-card .card-header .header-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  backdrop-filter: blur(2px);
+  flex-shrink: 0;
+}
+
+.chfi-wrapper .chfi-card .card-header .header-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.chfi-wrapper .chfi-card .card-header .card-title {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.chfi-wrapper .chfi-card .card-header .card-subtitle {
+  display: none;
+}
+
+/* ---------- Body ---------- */
+.chfi-wrapper .chfi-card .card-body {
+  padding: 18px 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.chfi-wrapper .chfi-card .form-area {
+  width: 100%;
+  max-width: 560px;
+}
+
+/* ---------- Form root + control height variable ---------- */
+.chfi-root {
+  --chfi-control-h: 38px;
+}
+
+.chfi-root .field-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  column-gap: 12px;
+  row-gap: 2px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.chfi-root .form-label {
+  font-weight: 600;
+  color: #1e293b;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.chfi-root .field-row > .field-error,
+.chfi-root .field-row .field-error {
+  grid-column: 2;
+}
+
+.chfi-root .form-label .label-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #2563eb;
+  display: inline-block;
+}
+
+/* ---------- Icon field ---------- */
+.chfi-root .icon-field {
+  position: relative;
+}
+
+.chfi-root .icon-field .icon {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1d4ed8;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.15);
+  pointer-events: none;
+}
+
+.chfi-root .icon-field .form-control,
+.chfi-root .icon-field .form-select {
+  padding-left: 44px;
+  border-radius: 10px;
+  height: var(--chfi-control-h);
+  font-size: 0.88rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background-color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.chfi-root .icon-field .form-control:hover,
+.chfi-root .icon-field .form-select:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+}
+
+.chfi-root .icon-field .form-control:focus,
+.chfi-root .icon-field .form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+  background-color: #ffffff;
+}
+
+.chfi-root .icon-field:focus-within .icon {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: #ffffff;
+  box-shadow: 0 6px 14px -6px rgba(37, 99, 235, 0.65);
+}
+
+.chfi-root .field-error {
+  margin-top: 3px;
+  font-size: 0.78rem;
+}
+
+/* ---------- Actions / Buttons ---------- */
+.chfi-root .actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.chfi-root .actions.actions-inline {
+  margin-top: 0;
+  align-self: center;
+  padding-top: 0;
+}
+
+.chfi-root .btn-submit {
+  height: var(--chfi-control-h);
+  border-radius: 10px;
+  padding: 6px 18px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #4ade80 100%);
+  border: 0;
+  box-shadow: 0 8px 18px -10px rgba(22, 163, 74, 0.65);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chfi-root .btn-submit:hover {
+  filter: brightness(1.02);
+  transform: translateY(-1px);
+}
+
+.chfi-root .btn-submit:active {
+  transform: translateY(0);
+}
+
+.chfi-root .btn-reset {
+  height: var(--chfi-control-h);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  background: #ffffff;
+  color: #15803d;
+  border: 1px solid rgba(22, 163, 74, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.chfi-root .btn-reset svg,
+.chfi-root .btn-submit svg {
+  flex-shrink: 0;
+}
+
+.chfi-root .btn-reset:hover {
+  background: #f0fdf4;
+  border-color: rgba(22, 163, 74, 0.55);
+}
+
+/* ---------- Inline row (input + buttons in one line) ---------- */
+.chfi-root .cast-inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.chfi-root .cast-inline .cast-input {
+  flex: 1;
+  min-width: 260px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 767.98px) {
+  .chfi-wrapper .chfi-card .form-area {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .chfi-wrapper .chfi-card {
+    border-radius: 12px;
+  }
+  .chfi-wrapper .chfi-card .card-header,
+  .chfi-wrapper .chfi-card .card-body {
+    padding: 14px;
+  }
+  .chfi-root .field-row {
+    grid-template-columns: 1fr;
+  }
+  .chfi-root .form-label {
+    margin-bottom: 4px;
+  }
+  .chfi-root .field-row > .field-error,
+  .chfi-root .field-row .field-error {
+    grid-column: 1;
+  }
+  .chfi-root .cast-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .chfi-root .cast-inline .cast-input {
+    min-width: 0;
+  }
+  .chfi-root .actions.actions-inline {
+    align-self: flex-start;
+  }
+}

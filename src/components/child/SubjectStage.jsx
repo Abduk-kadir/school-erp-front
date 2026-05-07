@@ -170,9 +170,9 @@ const SubjectStage = () => {
         const assignments = [...complusaryData, ...nonCompulsoryData];
         try {
 
-          // let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
-           // let formStatusPayload = { current_step: 5, reg_no: reg_no }
-          // await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
+           let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments })
+           let formStatusPayload = { current_step: 5, reg_no: reg_no }
+           await axios.post(`${baseURL}/api/form-status/upsert`, formStatusPayload)
              alert("Subjects assigned successfully!");
             navigate(`/parent-particular-stage/?step=5`)
 

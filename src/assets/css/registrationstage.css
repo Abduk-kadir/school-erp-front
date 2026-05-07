@@ -1,0 +1,192 @@
+/* =====================================================================
+ * registrationstage.css
+ * Styles for the Registration form (src/components/child/Registration.jsx).
+ *
+ * Usage:
+ *   import "src/assets/css/registrationstage.css";
+ *
+ * Class hooks:
+ *   .reg-form           -> applied on the row that wraps all inputs
+ *   .input-group        -> Bootstrap input group with leading icon
+ *   .input-icon         -> styled .input-group-text holding the icon
+ *   .info-icon          -> small (i) icon next to a label, with red tooltip
+ *   .field-tip          -> wraps an .input-group; shows red tooltip on hover/focus
+ *   .gender-group       -> wrapper for gender radio pills
+ *   .gender-pill        -> single pill chip for a gender option
+ *   .gender-pill.is-active -> active state for the selected gender
+ * ===================================================================== */
+
+/* ---------- Input group + icon styles ---------- */
+.reg-form .input-group .input-icon {
+  background-color: #f8fafc;
+  color: #4f46e5;
+  border-right: 0;
+}
+
+.reg-form .form-control,
+.reg-form .form-select {
+  border-left: 0;
+}
+
+.reg-form .input-group:focus-within .input-icon {
+  color: #312e81;
+}
+
+/* ---------- Label layout ---------- */
+.reg-form label.form-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* ---------- (i) info icon next to labels ---------- */
+.reg-form .info-icon {
+  color: #6366f1;
+  margin-left: 4px;
+  cursor: help;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.reg-form .info-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.25);
+  z-index: 20;
+}
+
+.reg-form .info-icon::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  border: 6px solid transparent;
+  border-top-color: #dc2626;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 20;
+}
+
+.reg-form .info-icon:hover::after,
+.reg-form .info-icon:focus::after,
+.reg-form .info-icon:hover::before,
+.reg-form .info-icon:focus::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ---------- Field-level red tooltip (Email / Contact Number) ---------- */
+.reg-form .field-tip {
+  position: relative;
+}
+
+.reg-form .field-tip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 12px;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.25);
+  z-index: 20;
+}
+
+.reg-form .field-tip::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 22px;
+  border: 6px solid transparent;
+  border-top-color: #dc2626;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 20;
+}
+
+.reg-form .field-tip:hover::after,
+.reg-form .field-tip:focus-within::after,
+.reg-form .field-tip:hover::before,
+.reg-form .field-tip:focus-within::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Gender pill chips ---------- */
+.gender-group {
+  --reg-control-h: 38px;
+  min-height: var(--reg-control-h);
+}
+
+.gender-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: var(--reg-control-h, 38px);
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  cursor: pointer;
+  line-height: 1;
+  margin: 0;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.gender-pill:hover {
+  border-color: rgba(99, 102, 241, 0.55);
+}
+
+.gender-pill input {
+  appearance: auto;
+  -webkit-appearance: radio;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: #4f46e5;
+  cursor: pointer;
+}
+
+.gender-pill .gender-pill-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+  text-transform: capitalize;
+}
+
+.gender-pill.is-active {
+  border-color: rgba(99, 102, 241, 0.85);
+  background: rgba(99, 102, 241, 0.08);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.gender-pill.is-active .gender-pill-text {
+  color: #4338ca;
+}
