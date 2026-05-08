@@ -13,7 +13,7 @@ const FeeGroupPricingPage = () => {
           { data: "feeGroup.groupname", title: "Group" },
           { data: "scheduletype", title: "Schedule" },
           { data: "isbackwardclass", title: "Is Backward" },
-          { data: "feeType?.name", title: "Fee Type" },
+          { data: "feeType.name", title: "Fee Type" },
           { data: "isAdded_student", title: "Is Added" },
           { data: "is_elective", title: "Is Elective" },
           { data: "subject?.value", title: "Subject Name" },

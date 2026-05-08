@@ -3,13 +3,13 @@ import React from 'react'
 import Breadcrumb from '../../../components/Breadcrumb'
 import CollectAcadmicFee2 from '../../../components/child/academicFee/CollectAcadmicFee2'
 
-const AcademicFeeCollectPage = () => {
+const CollectAdmissionPage = () => {
   return (
     <>
      
-      <CollectAcadmicFee2 feetypeid={3}/>
+      <CollectAcadmicFee2 feetypeid={2}/>
     </>
   )
 }
 
-export default AcademicFeeCollectPage
+export default CollectAdmissionPage

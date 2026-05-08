@@ -6,12 +6,13 @@ import baseURL from "../../../utils/baseUrl";
 
 const initialForm = {
   feeGroupId: "",
-  frequency: "",
+  scheduletype: "",
   fee_for:"",
   isAdded_student:"unAdded",
-  classId: "",
+  classid: "",
   backwardClass: false,
   gender: "both",
+  cast:"",
   is_elective:"no",
   subject_id:null,
   start_month:""
@@ -82,6 +83,7 @@ const FeeGroupPricing = () => {
   const [feesType,setFeesType]=useState([])
   const [classes, setClasses] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [casts,setCasts]=useState([])
   const [form, setForm] = useState(initialForm);
   const [yearprice, setYearprice] = useState([]);
   const [halfyearprice1, setHalfyearprice1] = useState([]);
@@ -91,7 +93,7 @@ const FeeGroupPricing = () => {
   const [quaterprice3, setQuaterprice3] = useState([]);
   const [quaterprice4,setQuaterprice4]=useState([])
   
-  const frequencies = ["Monthly", "Quaterly","Halfyearly",];
+  const frequencies = ["Monthly", "quarterly","half_yearly",];
   let tableHeads = [
     "Fee Head",
     "Apr",
@@ -201,10 +203,12 @@ const FeeGroupPricing = () => {
         const classesRes = await axios.get(`${baseURL}/api/classes`);
         const feegroupRes=await axios.get(`${baseURL}/api/fee-groups`);
         const subjectsRes=await axios.get(`${baseURL}/api/subjects`);
+        const castsRes=await axios.get(`${baseURL}/api/castes`);
         setFeesType(feesTypeRes.data.data ?? []);
         setClasses(classesRes.data.data ?? []);
         setFeegroup(feegroupRes.data.data??[])
         setSubjects(subjectsRes.data.data ?? []);
+        setCasts(castsRes.data.data ?? []);
       } catch (error) {
         console.error("Error fetching fee heads:", error);
       }
@@ -284,29 +288,30 @@ const FeeGroupPricing = () => {
     try{
     let groupdetails={
       feegroupid: form.feeGroupId,
-      frequency: form.frequency,
-      classId: form.classId,
+      scheduletype: form.scheduletype,
+      classid: form.classid,
       isbackwardclass: form.backwardClass,
       gender: form.gender,
       fee_for: form.fee_for,
       isAdded_student: form.isAdded_student,
       is_elective: form.is_elective,
       subject_id: form.subject_id,
+      cast:form.cast
     }
-       if(form.frequency=="Halfyearly"){
+       if(form.scheduletype=="half_yearly"){
         let groupPricingRecord=mergeFeeArrays(halfyearprice1,halfyearprice2)
         //console.log('group details',groupdetails)
         //console.log('group pricing record',groupPricingRecord)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord})
         
        }
-       if(form.frequency=="Quaterly"){
+       if(form.scheduletype=="quarterly"){
         let groupPricingRecord=mergeFeeArrays(quaterprice1,quaterprice2,quaterprice3,quaterprice4)
         //console.log('group details',groupdetails)
         //console.log('group pricing record',groupPricingRecord)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord})
        }
-       if(form.frequency=="Monthly"){
+       if(form.scheduletype=="Monthly"){
        // console.log('group details',groupdetails)
         //console.log('year price is:',yearprice)
         await axios.post(`${baseURL}/api/fee-groups/groupdetailandpricing`,{groupdetails,groupPricingRecord:yearprice})
@@ -374,17 +379,17 @@ const FeeGroupPricing = () => {
               </div>
 
               <div className="row mb-3 align-items-center">
-                <label htmlFor="frequency" className="col-sm-4 col-md-3 col-form-label text-sm-start">
-                  Frequency
+                <label htmlFor="scheduletype" className="col-sm-4 col-md-3 col-form-label text-sm-start">
+                  scheduletype
                 </label>
                 <div className="col-sm-8 col-md-6">
                   <select
-                    id="frequency"
+                    id="scheduletype"
                     className="form-select"
-                    value={form.frequency}
-                    onChange={updateField("frequency")}
+                    value={form.scheduletype}
+                    onChange={updateField("scheduletype")}
                   >
-                    <option value="">Select Frequency</option>
+                    <option value="">Select scheduletype</option>
                     {frequencies.map((freq) => (
                       <option key={freq} value={freq}>
                         {freq}
@@ -402,8 +407,8 @@ const FeeGroupPricing = () => {
                   <select
                     id="class-select"
                     className="form-select"
-                    value={form.classId}
-                    onChange={updateField("classId")}
+                    value={form.classid}
+                    onChange={updateField("classid")}
                   >
                     <option value="">Select Class</option>
                     {classes.map((cls) => (
@@ -453,6 +458,21 @@ const FeeGroupPricing = () => {
                 </div>
               </div>
 
+              {form?.backwardClass && (
+                <div className="row mb-3 align-items-center">
+                  <div className="col-sm-4 col-md-3 col-form-label text-sm-start">Cast</div>
+                  <div className="col-sm-8 col-md-6">
+                    <select className="form-select" value={form.cast} onChange={updateField("cast")}>
+                      <option value="">Select Cast</option>
+                      {casts.map((cast) => (
+                        <option key={cast.id} value={cast.id}>
+                          {cast.value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
               <div className="row mb-3 align-items-center">
                 <div className="col-sm-4 col-md-3 col-form-label text-sm-start">Gender</div>
                 <div className="col-sm-8 col-md-6">
@@ -624,8 +644,8 @@ const FeeGroupPricing = () => {
                   </button>
                 </div>
               </div>
-              {form.frequency === "Monthly" && makeTable(yearprice, setYearprice)}
-              {form.frequency === "Quaterly" && (
+              {form.scheduletype === "Monthly" && makeTable(yearprice, setYearprice)}
+              {form.scheduletype === "quarterly" && (
                 <>
                   {makeTable(quaterprice1, setQuaterprice1)}
                   {makeTable(quaterprice2, setQuaterprice2)}
@@ -633,7 +653,7 @@ const FeeGroupPricing = () => {
                   {makeTable(quaterprice4, setQuaterprice4)}
                 </>
               )}
-              {form.frequency === "Halfyearly" && (
+              {form.scheduletype === "half_yearly" && (
                 <>
                   {makeTable(halfyearprice1, setHalfyearprice1)}
                   {makeTable(halfyearprice2, setHalfyearprice2)}

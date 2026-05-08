@@ -255,7 +255,7 @@ const MasterLayout = () => {
           title: "Admission Fee",
           icon: "icon-park-outline:id-card",
           children: [
-            { title: "Collect Admission Fee", path: "/dashboard/accounts/admission/collect-admission-fee" },
+            { title: "Collect Admission Fee", path: "/dashboard/admission/collect-admission-fee" },
             { title: "Report-Online Admission Payment", path: "/dashboard/admission/online-admission-payment" },
             { title: "Report-Offline Admission Payment", path: "/dashboard/admission/offline-admission-payment" },
             { title: "Report-All Transaction Admission Payment", path: "/dashboard/admission/all-transaction-admission-payment" },

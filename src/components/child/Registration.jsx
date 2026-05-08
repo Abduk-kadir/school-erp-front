@@ -239,7 +239,7 @@ const Registration = () => {
                     <Field as="select" name="student_type" className="form-select">
                       <option value="">Select student type</option>
                       <option value="added">added</option>
-                      <option value="unAdded">unAdded</option>
+                      <option value="unadded">unadded</option>
                     </Field>
                   </div>
                   <ErrorMessage name="student_type" component="div" className="text-danger small mt-1" />

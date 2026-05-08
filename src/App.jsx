@@ -187,6 +187,10 @@ const AdmissionAllFeeTransactionPage = lazy(() =>
   import("./pages/AdminPages/admissionfee/AdmissionAllFeeTransactionPage")
 );
 
+const CollectAdmissionPage = lazy(() =>
+  import("./pages/AdminPages/admissionfee/CollectAdmissionPage")
+);
+
 const TransportOnlineFeeReportPage = lazy(() =>
   import("./pages/AdminPages/transportfee/TransportOnlineFeeReportPage")
 );
@@ -199,6 +203,10 @@ const TransportUnpaidAndPaidReportPage = lazy(() =>
 const TransportAllFeeTransactionPage = lazy(() =>
   import("./pages/AdminPages/transportfee/TransportAllFeeTransactionPage")
 );
+const CollectTransportFeePage = lazy(() =>
+  import("./pages/AdminPages/transportfee/CollectTransportFeePage")
+);
+
 const CanteenOfflinePaymentReportPage = lazy(() =>
   import("./pages/AdminPages/canteenfee/CanteenOfflinePaymentReport")
 );
@@ -210,6 +218,9 @@ const CanteenUnpaidAndPaidReportPage = lazy(() =>
 );
 const CanteenAllFeeTransactionPage = lazy(() =>
   import("./pages/AdminPages/canteenfee/CanteenAllFeeTransactionPage")
+);
+const CollectCanteenFeePage = lazy(() =>
+  import("./pages/AdminPages/canteenfee/CollectCanteenFeePage")
 );
 
 const AcademicFinePage = lazy(() => import("./pages/AdminPages/academifee/AcademicFinePage"))
@@ -312,6 +323,18 @@ function App() {
               <Route path="setting">
                 <Route path="institute" element={<InstitutePage />} />
               </Route>
+
+              <Route path="admission-report">
+                <Route
+                  path="form-status-report"
+                  element={<AddmissionFormStatusReport />}
+                />
+                <Route
+                  path="form-accept-report"
+                  element={<AddmissionFormAcceptReport />}
+                />
+              </Route>
+
               <Route path="admission">
                 <Route path="form-conform" element={<AddmissionConformPage />} />
                 <Route path="seat-allotment" element={<SeatAllotmentPage />} />
@@ -329,18 +352,10 @@ function App() {
                   path="all-transaction-admission-payment"
                   element={<AdmissionAllFeeTransactionPage />}
                 />
+                <Route path="collect-admission-fee" element={<CollectAdmissionPage />} />
               </Route>
 
-              <Route path="admission-report">
-                <Route
-                  path="form-status-report"
-                  element={<AddmissionFormStatusReport />}
-                />
-                <Route
-                  path="form-accept-report"
-                  element={<AddmissionFormAcceptReport />}
-                />
-              </Route>
+             
 
               <Route path="academic">
                 <Route path="student" element={<StudentPage />} />
@@ -364,6 +379,7 @@ function App() {
                   path="all-transaction-bus-payment"
                   element={<TransportAllFeeTransactionPage />}
                 />
+                <Route path="collect-bus-fee" element={<CollectTransportFeePage />} />
               </Route>
 
               <Route path="academic-fee">
@@ -413,10 +429,12 @@ function App() {
                   path="all-transaction-canteen-payment"
                   element={<CanteenAllFeeTransactionPage />}
                 />
+                <Route path="collect-canteen-fee" element={<CollectCanteenFeePage />} />
               </Route>
               <Route path="transport">
                 <Route path="add-route" element={<RoutePage />} />
                 <Route path="assign-sub-route" element={<SubRoutePage />} />
+                
               </Route>
               <Route path="class-wise-school" element={<ClasswiseSchoolPage />} />
               <Route path="staff-master" element={<AllStaffPage />} />

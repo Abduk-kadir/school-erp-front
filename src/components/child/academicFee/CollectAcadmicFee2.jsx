@@ -24,7 +24,8 @@ const formatClassOrDivision = (v) => {
     return String(v);
 };
 
-const CollectAcadmicFee2 = () => {
+const CollectAcadmicFee2 = ({feetypeid}) => {
+    console.log("feetypeid********:",feetypeid)
     const [reg_no, setReg_no] = useState("");
     const [merit_reg_no, setMerit_reg_no] = useState("");
     const [student, setStudent] = useState(null);
@@ -55,7 +56,7 @@ const CollectAcadmicFee2 = () => {
             if (merit_reg_no) {
 
                 let response = await axios.get(`${baseURL}/api/personal-information/reg_no/${merit_reg_no}`)
-                let response2 = await axios.get(`${baseURL}/api/fee-groups/student/${merit_reg_no}/assigned-fees`)
+                let response2 = await axios.get(`${baseURL}/api/fee-groups/student/feestype/${merit_reg_no}/${feetypeid}/assigned-fees`)
                 let allFeeheadspricing = response2?.data?.data
                 allFeeheadspricing=allFeeheadspricing.map((elem)=>{
                     return{
