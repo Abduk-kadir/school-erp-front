@@ -113,7 +113,7 @@ const feeReportColumns = [
 const CanteenOfflinePaymentReportPage = () => {
   return (
     <div>
-      <AcadmicOfflineFeeReportDataTable url={`${baseURL}/api/fees`} columns={feeReportColumns} />
+      <AcadmicOfflineFeeReportDataTable url={`${baseURL}/api/canteen-fees/allfee-collection`} columns={feeReportColumns} />
     </div>
   );
 };

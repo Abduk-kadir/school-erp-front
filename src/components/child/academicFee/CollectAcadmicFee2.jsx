@@ -24,8 +24,9 @@ const formatClassOrDivision = (v) => {
     return String(v);
 };
 
-const CollectAcadmicFee2 = ({feetypeid}) => {
+const CollectAcadmicFee2 = ({feetypeid,apiurl,feeLabel}) => {
     console.log("feetypeid********:",feetypeid)
+    console.log("apiurl********:",apiurl)
     const [reg_no, setReg_no] = useState("");
     const [merit_reg_no, setMerit_reg_no] = useState("");
     const [student, setStudent] = useState(null);
@@ -101,7 +102,7 @@ const CollectAcadmicFee2 = ({feetypeid}) => {
             }
             else if (reg_no) {
                 let response = await axios.get(`${baseURL}/api/parmanent-personal-information/reg/${reg_no}`)
-                let response2 = await axios.get(`${baseURL}/api/fee-groups/student/${reg_no}/assigned-fees`)
+                let response2 = await axios.get(`${baseURL}/api/fee-groups/student/feestype/${reg_no}/${feetypeid}/assigned-fees`)
                 let allFeeheadspricing = response2?.data?.data
                 allFeeheadspricing=allFeeheadspricing.map((elem)=>{
                     return{
@@ -241,7 +242,7 @@ const CollectAcadmicFee2 = ({feetypeid}) => {
             reg_no:common_reg_no,total: academicFee,payment: typeoffeepayment==0?totalpaid:0, total_paid:academicFee-payableFee+totalpaid,
             balance:payableFee-totalpaid, remark: remark, payment_mode: paymentMode, date: transactionDate, consessionamount:typeoffeepayment==1?totalpaid:0, consession: typeoffeepayment
           }
-       let {data}=await axios.post(`${baseURL}/api/student-fees/fee-collection`,{feecollection,filteredstudentfees,feerecordmothlydata})
+       let {data}=await axios.post(`${baseURL}${apiurl}`,{feecollection,filteredstudentfees,feerecordmothlydata})
        if(merit_reg_no){
         let response3=await axios.post(`${baseURL}/api/fees/student-copy-from-personal-to-par-personal`,{reg_no:merit_reg_no})
       }
@@ -435,7 +436,7 @@ const CollectAcadmicFee2 = ({feetypeid}) => {
                             backgroundColor: "#d6eaff",
                             borderBottom: "1px solid rgba(13, 110, 253, 0.18)",
                         }}>
-                        <h6>Collect Fee</h6>
+                        <h6>Collect {feeLabel}</h6>
 
 
 
@@ -570,64 +571,64 @@ const CollectAcadmicFee2 = ({feetypeid}) => {
                                                 Due-<br />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="apr_total" value={(+item?.apr_total || 0) - (+item?.apr_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="apr_paid" placeholder={(+item?.apr_total || 0) - (+item?.apr_total_paid || 0)} value={item?.apr_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="apr_total" value={item.apr_total_due==0?item.apr_total:(+item?.apr_total || 0) - (+item?.apr_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="apr_paid"  value={item.apr_total_due==0?"paid":item?.apr_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.apr_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="apr_due" value={(+item?.apr_total || 0) - (+item?.apr_total_paid || 0) - (+item?.apr_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="may_total" value={(+item?.may_total || 0) - (+item?.may_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="may_paid" placeholder={(+item?.may_total || 0) - (+item?.may_total_paid || 0)} value={item?.may_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="may_total" value={item.may_total_due==0?item.may_total:(+item?.may_total || 0) - (+item?.may_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="may_paid"  value={item.may_total_due==0?"paid":item?.may_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.may_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="may_due" value={(+item?.may_total || 0) - (+item?.may_total_paid || 0) - (+item?.may_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jun_total" value={(+item?.jun_total || 0) - (+item?.jun_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jun_paid" placeholder={(+item?.jun_total || 0) - (+item?.jun_total_paid || 0)} value={item?.jun_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jun_total" value={item.jun_total_due==0?item.jun_total:(+item?.jun_total || 0) - (+item?.jun_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jun_paid"  value={item.jun_total_due==0?"paid":item?.jun_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.jun_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="jun_due" value={(+item?.jun_total || 0) - (+item?.jun_total_paid || 0) - (+item?.jun_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jul_total" value={(+item?.jul_total || 0) - (+item?.jul_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jul_paid" placeholder={(+item?.jul_total || 0) - (+item?.jul_total_paid || 0)} value={item?.jul_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jul_total" value={item.jul_total_due==0?item.jul_total:(+item?.jul_total || 0) - (+item?.jul_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jul_paid"  value={item.jul_total_due==0?"paid":item?.jul_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.jul_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="jul_due" value={(+item?.jul_total || 0) - (+item?.jul_total_paid || 0) - (+item?.jul_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="aug_total" value={(+item?.aug_total || 0) - (+item?.aug_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="aug_paid" placeholder={(+item?.aug_total || 0) - (+item?.aug_total_paid || 0)} value={item?.aug_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="aug_total" value={item.aug_total_due==0?item.aug_total:(+item?.aug_total || 0) - (+item?.aug_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="aug_paid"  value={item.aug_total_due==0?"paid":item?.aug_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.aug_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="aug_due" value={(+item?.aug_total || 0) - (+item?.aug_total_paid || 0) - (+item?.aug_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="sep_total" value={(+item?.sep_total || 0) - (+item?.sep_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="sep_paid" placeholder={(+item?.sep_total || 0) - (+item?.sep_total_paid || 0)} value={item?.sep_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="sep_total" value={item.sep_total_due==0?item.sep_total:(+item?.sep_total || 0) - (+item?.sep_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="sep_paid"  value={item.sep_total_due==0?"paid":item?.sep_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.sep_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="sep_due" value={(+item?.sep_total || 0) - (+item?.sep_total_paid || 0) - (+item?.sep_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="oct_total" value={(+item?.oct_total || 0) - (+item?.oct_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="oct_paid" placeholder={(+item?.oct_total || 0) - (+item?.oct_total_paid || 0)} value={item?.oct_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="oct_total" value={item.oct_total_due==0?item.oct_total:(+item?.oct_total || 0) - (+item?.oct_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="oct_paid"  value={item.oct_total_due==0?"paid":item?.oct_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.oct_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="oct_due" value={(+item?.oct_total || 0) - (+item?.oct_total_paid || 0) - (+item?.oct_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="nov_total" value={(+item?.nov_total || 0) - (+item?.nov_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="nov_paid" placeholder={(+item?.nov_total || 0) - (+item?.nov_total_paid || 0)} value={item?.nov_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="nov_total" value={item.nov_total_due==0?item.nov_total:(+item?.nov_total || 0) - (+item?.nov_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="nov_paid"  value={item.nov_total_due==0?"paid":item?.nov_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.nov_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="nov_due" value={(+item?.nov_total || 0) - (+item?.nov_total_paid || 0) - (+item?.nov_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="dec_total" value={(+item?.dec_total || 0) - (+item?.dec_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="dec_paid" placeholder={(+item?.dec_total || 0) - (+item?.dec_total_paid || 0)} value={item?.dec_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="dec_total" value={item.dec_total_due==0?item.dec_total:(+item?.dec_total || 0) - (+item?.dec_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="dec_paid"  value={item.dec_total_due==0?"paid":item?.dec_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.dec_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="dec_due" value={(+item?.dec_total || 0) - (+item?.dec_total_paid || 0) - (+item?.dec_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jan_total" value={(+item?.jan_total || 0) - (+item?.jan_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jan_paid" placeholder={(+item?.jan_total || 0) - (+item?.jan_total_paid || 0)} value={item?.jan_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jan_total" value={item.jan_total_due==0?item.jan_total:(+item?.jan_total || 0) - (+item?.jan_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jan_paid"  value={item.jan_total_due==0?"paid":item?.jan_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.jan_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="jan_due" value={(+item?.jan_total || 0) - (+item?.jan_total_paid || 0) - (+item?.jan_paid || 0)} disabled />
 
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="feb_total" value={(+item?.feb_total || 0) - (+item?.feb_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="feb_paid" placeholder={(+item?.feb_total || 0) - (+item?.feb_total_paid || 0)} value={item?.feb_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="feb_total" value={item.feb_total_due==0?item.feb_total:(+item?.feb_total || 0) - (+item?.feb_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="feb_paid"  value={item.feb_total_due==0?"paid":item?.feb_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.feb_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="feb_due" value={(+item?.feb_total || 0) - (+item?.feb_total_paid || 0) - (+item?.feb_paid || 0)} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
-                                                <input className="form-control form-control-sm mb-1 w-100" name="mar_total" value={(+item?.mar_total || 0) - (+item?.mar_total_paid || 0)} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="mar_paid" placeholder={(+item?.mar_total || 0) - (+item?.mar_total_paid || 0)} value={item?.mar_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="mar_total" value={item.mar_total_due==0?item.mar_total:(+item?.mar_total || 0) - (+item?.mar_total_paid || 0)} disabled />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="mar_paid"  value={item.mar_total_due==0?"paid":item?.mar_paid ?? ""} onChange={(e) => handlePaidChange(e, getRowId(item))}  disabled={item.mar_total_due == 0} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="mar_due" value={(+item?.mar_total || 0) - (+item?.mar_total_paid || 0) - (+item?.mar_paid || 0)} disabled />
                                             </td>
 

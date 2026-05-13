@@ -113,7 +113,7 @@ const feeReportColumns = [
 const CanteenAllFeeTransactionPage = () => {
   return (
     <div>
-      <AcademicAllTransactionReportDataTable url={`${baseURL}/api/fees`} columns={feeReportColumns} />
+      <AcademicAllTransactionReportDataTable url={`${baseURL}/api/canteen-fees/allfee-collection`} columns={feeReportColumns} />
     </div>
   );
 };

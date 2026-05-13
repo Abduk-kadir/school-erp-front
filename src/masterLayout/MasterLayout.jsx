@@ -248,18 +248,20 @@ const MasterLayout = () => {
             { title: "Fee Group Pricing", path: "/dashboard/accounts/fee-master/fee-group-pricing" },
             {title:"Fine", path: "/dashboard/accounts/fee-master/fine"},
             {title:"Assigned Fine",path:"/dashboard/accounts/fee-master/assigned-fine"},
-            {title:"Online Fee Breakup",path:"/dashboard/accounts/fee-master/online-fee-breakup"}
+            
           ]
         },
         {
           title: "Admission Fee",
           icon: "icon-park-outline:id-card",
           children: [
+            {title:"Split Admission Fee",path:"/dashboard/admission/split-admission-fee"},
             { title: "Collect Admission Fee", path: "/dashboard/admission/collect-admission-fee" },
             { title: "Report-Online Admission Payment", path: "/dashboard/admission/online-admission-payment" },
             { title: "Report-Offline Admission Payment", path: "/dashboard/admission/offline-admission-payment" },
             { title: "Report-All Transaction Admission Payment", path: "/dashboard/admission/all-transaction-admission-payment" },
             { title: "Report-Student Wise Admission Payment", path: "/dashboard/admission/student-wise-admission-payment" },
+            
             
 
           ]
@@ -269,6 +271,7 @@ const MasterLayout = () => {
           title: "Academic Fee",
           icon: "icon-park-outline:id-card",
           children: [
+            {title:"Split Academic Fee",path:"/dashboard/academic-fee/split-academic-fee"},
             { title: "Collect Academic Fee", path: "/dashboard/academic-fee/collect-academic-fee" },
             { title: "Report-Online Academic Payment", path: "/dashboard/academic-fee/online-academic-payment" },
             { title: "Report-Offline Academic Payment", path: "/dashboard/academic-fee/offline-academic-payment" },
@@ -299,6 +302,7 @@ const MasterLayout = () => {
           title: "Canteen Fee",
           icon: "icon-park-outline:id-card",
           children: [
+            {title:"Split Canteen Fee",path:"/dashboard/canteen-fee/split-canteen-fee"},
             { title: "Collect Canteen Fee", path: "/dashboard/canteen-fee/collect-canteen-fee" },
             { title: "Report-Online Canteen Payment", path: "/dashboard/canteen-fee/online-canteen-payment" },
             { title: "Report-Offline Canteen Payment", path: "/dashboard/canteen-fee/offline-canteen-payment" },

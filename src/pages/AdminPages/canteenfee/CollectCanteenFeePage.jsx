@@ -7,7 +7,7 @@ const CollectCanteenFeePage = () => {
   return (
     <>
      
-      <CollectAcadmicFee2 feetypeid={4}/>
+      <CollectAcadmicFee2 feetypeid={4} apiurl='/api/canteen-fees/fee-collection' feeLabel="Canteen Fee"/>
     </>
   )
 }

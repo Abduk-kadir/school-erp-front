@@ -141,9 +141,18 @@ const AssignedFinedPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/AssignedFinedPage")
 );
 
-const FeeSplitPage = lazy(() =>
-  import("./pages/AdminPages/feeMaster/FeeSplitPage")
+
+
+const SplitAdmissionFeePage = lazy(() =>
+  import("./pages/AdminPages/admissionfee/SplitAdmissionFeePage")
 );
+const SplitAcademicFeePage = lazy(() =>
+  import("./pages/AdminPages/academifee/SplitAcademicFeePage")
+);
+const SplitCanteenFeePage = lazy(() =>
+  import("./pages/AdminPages/canteenfee/SplitCanteenPage")
+);
+
 
 const FeeGroupPricingPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/FeeGroupPricingPage")
@@ -340,6 +349,7 @@ function App() {
                 <Route path="seat-allotment" element={<SeatAllotmentPage />} />
                 <Route path="view-accept" element={<AllStageShown />} />
                 <Route path="student-data" element={<DownloadStudentDataPage />} />
+                <Route path="split-admission-fee" element={<SplitAdmissionFeePage />} />
                 <Route
                   path="online-admission-payment"
                   element={<AdmissionOnlineFeeReportPage />}
@@ -383,6 +393,7 @@ function App() {
               </Route>
 
               <Route path="academic-fee">
+                <Route path="split-academic-fee" element={<SplitAcademicFeePage />} />
                 <Route
                   path="online-academic-payment"
                   element={<AcacademicOnlineFeeReportPage />}
@@ -413,6 +424,7 @@ function App() {
                 <Route path="collect-academic-fee" element={<AcademicFeeCollectPage />} />
               </Route>
               <Route path="canteen-fee">
+                <Route path="split-canteen-fee" element={<SplitCanteenFeePage />} />
                 <Route
                   path="online-canteen-payment"
                   element={<CanteenOnlineFeeReportPage />}
@@ -448,7 +460,7 @@ function App() {
                   <Route path="fee-group-pricing" element={<FeeGroupPricingPage />} />
                   <Route path='fine' element={<FinePage />} />
                   <Route path='assigned-fine' element={<AssignedFinedPage />} />
-                  <Route path='online-fee-breakup' element={<FeeSplitPage />} />
+                  
                 </Route>
               </Route>
 

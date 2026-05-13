@@ -9,11 +9,57 @@ const parseNum = (v) => {
     const n = Number.parseFloat(String(v ?? "").replace(/,/g, ""));
     return Number.isFinite(n) ? n : 0;
 };
+
+const SPLIT_MONTHS = [
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "oct",
+    "nov",
+    "dec",
+    "jan",
+    "feb",
+    "mar",
+];
+
 /** Due row: coerce operands to numbers before subtracting (API may return strings). */
 const monthSplitDisplayTotal = (item, month) =>
     (item?.[`split_${month}_total`]
         ? parseNum(item[`split_${month}_total`])
         : parseNum(item[`${month}_total`])) - parseNum(item[`${month}_split1`]);
+
+/** Same numeric value as the disabled Total row input for that month (see table `value=`). */
+const tableTotalLineValue = (item, m) => {
+    const st = `split_${m}_total`;
+    const tk = `${m}_total`;
+    return item?.[st] ? parseNum(item[st]) : parseNum(item[tk]);
+};
+
+/** Copy table-visible values into row state after fetch (Total / Split1 / Split2). */
+const syncRowFieldsToDisplayedTableValues = (row) => {
+    const r = { ...row };
+    for (const m of SPLIT_MONTHS) {
+        const st = `split_${m}_total`;
+        const tk = `${m}_total`;
+        let totalShown = tableTotalLineValue(r, m);
+        if (!Number.isFinite(totalShown)) {
+            totalShown = parseNum(r[tk]);
+        }
+        r[st] = totalShown;
+    }
+    for (const m of SPLIT_MONTHS) {
+        const st = `split_${m}_total`;
+        const tk = `${m}_total`;
+        const s1 = `${m}_split1`;
+        const s2 = `${m}_split2`;
+        r[s1] = r[s1] ? r[s1] : r[tk];
+        r[s2] = r[s1] ? monthSplitDisplayTotal(r, m) : 0;
+    }
+    return r;
+};
 const rowMatchesId = (row, rowId) =>
     rowId != null &&
     (row.id === rowId ||
@@ -29,7 +75,8 @@ const formatClassOrDivision = (v) => {
     return String(v);
 };
 
-const FeeSplit = () => {
+const FeeSplit = ({feetypeid,feeLabel}) => {
+    console.log('feetypeid*******:',feetypeid)
     const [reg_no, setReg_no] = useState("");
     const [merit_reg_no, setMerit_reg_no] = useState("");
     const [student, setStudent] = useState(null);
@@ -65,25 +112,27 @@ const FeeSplit = () => {
             if (merit_reg_no) {
 
                 let response = await axios.get(`${baseURL}/api/personal-information/reg_no/${merit_reg_no}`)
-                let response2 = await axios.get(`${baseURL}/api/fee-groups/student/${merit_reg_no}/assigned-fees`)
+                let response2 = await axios.get(`${baseURL}/api/fee-groups/student/feestype/${merit_reg_no}/${feetypeid}/assigned-fees`)
                 let allFeeheadspricing = response2?.data?.data
-                allFeeheadspricing = allFeeheadspricing.map((elem) => {
-                    return {
-                        ...elem,
-                        apr_paid: +elem?.apr_total - elem?.apr_total_paid,
-                        may_paid: +elem?.may_total - elem?.may_total_paid,
-                        jun_paid: +elem?.jun_total - elem?.jun_total_paid,
-                        jul_paid: +elem?.jul_total - elem?.jul_total_paid,
-                        aug_paid: +elem?.aug_total - elem?.aug_total_paid,
-                        sep_paid: +elem?.sep_total - elem?.sep_total_paid,
-                        oct_paid: +elem?.oct_total - elem?.oct_total_paid,
-                        nov_paid: +elem?.nov_total - elem?.nov_total_paid,
-                        dec_paid: +elem?.dec_total - elem?.dec_total_paid,
-                        jan_paid: +elem?.jan_total - elem?.jan_total_paid,
-                        feb_paid: +elem?.feb_total - elem?.feb_total_paid,
-                        mar_paid: +elem?.mar_total - elem?.mar_total_paid
-                    }
-                })
+                allFeeheadspricing = allFeeheadspricing
+                    .map((elem) => {
+                        return {
+                            ...elem,
+                            apr_paid: +elem?.apr_total - elem?.apr_total_paid,
+                            may_paid: +elem?.may_total - elem?.may_total_paid,
+                            jun_paid: +elem?.jun_total - elem?.jun_total_paid,
+                            jul_paid: +elem?.jul_total - elem?.jul_total_paid,
+                            aug_paid: +elem?.aug_total - elem?.aug_total_paid,
+                            sep_paid: +elem?.sep_total - elem?.sep_total_paid,
+                            oct_paid: +elem?.oct_total - elem?.oct_total_paid,
+                            nov_paid: +elem?.nov_total - elem?.nov_total_paid,
+                            dec_paid: +elem?.dec_total - elem?.dec_total_paid,
+                            jan_paid: +elem?.jan_total - elem?.jan_total_paid,
+                            feb_paid: +elem?.feb_total - elem?.feb_total_paid,
+                            mar_paid: +elem?.mar_total - elem?.mar_total_paid
+                        }
+                    })
+                    .map(syncRowFieldsToDisplayedTableValues)
                 let student = response?.data?.data
                 setStudent({
 
@@ -100,29 +149,31 @@ const FeeSplit = () => {
             }
             else if (reg_no) {
                 let response = await axios.get(`${baseURL}/api/parmanent-personal-information/reg/${reg_no}`)
-                let response2 = await axios.get(`${baseURL}/api/student-fee-installment-splits/${reg_no}`)
+                let response2 = await axios.get(`${baseURL}/api/student-fee-installment-splits/${reg_no}/feefor/${feetypeid}`)
 
                 let allFeeheadspricing = response2?.data?.data
 
 
-                allFeeheadspricing = allFeeheadspricing.map((elem) => {
-                    return {
-                        ...elem,
-                        split_apr_total: +elem?.split_apr_total - elem?.apr_split1,
-                        split_may_total: +elem?.split_may_total - elem?.may_split1,
-                        split_jun_total: +elem?.split_jun_total - elem?.jun_split1,
-                        split_jul_total: +elem?.split_jul_total - elem?.jul_split1,
-                        split_aug_total: +elem?.split_aug_total - elem?.aug_split1,
-                        split_sep_total: +elem?.split_sep_total - elem?.sep_split1,
-                        split_oct_total: +elem?.split_oct_total - elem?.oct_split1,
-                        split_nov_total: +elem?.split_nov_total - elem?.nov_split1,
-                        split_dec_total: +elem?.split_dec_total - elem?.dec_split1,
-                        split_jan_total: +elem?.split_jan_total - elem?.jan_split1,
-                        split_feb_total: +elem?.split_feb_total - elem?.feb_split1,
-                        split_mar_total: +elem?.split_mar_total - elem?.mar_split1,
-                        
-                    }
-                })
+                allFeeheadspricing = allFeeheadspricing
+                    .map((elem) => {
+                        return {
+                            ...elem,
+                            split_apr_total: +elem?.split_apr_total - elem?.apr_split2,
+                            split_may_total: +elem?.split_may_total - elem?.may_split2,
+                            split_jun_total: +elem?.split_jun_total - elem?.jun_split2,
+                            split_jul_total: +elem?.split_jul_total - elem?.jul_split2,
+                            split_aug_total: +elem?.split_aug_total - elem?.aug_split2,
+                            split_sep_total: +elem?.split_sep_total - elem?.sep_split2,
+                            split_oct_total: +elem?.split_oct_total - elem?.oct_split2,
+                            split_nov_total: +elem?.split_nov_total - elem?.nov_split2,
+                            split_dec_total: +elem?.split_dec_total - elem?.dec_split2,
+                            split_jan_total: +elem?.split_jan_total - elem?.jan_split2,
+                            split_feb_total: +elem?.split_feb_total - elem?.feb_split2,
+                            split_mar_total: +elem?.split_mar_total - elem?.mar_split2,
+                            
+                        }
+                    })
+                    .map(syncRowFieldsToDisplayedTableValues)
 
                 let student = response?.data?.data
                 setStudent({
@@ -294,8 +345,9 @@ const FeeSplit = () => {
                 );
                 if (s) {
                     const p = s[1];
-                    const base = next?.[`split_${p}_total`]
-                        ? parseNum(next[`split_${p}_total`])
+                    const baseRaw = tableTotalLineValue(next, p);
+                    const base = Number.isFinite(baseRaw)
+                        ? baseRaw
                         : parseNum(next[`${p}_total`]);
                     next[`${p}_total`] = base;
                     next[`split_${p}_total`] = base;
@@ -393,7 +445,7 @@ const FeeSplit = () => {
                             backgroundColor: "#d6eaff",
                             borderBottom: "1px solid rgba(13, 110, 253, 0.18)",
                         }}>
-                        <h6>Split Student Fee</h6>
+                        <h6>{feeLabel}</h6>
 
 
 
@@ -529,63 +581,63 @@ const FeeSplit = () => {
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_apr_total" value={(item?.split_apr_total ? parseNum(item.split_apr_total) : parseNum(item.apr_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="apr_split1" value={item?.apr_split1?item?.apr_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="apr_split1" value={item?.apr_split1?item?.apr_split1:item?.apr_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="apr_split2" value={item?.apr_split1 ? monthSplitDisplayTotal(item, "apr") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_may_total" value={(item?.split_may_total ? parseNum(item.split_may_total) : parseNum(item.may_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="may_split1" value={item?.may_split1?item?.may_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="may_split1" value={item?.may_split1?item?.may_split1:item?.may_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="may_split2" value={item?.may_split1 ? monthSplitDisplayTotal(item, "may") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_jun_total" value={(item?.split_jun_total ? parseNum(item.split_jun_total) : parseNum(item.jun_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jun_split1" value={item?.jun_split1?item?.jun_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jun_split1" value={item?.jun_split1?item?.jun_split1:item?.jun_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="jun_split2" value={item?.jun_split1 ? monthSplitDisplayTotal(item, "jun") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_jul_total" value={(item?.split_jul_total ? parseNum(item.split_jul_total) : parseNum(item.jul_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jul_split1" value={item?.jul_split1?item?.jul_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jul_split1" value={item?.jul_split1?item?.jul_split1:item?.jul_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="jul_split2" value={item?.jul_split1 ? monthSplitDisplayTotal(item, "jul") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_aug_total" value={(item?.split_aug_total ? parseNum(item.split_aug_total) : parseNum(item.aug_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="aug_split1" value={item?.aug_split1?item?.aug_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="aug_split1" value={item?.aug_split1?item?.aug_split1:item?.aug_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="aug_split2" value={item?.aug_split1 ? monthSplitDisplayTotal(item, "aug") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_sep_total" value={(item?.split_sep_total ? parseNum(item.split_sep_total) : parseNum(item.sep_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="sep_split1" value={item?.sep_split1?item?.sep_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="sep_split1" value={item?.sep_split1?item?.sep_split1:item?.sep_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="sep_split2" value={item?.sep_split1 ? monthSplitDisplayTotal(item, "sep") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_oct_total" value={(item?.split_oct_total ? parseNum(item.split_oct_total) : parseNum(item.oct_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="oct_split1" value={item?.oct_split1?item?.oct_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="oct_split1" value={item?.oct_split1?item?.oct_split1:item?.oct_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="oct_split2" value={item?.oct_split1 ? monthSplitDisplayTotal(item, "oct") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_nov_total" value={(item?.split_nov_total ? parseNum(item.split_nov_total) : parseNum(item.nov_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="nov_split1" value={item?.nov_split1?item?.nov_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="nov_split1" value={item?.nov_split1?item?.nov_split1:item?.nov_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="nov_split2" value={item?.nov_split1 ? monthSplitDisplayTotal(item, "nov") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_dec_total" value={(item?.split_dec_total ? parseNum(item.split_dec_total) : parseNum(item.dec_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="dec_split1" value={item?.dec_split1?item?.dec_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="dec_split1" value={item?.dec_split1?item?.dec_split1:item?.dec_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="dec_split2" value={item?.dec_split1 ? monthSplitDisplayTotal(item, "dec") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_jan_total" value={(item?.split_jan_total ? parseNum(item.split_jan_total) : parseNum(item.jan_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="jan_split1" value={item?.jan_split1?item?.jan_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="jan_split1" value={item?.jan_split1?item?.jan_split1:item?.jan_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="jan_split2" value={item?.jan_split1 ? monthSplitDisplayTotal(item, "jan") : 0} disabled />
 
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_feb_total" value={(item?.split_feb_total ? parseNum(item.split_feb_total) : parseNum(item.feb_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="feb_split1" value={item?.feb_split1?item?.feb_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="feb_split1" value={item?.feb_split1?item?.feb_split1:item?.feb_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="feb_split2" value={item?.feb_split1 ? monthSplitDisplayTotal(item, "feb") : 0} disabled />
                                             </td>
                                             <td className="p-1 align-top" style={{ minWidth: "5rem", maxWidth: "5.5rem", verticalAlign: "top" }}>
                                                 <input className="form-control form-control-sm mb-1 w-100" name="split_mar_total" value={(item?.split_mar_total ? parseNum(item.split_mar_total) : parseNum(item.mar_total))} disabled />
-                                                <input className="form-control form-control-sm mb-1 w-100" name="mar_split1" value={item?.mar_split1?item?.mar_split1:0} onChange={(e) => handlePaidChange(e, getRowId(item))} />
+                                                <input className="form-control form-control-sm mb-1 w-100" name="mar_split1" value={item?.mar_split1?item?.mar_split1:item?.mar_total} onChange={(e) => handlePaidChange(e, getRowId(item))} />
                                                 <input className="form-control form-control-sm mb-1 w-100" name="mar_split2" value={item?.mar_split1 ? monthSplitDisplayTotal(item, "mar") : 0} disabled />
                                             </td>
 

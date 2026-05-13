@@ -31,7 +31,7 @@ const StudentFee = () => {
             try {
                 //let response = await axios.get(`${baseURL}/api/fee-record-monthly/reg_no/${11}`)
                 let { data } = await axios.get(`${baseURL}/api/fees/registration/${11}`)
-                let response=await axios.get(`${baseURL}/api/fee-groups/student/${4}/assigned-fees`)
+                let response=await axios.get(`${baseURL}/api/fee-groups/student/feestype/${14}/${2}/assigned-fees-split`)
                
                let newrecords=response?.data?.data.map((elem)=>{
                 return {
