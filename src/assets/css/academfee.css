@@ -223,6 +223,16 @@
 
 .af-fee-row--data > [class*="col-"]:last-child {
   border-right: none;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+
+/* Split pay used <br /> between buttons — hide so Pay controls stay one row where space allows */
+.af-fee-row--data > [class*="col-"]:last-child br {
+  display: none;
 }
 
 .af-page .af-fee-row--data > [class*="col-"].border {
