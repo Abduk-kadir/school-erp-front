@@ -320,10 +320,168 @@ const StudentFee = () => {
             total_split1 = feedata?.apr_split1 + feedata?.may_split1 + feedata?.jun_split1 + feedata?.jul_split1 + feedata?.aug_split1 + feedata?.sep_split1 + feedata?.oct_split1 + feedata?.nov_split1 + feedata?.dec_split1 + feedata?.jan_split1 + feedata?.feb_split1 + feedata?.mar_split1;
             total_split2 = feedata?.apr_split2 + feedata?.may_split2 + feedata?.jun_split2 + feedata?.jul_split2 + feedata?.aug_split2 + feedata?.sep_split2 + feedata?.oct_split2 + feedata?.nov_split2 + feedata?.dec_split2 + feedata?.jan_split2 + feedata?.feb_split2 + feedata?.mar_split2;
         }
-        return { total, total_split1, total_split2, total_paid }
+        return { total,total_paid, total_split1, total_split2, }
 
     }
+    //here i am changing
+  let savingMonthlyData=(installment,month,paidtype)=>{
+    return installment.map(elem => {
+        if (month == 'apr') { 
+            let apr_paid=paidtype=='single'?Number(elem.apr_total)-Number(elem.apr_total_paid):paidtype=='split1'?Number(elem.apr_split1):Number(elem.apr_split2)
+            let apr_total_paid=Number(elem.apr_total_paid)+apr_paid;
+            let apr_total_due=Number(elem.apr_total)-apr_total_paid;
+            return { ...elem, apr_total_paid,apr_paid,apr_total_due} 
+        }
+        if (month == 'may') {
+            let may_paid = paidtype == 'single' ? Number(elem.may_total) - Number(elem.may_total_paid) : paidtype == 'split1' ? Number(elem.may_split1) : Number(elem.may_split2)
+            let may_total_paid = Number(elem.may_total_paid) + may_paid
+            let may_total_due = Number(elem.may_total) - may_total_paid
+            return { ...elem, may_total_paid, may_paid, may_total_due }
+        }
+        if (month == 'jun') {
+            let jun_paid = paidtype == 'single' ? Number(elem.jun_total) - Number(elem.jun_total_paid) : paidtype == 'split1' ? Number(elem.jun_split1) : Number(elem.jun_split2)
+            let jun_total_paid = Number(elem.jun_total_paid) + jun_paid
+            let jun_total_due = Number(elem.jun_total) - jun_total_paid
+            return { ...elem, jun_total_paid, jun_paid, jun_total_due }
+        }
+        if (month == 'jul') {
+            let jul_paid = paidtype == 'single' ? Number(elem.jul_total) - Number(elem.jul_total_paid) : paidtype == 'split1' ? Number(elem.jul_split1) : Number(elem.jul_split2)
+            let jul_total_paid = Number(elem.jul_total_paid) + jul_paid
+            let jul_total_due = Number(elem.jul_total) - jul_total_paid
+            return { ...elem, jul_total_paid, jul_paid, jul_total_due }
+        }
+        if (month == 'aug') {
+            let aug_paid = paidtype == 'single' ? Number(elem.aug_total) - Number(elem.aug_total_paid) : paidtype == 'split1' ? Number(elem.aug_split1) : Number(elem.aug_split2)
+            let aug_total_paid = Number(elem.aug_total_paid) + aug_paid
+            let aug_total_due = Number(elem.aug_total) - aug_total_paid
+            return { ...elem, aug_total_paid, aug_paid, aug_total_due }
+        }
+        if (month == 'sep') {
+            let sep_paid = paidtype == 'single' ? Number(elem.sep_total) - Number(elem.sep_total_paid) : paidtype == 'split1' ? Number(elem.sep_split1) : Number(elem.sep_split2)
+            let sep_total_paid = Number(elem.sep_total_paid) + sep_paid
+            let sep_total_due = Number(elem.sep_total) - sep_total_paid
+            return { ...elem, sep_total_paid, sep_paid, sep_total_due }
+        }
+        if (month == 'oct') {
+            let oct_paid = paidtype == 'single' ? Number(elem.oct_total) - Number(elem.oct_total_paid) : paidtype == 'split1' ? Number(elem.oct_split1) : Number(elem.oct_split2)
+            let oct_total_paid = Number(elem.oct_total_paid) + oct_paid
+            let oct_total_due = Number(elem.oct_total) - oct_total_paid
+            return { ...elem, oct_total_paid, oct_paid, oct_total_due }
+        }
+        if (month == 'nov') {
+            let nov_paid = paidtype == 'single' ? Number(elem.nov_total) - Number(elem.nov_total_paid) : paidtype == 'split1' ? Number(elem.nov_split1) : Number(elem.nov_split2)
+            let nov_total_paid = Number(elem.nov_total_paid) + nov_paid
+            let nov_total_due = Number(elem.nov_total) - nov_total_paid
+            return { ...elem, nov_total_paid, nov_paid, nov_total_due }
+        }
+        if (month == 'dec') {
+            let dec_paid = paidtype == 'single' ? Number(elem.dec_total) - Number(elem.dec_total_paid) : paidtype == 'split1' ? Number(elem.dec_split1) : Number(elem.dec_split2)
+            let dec_total_paid = Number(elem.dec_total_paid) + dec_paid
+            let dec_total_due = Number(elem.dec_total) - dec_total_paid
+            return { ...elem, dec_total_paid, dec_paid, dec_total_due }
+        }
+        if (month == 'jan') {
+            let jan_paid = paidtype == 'single' ? Number(elem.jan_total) - Number(elem.jan_total_paid) : paidtype == 'split1' ? Number(elem.jan_split1) : Number(elem.jan_split2)
+            let jan_total_paid = Number(elem.jan_total_paid) + jan_paid
+            let jan_total_due = Number(elem.jan_total) - jan_total_paid
+            return { ...elem, jan_total_paid, jan_paid, jan_total_due }
+        }
+        if (month == 'feb') {
+            let feb_paid = paidtype == 'single' ? Number(elem.feb_total) - Number(elem.feb_total_paid) : paidtype == 'split1' ? Number(elem.feb_split1) : Number(elem.feb_split2)
+            let feb_total_paid = Number(elem.feb_total_paid) + feb_paid
+            let feb_total_due = Number(elem.feb_total) - feb_total_paid
+            return { ...elem, feb_total_paid, feb_paid, feb_total_due }
+        }
+        if (month == 'mar') {
+            let mar_paid = paidtype == 'single' ? Number(elem.mar_total) - Number(elem.mar_total_paid) : paidtype == 'split1' ? Number(elem.mar_split1) : Number(elem.mar_split2)
+            let mar_total_paid = Number(elem.mar_total_paid) + mar_paid
+            let mar_total_due = Number(elem.mar_total) - mar_total_paid
+            return { ...elem, mar_total_paid, mar_paid, mar_total_due }
+        }
+    })
+  }
+  //doing calulation for quaterly data (same paid/split rules as savingMonthlyData, applied to each month in the quarter)
+  let savingQuarterlyData=(installment,month,paidtype)=>{
+    const monthPayment = (elem, pref) => {
+      const pref_paid = paidtype == 'single' ? Number(elem[`${pref}_total`]) - Number(elem[`${pref}_total_paid`]) : paidtype == 'split1' ? Number(elem[`${pref}_split1`]) : Number(elem[`${pref}_split2`])
+      const pref_total_paid = Number(elem[`${pref}_total_paid`]) + pref_paid
+      const pref_total_due = Number(elem[`${pref}_total`]) - pref_total_paid
+      return {
+        [`${pref}_total_paid`]: pref_total_paid,
+        [`${pref}_paid`]: pref_paid,
+        [`${pref}_total_due`]: pref_total_due,
+      }
+    }
 
+    return installment.map((elem) => {
+      if (month == 'apr') {
+        return { ...elem, ...monthPayment(elem, 'apr'), ...monthPayment(elem, 'may'), ...monthPayment(elem, 'jun') }
+      }
+      if (month == 'jul') {
+        return { ...elem, ...monthPayment(elem, 'jul'), ...monthPayment(elem, 'aug'), ...monthPayment(elem, 'sep') }
+      }
+      if (month == 'oct') {
+        return { ...elem, ...monthPayment(elem, 'oct'), ...monthPayment(elem, 'nov'), ...monthPayment(elem, 'dec') }
+      }
+      if (month == 'jan') {
+        return { ...elem, ...monthPayment(elem, 'jan'), ...monthPayment(elem, 'feb'), ...monthPayment(elem, 'mar') }
+      }
+      return elem
+    })
+  }
+
+  let savingHalfYearlyData=(installment,month,paidtype)=>{
+    const monthPayment = (elem, pref) => {
+      const pref_paid = paidtype == 'single' ? Number(elem[`${pref}_total`]) - Number(elem[`${pref}_total_paid`]) : paidtype == 'split1' ? Number(elem[`${pref}_split1`]) : Number(elem[`${pref}_split2`])
+      const pref_total_paid = Number(elem[`${pref}_total_paid`]) + pref_paid
+      const pref_total_due = Number(elem[`${pref}_total`]) - pref_total_paid
+      return {
+        [`${pref}_total_paid`]: pref_total_paid,
+        [`${pref}_paid`]: pref_paid,
+        [`${pref}_total_due`]: pref_total_due,
+      }
+    }
+
+    return installment.map((elem) => {
+      if (month == 'apr') {
+        return { ...elem, ...monthPayment(elem, 'apr'), ...monthPayment(elem, 'may'), ...monthPayment(elem, 'jun'), ...monthPayment(elem, 'jul'), ...monthPayment(elem, 'aug'), ...monthPayment(elem, 'sep') }
+      }
+      if (month == 'oct') {
+        return { ...elem, ...monthPayment(elem, 'oct'), ...monthPayment(elem, 'nov'), ...monthPayment(elem, 'dec'), ...monthPayment(elem, 'jan'), ...monthPayment(elem, 'feb'), ...monthPayment(elem, 'mar') }
+      }
+      return elem
+    })
+  }
+  let savingAnnuallyData=(installment,month,paidtype)=>{
+    const monthPayment = (elem, pref) => {
+      const pref_paid = paidtype == 'single' ? Number(elem[`${pref}_total`]) - Number(elem[`${pref}_total_paid`]) : paidtype == 'split1' ? Number(elem[`${pref}_split1`]) : Number(elem[`${pref}_split2`])
+      const pref_total_paid = Number(elem[`${pref}_total_paid`]) + pref_paid
+      const pref_total_due = Number(elem[`${pref}_total`]) - pref_total_paid
+      return {
+        [`${pref}_total_paid`]: pref_total_paid,
+        [`${pref}_paid`]: pref_paid,
+        [`${pref}_total_due`]: pref_total_due,
+      }
+    }
+
+    return installment.map((elem) => {
+      return {
+        ...elem,
+        ...monthPayment(elem, 'apr'),
+        ...monthPayment(elem, 'may'),
+        ...monthPayment(elem, 'jun'),
+        ...monthPayment(elem, 'jul'),
+        ...monthPayment(elem, 'aug'),
+        ...monthPayment(elem, 'sep'),
+        ...monthPayment(elem, 'oct'),
+        ...monthPayment(elem, 'nov'),
+        ...monthPayment(elem, 'dec'),
+        ...monthPayment(elem, 'jan'),
+        ...monthPayment(elem, 'feb'),
+        ...monthPayment(elem, 'mar'),
+      }
+    })
+  }
 
 
 
@@ -415,136 +573,37 @@ const StudentFee = () => {
         }
         fetchData()
     }, [])
-    let handlePay = async (month, splitname, splitamount) => {
-
-
-        // console.log('academic fee data is:',academicFeeData)
+    let handlePay = async (month,nameoffee,typeoffee,paidtype, total,totalpaid) => {
+     // console.log('month is:',month)
+      console.log('nameof fee is:',nameoffee);
+      console.log('type of fee is:',typeoffee)
+      //console.log('paid type is:',paidtype)
+      //console.log('payment:',total)
+      //console.log('total paid is*****:',totalpaid)
+     
+      let totalfeebytype =nameoffee == 'admission'? admissionTotalFee: nameoffee == 'canteen'? canteenTotalFee: academicFee;
+      let payment=total-totalpaid
+      let total_paid=nameoffee=='admission'?totalPaidAdmissionFee:nameoffee=='canteen'?totalPaidCanteenFee:totalPaid
+      let payable=nameoffee=='admission'?payableAdmissionFee:nameoffee=='canteen'?payableCanteenFee:payableFee
+     
+      let feecollection = { reg_no: 4, total: totalfeebytype, payment:payment, total_paid: total_paid + payment, balance: payable - payment, consession: 0, consessionamount: 0, remark: '', payment_mode: 'online', date: new Date().toISOString().split('T')[0] }
+      console.log('feecollection::',feecollection)
+        
         try {
-            let total = 0;
-            let total_paid = 0;
-            if (type == 'monthly' && month == 'apr') {
-                total = academicFeeData.apr_total;
-                total_paid = academicFeeData.apr_total_paid;
-            }
-            if (type == 'monthly' && month == 'may') {
-                total = academicFeeData.may_total;
-                total_paid = academicFeeData.may_total_paid;
-            }
-            if (type == 'monthly' && month == 'jun') {
-                total = academicFeeData.jun_total;
-                total_paid = academicFeeData.jun_total_paid;
-            }
-            if (type == 'monthly' && month == 'jul') {
-                total = academicFeeData.jul_total;
-                total_paid = academicFeeData.jul_total_paid;
-            }
-            if (type == 'monthly' && month == 'aug') {
-                total = academicFeeData.aug_total;
-                total_paid = academicFeeData.aug_total_paid;
-            }
-            if (type == 'monthly' && month == 'sep') {
-                total = academicFeeData.sep_total;
-                total_paid = academicFeeData.sep_total_paid;
-            }
-            if (type == 'monthly' && month == 'oct') {
-                total = academicFeeData.oct_total;
-                total_paid = academicFeeData.oct_total_paid;
-            }
-            if (type == 'monthly' && month == 'nov') {
-                total = academicFeeData.nov_total;
-                total_paid = academicFeeData.nov_total_paid;
-            }
-            if (type == 'monthly' && month == 'dec') {
-                total = academicFeeData.dec_total;
-                total_paid = academicFeeData.dec_total_paid;
-            }
-            if (type == 'monthly' && month == 'jan') {
-                total = academicFeeData.jan_total;
-                total_paid = academicFeeData.jan_total_paid;
-            }
-            if (type == 'monthly' && month == 'feb') {
-                total = academicFeeData.feb_total;
-                total_paid = academicFeeData.feb_total_paid;
-            }
-            if (type == 'monthly' && month == 'mar') {
-                total = academicFeeData.mar_total;
-                total_paid = academicFeeData.mar_total_paid;
-            }
-            if (type == 'quarterly' && month == 'apr') {
-                total = academicFeeData.apr_total + academicFeeData.may_total + academicFeeData.jun_total;
-                total_paid = academicFeeData.apr_total_paid + academicFeeData.may_total_paid + academicFeeData.jun_total_paid;
-            }
-            if (type == 'quarterly' && month == 'jul') {
-                total = academicFeeData.jul_total + academicFeeData.aug_total + academicFeeData.sep_total;
-                total_paid = academicFeeData.jul_total_paid + academicFeeData.aug_total_paid + academicFeeData.sep_total_paid;
-            }
-            if (type == 'quarterly' && month == 'oct') {
-                total = academicFeeData.oct_total + academicFeeData.nov_total + academicFeeData.dec_total;
-                total_paid = academicFeeData.oct_total_paid + academicFeeData.nov_total_paid + academicFeeData.dec_total_paid;
-            }
-            if (type == 'quarterly' && month == 'jan') {
-                total = academicFeeData.jan_total + academicFeeData.feb_total + academicFeeData.mar_total;
-                total_paid = academicFeeData.jan_total_paid + academicFeeData.feb_total_paid + academicFeeData.mar_total_paid;
-            }
-            if (type == 'half_yearly' && month == 'apr') {
-                total = academicFeeData.apr_total + academicFeeData.may_total + academicFeeData.jun_total + academicFeeData.jul_total + academicFeeData.aug_total + academicFeeData.sep_total;
-                total_paid = academicFeeData.apr_total_paid + academicFeeData.may_total_paid + academicFeeData.jun_total_paid + academicFeeData.jul_total_paid + academicFeeData.aug_total_paid + academicFeeData.sep_total_paid;
-            }
-            if (type == 'half_yearly' && month == 'oct') {
-                total = academicFeeData.oct_total + academicFeeData.nov_total + academicFeeData.dec_total + academicFeeData.jan_total + academicFeeData.feb_total + academicFeeData.mar_total;
-                total_paid = academicFeeData.oct_total_paid + academicFeeData.nov_total_paid + academicFeeData.dec_total_paid + academicFeeData.jan_total_paid + academicFeeData.feb_total_paid + academicFeeData.mar_total_paid;
-            }
-            if (type == 'annually' && month == 'apr') {
-                total = academicFeeData.apr_total + academicFeeData.may_total + academicFeeData.jun_total + academicFeeData.jul_total + academicFeeData.aug_total + academicFeeData.sep_total + academicFeeData.oct_total + academicFeeData.nov_total + academicFeeData.dec_total + academicFeeData.jan_total + academicFeeData.feb_total + academicFeeData.mar_total;
-                total_paid = academicFeeData.apr_total_paid + academicFeeData.may_total_paid + academicFeeData.jun_total_paid + academicFeeData.jul_total_paid + academicFeeData.aug_total_paid + academicFeeData.sep_total_paid + academicFeeData.oct_total_paid + academicFeeData.nov_total_paid + academicFeeData.dec_total_paid + academicFeeData.jan_total_paid + academicFeeData.feb_total_paid + academicFeeData.mar_total_paid;
-            }
-
-            let collectfeevalue = { reg_no: 4, total: academicFee, payment: total - total_paid, total_paid: totalPaid + (total - total_paid), balance: payableFee - (total - total_paid), consession: 0, consessionamount: 0, remark: '', payment_mode: 'online', date: new Date().toISOString().split('T')[0] }
-
-
-
-            //  console.log('student fee is**************',studentFee)
-            let dataMonthly = studentFee.map(elem => {
-                if (month == 'apr') { return { ...elem, apr_total_paid: Number(elem.apr_total), apr_paid: Number(elem.apr_total) - Number(elem.apr_total_paid), apr_total_due: 0 } }
-                if (month == 'may') { return { ...elem, may_total_paid: Number(elem.may_total), may_paid: Number(elem.may_total) - Number(elem.may_total_paid), may_total_due: 0 } }
-                if (month == 'jun') { return { ...elem, jun_total_paid: Number(elem.jun_total), jun_paid: Number(elem.jun_total) - Number(elem.jun_total_paid), jun_total_due: 0 } }
-                if (month == 'jul') { return { ...elem, jul_total_paid: Number(elem.jul_total), jul_paid: Number(elem.jul_total) - Number(elem.jul_total_paid), jul_total_due: 0 } }
-                if (month == 'aug') { return { ...elem, aug_total_paid: Number(elem.aug_total), aug_paid: Number(elem.aug_total) - Number(elem.aug_total_paid), aug_total_due: 0 } }
-                if (month == 'sep') { return { ...elem, sep_total_paid: Number(elem.sep_total), sep_paid: Number(elem.sep_total) - Number(elem.sep_total_paid), sep_total_due: 0 } }
-                if (month == 'oct') { return { ...elem, oct_total_paid: Number(elem.oct_total), oct_paid: Number(elem.oct_total) - Number(elem.oct_total_paid), oct_total_due: 0 } }
-                if (month == 'nov') { return { ...elem, nov_total_paid: Number(elem.nov_total), nov_paid: Number(elem.nov_total) - Number(elem.nov_total_paid), nov_total_due: 0 } }
-                if (month == 'dec') { return { ...elem, dec_total_paid: Number(elem.dec_total), dec_paid: Number(elem.dec_total) - Number(elem.dec_total_paid), dec_total_due: 0 } }
-                if (month == 'jan') { return { ...elem, jan_total_paid: Number(elem.jan_total), jan_paid: Number(elem.jan_total) - Number(elem.jan_total_paid), jan_total_due: 0 } }
-                if (month == 'feb') { return { ...elem, feb_total_paid: Number(elem.feb_total), feb_paid: Number(elem.feb_total) - Number(elem.feb_total_paid), feb_total_due: 0 } }
-                if (month == 'mar') { return { ...elem, mar_total_paid: Number(elem.mar_total), mar_paid: Number(elem.mar_total) - Number(elem.mar_total_paid), mar_total_due: 0 } }
-            })
-            let dataquarterly = studentFee.map((elem) => {
-                if (month == 'apr') { return { ...elem, apr_total_paid: Number(elem.apr_total), apr_paid: Number(elem.apr_total) - Number(elem.apr_total_paid), apr_total_due: 0, may_total_paid: Number(elem.may_total), may_paid: Number(elem.may_total) - Number(elem.may_total_paid), may_total_due: 0, jun_total_paid: Number(elem.jun_total), jun_paid: Number(elem.jun_total) - Number(elem.jun_total_paid), jun_total_due: 0 } }
-                if (month == 'jul') { return { ...elem, jul_total_paid: Number(elem.jul_total), jul_paid: Number(elem.jul_total) - Number(elem.jul_total_paid), jul_total_due: 0, aug_total_paid: Number(elem.aug_total), aug_paid: Number(elem.aug_total) - Number(elem.aug_total_paid), aug_total_due: 0, sep_total_paid: Number(elem.sep_total), sep_paid: Number(elem.sep_total) - Number(elem.sep_total_paid), sep_total_due: 0 } }
-                if (month == 'oct') { return { ...elem, oct_total_paid: Number(elem.oct_total), oct_paid: Number(elem.oct_total) - Number(elem.oct_total_paid), oct_total_due: 0, nov_total_paid: Number(elem.nov_total), nov_paid: Number(elem.nov_total) - Number(elem.nov_total_paid), nov_total_due: 0, dec_total_paid: Number(elem.dec_total), dec_paid: Number(elem.dec_total) - Number(elem.dec_total_paid), dec_total_due: 0 } }
-                if (month == 'jan') { return { ...elem, jan_total_paid: Number(elem.jan_total), jan_paid: Number(elem.jan_total) - Number(elem.jan_total_paid), jan_total_due: 0, feb_total_paid: Number(elem.feb_total), feb_paid: Number(elem.feb_total) - Number(elem.feb_total_paid), feb_total_due: 0, mar_total_paid: Number(elem.mar_total), mar_paid: Number(elem.mar_total) - Number(elem.mar_total_paid), mar_total_due: 0 } }
-            })
-
-            let datahalf_yearly = studentFee.map((elem) => {
-                if (month == 'apr') { return { ...elem, apr_total_paid: Number(elem.apr_total), apr_paid: Number(elem.apr_total) - Number(elem.apr_total_paid), apr_total_due: 0, may_total_paid: Number(elem.may_total), may_paid: Number(elem.may_total) - Number(elem.may_total_paid), may_total_due: 0, jun_total_paid: Number(elem.jun_total), jun_paid: Number(elem.jun_total) - Number(elem.jun_total_paid), jun_total_due: 0, jul_total_paid: Number(elem.jul_total), jul_paid: Number(elem.jul_total) - Number(elem.jul_total_paid), jul_total_due: 0, aug_total_paid: Number(elem.aug_total), aug_paid: Number(elem.aug_total) - Number(elem.aug_total_paid), aug_total_due: 0, sep_total_paid: Number(elem.sep_total), sep_paid: Number(elem.sep_total) - Number(elem.sep_total_paid), sep_total_due: 0 } }
-                if (month == 'oct') { return { ...elem, oct_total_paid: Number(elem.oct_total), oct_paid: Number(elem.oct_total) - Number(elem.oct_total_paid), oct_total_due: 0, nov_total_paid: Number(elem.nov_total), nov_paid: Number(elem.nov_total) - Number(elem.nov_total_paid), nov_total_due: 0, dec_total_paid: Number(elem.dec_total), dec_paid: Number(elem.dec_total) - Number(elem.dec_total_paid), dec_total_due: 0, jan_total_paid: Number(elem.jan_total), jan_paid: Number(elem.jan_total) - Number(elem.jan_total_paid), jan_total_due: 0, feb_total_paid: Number(elem.feb_total), feb_paid: Number(elem.feb_total) - Number(elem.feb_total_paid), feb_total_due: 0, mar_total_paid: Number(elem.mar_total), mar_paid: Number(elem.mar_total) - Number(elem.mar_total_paid), mar_total_due: 0 } }
-
-            })
-
-            let dataAnnually = studentFee.map((elem) => {
-                return { ...elem, apr_total_paid: Number(elem.apr_total), apr_paid: Number(elem.apr_total) - Number(elem.apr_total_paid), apr_total_due: 0, may_total_paid: Number(elem.may_total), may_paid: Number(elem.may_total) - Number(elem.may_total_paid), may_total_due: 0, jun_total_paid: Number(elem.jun_total), jun_paid: Number(elem.jun_total) - Number(elem.jun_total_paid), jun_total_due: 0, jul_total_paid: Number(elem.jul_total), jul_paid: Number(elem.jul_total) - Number(elem.jul_total_paid), jul_total_due: 0, aug_total_paid: Number(elem.aug_total), aug_paid: Number(elem.aug_total) - Number(elem.aug_total_paid), aug_total_due: 0, sep_total_paid: Number(elem.sep_total), sep_paid: Number(elem.sep_total) - Number(elem.sep_total_paid), sep_total_due: 0, oct_total_paid: Number(elem.oct_total), oct_paid: Number(elem.oct_total) - Number(elem.oct_total_paid), oct_total_due: 0, nov_total_paid: Number(elem.nov_total), nov_paid: Number(elem.nov_total) - Number(elem.nov_total_paid), nov_total_due: 0, dec_total_paid: Number(elem.dec_total), dec_paid: Number(elem.dec_total) - Number(elem.dec_total_paid), dec_total_due: 0, jan_total_paid: Number(elem.jan_total), jan_paid: Number(elem.jan_total) - Number(elem.jan_total_paid), jan_total_due: 0, feb_total_paid: Number(elem.feb_total), feb_paid: Number(elem.feb_total) - Number(elem.feb_total_paid), feb_total_due: 0, mar_total_paid: Number(elem.mar_total), mar_paid: Number(elem.mar_total) - Number(elem.mar_total_paid), mar_total_due: 0 }
-            })
-
-
-
+            let installmentData=nameoffee=='academic'?studentFee:nameoffee=='admission'?admissionFee:canteenFee;
+            let dataMonthly = savingMonthlyData(installmentData,month,paidtype)
+            console.log('data monthly is:',dataMonthly)
+            let dataquarterly =savingQuarterlyData(installmentData,month,paidtype)
+            let datahalfyearly =savingHalfYearlyData(installmentData,month,paidtype)
+            let dataAnnually = savingAnnuallyData(installmentData,month,paidtype)
             dataMonthly = dataMonthly.map(elem => {
                 return { ...elem, date: new Date().toISOString().split('T')[0] }
             })
-            console.log('data monthly is:', dataMonthly)
+           
             dataquarterly = dataquarterly.map(elem => {
                 return { ...elem, date: new Date().toISOString().split('T')[0] }
             })
-            datahalf_yearly = datahalf_yearly.map(elem => {
+            datahalfyearly = datahalfyearly.map(elem => {
 
                 return { ...elem, date: new Date().toISOString().split('T')[0] }
             })
@@ -552,25 +611,33 @@ const StudentFee = () => {
                 return { ...elem, date: new Date().toISOString().split('T')[0] }
             })
             let records = []
-            if (type == 'monthly') { records = dataMonthly }
-            if (type == 'quarterly') { records = dataquarterly }
-            if (type == 'half_yearly') { records = datahalf_yearly }
-            if (type == 'annually') { records = dataAnnually }
+            if (typeoffee == 'monthly') { records = dataMonthly }
+            if (typeoffee == 'quarterly') { records = dataquarterly }
+            if (typeoffee == 'half_yearly') { records = datahalfyearly }
+            if (typeoffee == 'annually') { records = dataAnnually }
 
             let filteredstudentfees = records.map(({ apr_paid, may_paid, jun_paid, jul_paid, aug_paid, sep_paid, oct_paid, nov_paid, dec_paid, jan_paid, feb_paid, mar_paid, ...rest }) => rest)
             // console.log('records is:',records)
 
-            let senddata = { feecollection: collectfeevalue, filteredstudentfees: filteredstudentfees, feerecordmothlydata: records }
-            // let {data}=await axios.post(`${baseURL}/api/student-fees/fee-collection`,senddata)
+            let senddata = { feecollection: feecollection, filteredstudentfees: filteredstudentfees, feerecordmothlydata: records }
+             if(nameoffee=='academic'){
+             let {data}=await axios.post(`${baseURL}/api/student-fees/fee-collection`,senddata)
+             }
+             if(nameoffee=='admission'){
+            let {data}=await axios.post(`${baseURL}/api/admission-fees/fee-collection`,senddata)
+             }
+             if(nameoffee=='canteen'){
+                let {data}=await axios.post(`${baseURL}/api/canteen-fees/fee-collection`,senddata)
 
-
+             }
+             
             alert('fee is saved successfully')
         }
         catch (error) {
             alert('not saved')
             alert(error)
         }
-
+        
 
     }
 
@@ -817,7 +884,7 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                         </div>
                         {
                             admissionTableViewData.map((item, index) => {
-                                const { total, total_split1, total_split2 } = totalvalueFun(admissionFeeData, adtype, item?.month) || {}
+                                const { total,total_paid, total_split1, total_split2 } = totalvalueFun(admissionFeeData, adtype, item?.month) || {}
                                 return (
                                 <>
                                     <div
@@ -853,21 +920,21 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
 
                                                         {isSplitAdmissionFee ? (
                                                             <>
-                                                                <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                                <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split1',total_split1,total_paid)}>
+                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                     {total_split1} Pay
                                                                 </button>
                                                                 {total_split2 > 0 &&
-                                                                <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                                <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split2',total_split2,total_paid,)}>
+                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden />
 
                                                                     {total_split2} Pay
                                                                 </button>}
                                                             </>
                                                         ) : (
-                                                            <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                            <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'single',total,total_paid)}>
+                                                                <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                 {total} Pay
                                                             </button>
@@ -881,19 +948,19 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                                                     {
                                                      isSplitAdmissionFee ? (
                                                     <>
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split1',total_split1,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split1} Pay
                                                     </button>
                                                   {total_split2 > 0 &&
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split2',total_split2,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split2} Pay
                                                     </button>}
                                                     </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month)}>
-
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'single',total,total_paid)}>
+                                                     <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                     {total}
                                                     Pay</button>
                                                     )
@@ -907,19 +974,19 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                                                 <>
                                                     {isSplitAdmissionFee ? (
                                                         <>
-                                                        <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                        <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split1',total_split1,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split1} Pay
                                                         </button>
                                                         {total_split2 > 0 &&
-                                                        <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                        <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split2',total_split2,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split2} Pay
                                                         </button>}
                                                         </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'single',total,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total} Pay
                                                     </button>
                                                     )}
@@ -931,19 +998,19 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
 
                                                     {isSplitAdmissionFee ? (
                                                     <>
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split1',total_split1,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total_split1} Pay
                                                     </button>
                                                     {total_split2 > 0 &&
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'split2',total_split2,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total_split2} Pay
                                                     </button>}
                                                     </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month,'admission',adtype,'single',total,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total} Pay
                                                     </button>
                                                     )}
@@ -1047,7 +1114,7 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                         </div>
                         {
                             acdemicTableViewData.map((item, index) => {
-                                const { total, total_split1, total_split2 } = totalvalueFun(academicFeeData, actype, item?.month) || {}
+                                const { total,total_paid, total_split1, total_split2 } = totalvalueFun(academicFeeData, actype, item?.month) || {}
                                 return (
                                 <>
                                     <div
@@ -1083,21 +1150,21 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
 
                                                         {isSplitAcademicFee ? (
                                                             <>
-                                                                <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                                <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'split1',total_split1,total_paid)}>
+                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                     {total_split1} Pay
                                                                 </button>
 
-                                                                {total_split2 > 0 && <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                                {total_split2 > 0 && <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'split2',total_split2,total_paid)}>
+                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                     {total_split2} Pay
                                                                 </button>}
                                                             </>
                                                         ) : (
-                                                            <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                            <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'single',total,total_paid)}>
+                                                                <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                 {total} Pay
                                                             </button>
@@ -1111,18 +1178,18 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                                                     {
                                                      isSplitAcademicFee ? (
                                                     <>
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'split1',total_split1,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split1} Pay
                                                     </button>
                                                 {total_split2 > 0 &&
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'onClick={()=>handlePay(item?.month,'academic',actype,'split2',total_split2,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split2} Pay
                                                     </button>}
                                                     </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month)}>
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() =>handlePay(item?.month,'academic',actype,'single',total,total_paid)}>
 
                                                     {total}
                                                     Pay</button>
@@ -1137,22 +1204,22 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                                                 <>
                                                     {isSplitAcademicFee ? (
                                                         <>
-                                                        <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                        <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'split1',total_split1,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split1} Pay
                                                         </button>
                                                        {
                                                         total_split2 > 0 &&
-                                                        <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                        <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'split2',total_split2,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split2} Pay
                                                         </button>
     
                                                       }
                                                         </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'single',total,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total} Pay
                                                     </button>
                                                     )}
@@ -1164,21 +1231,21 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
 
                                                     {isSplitAcademicFee ? (
                                                     <>
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'split1',total_split1,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total_split1} Pay
                                                     </button>
                                                     {
                                                      total_split2 > 0 &&
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'split2',total_split2,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total_split2} Pay
                                                     </button>
     }
                                                     </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'academic',actype,'single',total,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total} Pay
                                                     </button>
                                                     )}
@@ -1268,7 +1335,7 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                         </div>
                         {
                             canteenTableViewData.map((item, index) => {
-                                const { total, total_split1, total_split2 } = totalvalueFun(canteenFeeData, cantype, item?.month) || {}
+                                const { total,total_paid, total_split1, total_split2 } = totalvalueFun(canteenFeeData, cantype, item?.month) || {}
                                 return (
                                 <>
                                     <div
@@ -1304,22 +1371,22 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
 
                                                         {isSplitCanteenFee ? (
                                                             <>
-                                                                <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                                <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split1',total_split1,total_paid)}>
+                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                     {total_split1} Pay
                                                                 </button>
                                                                 {total_split2 > 0 &&
-                                                                <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                                <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split2',total_split2,total_paid)}>
+                                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                     {total_split2} Pay
                                                                 </button>
                                                                 }
                                                             </>
                                                         ) : (
-                                                            <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                                <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                            <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'single',total,total_paid)}>
+                                                                <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
 
                                                                 {total} Pay
                                                             </button>
@@ -1333,19 +1400,19 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                                                     {
                                                      isSplitCanteenFee ? (
                                                     <>
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split1',total_split1,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split1} Pay
                                                     </button>
                                                     {total_split2 > 0 &&
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split2',total_split2,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split2} Pay
                                                     </button>}
                                                     </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={() => handlePay(item?.month)}>
-
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'single',total,total_paid)}>
+                                                    <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                     {total}
                                                     Pay</button>
                                                     )
@@ -1359,19 +1426,19 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
                                                 <>
                                                     {isSplitCanteenFee ? (
                                                         <>
-                                                        <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                        <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split1',total_split1,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split1} Pay
                                                         </button>
                                                         {total_split2 > 0 &&
-                                                        <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                        <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split2',total_split2,total_paid)}>
+                                                            <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                             {total_split2} Pay
                                                         </button>}
                                                         </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'single',total,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total} Pay
                                                     </button>
                                                     )}
@@ -1383,19 +1450,19 @@ console.log('is academidc fee split :',isSplitAcademicFee && typofAcademicFee ==
 
                                                     {isSplitCanteenFee ? (
                                                     <>
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split1',total_split1,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total_split1} Pay
                                                     </button>
                                                     {total_split2 > 0 &&
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'split2',total_split2,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total_split2} Pay
                                                     </button>}
                                                     </>
                                                     ) : (
-                                                    <button type="button" className='btn btn-primary af-fee-pay-btn'>
-                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden onClick={() => handlePay(item?.month)} />
+                                                    <button type="button" className='btn btn-primary af-fee-pay-btn' onClick={()=>handlePay(item?.month,'canteen',cantype,'single',total,total_paid)}>
+                                                        <Icon icon="solar:card-send-bold-duotone" className="af-fee-pay-btn-icon" aria-hidden  />
                                                         {total} Pay
                                                     </button>
                                                     )}
