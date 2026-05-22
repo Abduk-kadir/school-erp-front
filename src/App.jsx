@@ -61,12 +61,22 @@ const AddmissionConformPage = lazy(() =>
 const SeatAllotmentPage = lazy(() =>
   import("./pages/AdminPages/admissionMaster/SeatAllotmentPage")
 );
+
+//academic module importing here
 const StudentPage = lazy(() =>
   import("./pages/AdminPages/academic/StudentPage")
 );
 const StudentBulkUpdatePage = lazy(() =>
   import("./pages/AdminPages/academic/StudentBulkUpdatePage")
 );
+const TakeInAndOutAttendancePage = lazy(() =>import("./pages/AdminPages/academic/TakeInAndOutAttendancePage"))
+const InAndOutDetailReportPage = lazy(() =>
+  import("./pages/AdminPages/academic/InAndOutDetailReportPage")
+);
+const InAndOutSummaryReportPage = lazy(() =>import("./pages/AdminPages/academic/InAndOutSummaryReportPage"))
+const InAndOutMonthlyReportPage = lazy(() =>import("./pages/AdminPages/academic/InAndOutMonthlyReportPage"))
+//ending here academic module 
+
 const DocumentStage = lazy(() => import("./components/child/DocumentStage"));
 const DeclarationStage = lazy(() =>
   import("./components/child/DeclarationStage")
@@ -118,7 +128,9 @@ const DownloadStudentDataPage = lazy(() =>
 //end admission module importing here
 
 //importing fee module
-
+const PaymentSettingPage = lazy(() =>
+  import("./pages/AdminPages/feeMaster/paymentSettingPage")
+);
 const AddBankPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/AddBankPage")
 );
@@ -370,6 +382,12 @@ function App() {
               <Route path="academic">
                 <Route path="student" element={<StudentPage />} />
                 <Route path="student-detail-bulk-update" element={<StudentBulkUpdatePage />} />
+                <Route path="in-out-attendance" element={<TakeInAndOutAttendancePage />} />
+
+                <Route path="in-out-attendance-detail-report"  element={<InAndOutDetailReportPage />} />
+                <Route path="in-out-attendance-summary-report"  element={<InAndOutSummaryReportPage />} />
+                <Route path="in-out-attendance-monthly-report"  element={<InAndOutMonthlyReportPage/>} />
+                <Route path="in-out-attendance-yearly-report"  element={<InAndOutDetailReportPage />} />
               </Route>
 
               <Route path="bus-fee">
@@ -452,6 +470,7 @@ function App() {
               <Route path="staff-master" element={<AllStaffPage />} />
               <Route path="accounts">
                 <Route path="fee-master">
+                  <Route path="payment-setting" element={<PaymentSettingPage />} />
                   <Route path="add-bank" element={<AddBankPage />} />
                   <Route path="add-bank-detail" element={<BankDetailPage />} />
                   <Route path="add-fees-type" element={<FeeTypePage />} />

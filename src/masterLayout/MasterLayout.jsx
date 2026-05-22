@@ -214,7 +214,30 @@ const MasterLayout = () => {
       children: [
         { title: "Student", path: "/dashboard/academic/student" },
         { title: "Download Student", path: "/dashboard/academic/student" },
-        {title:"Student Detail Bulk Update",path:"/dashboard/academic/student-detail-bulk-update"}
+        {title:"Student Detail Bulk Update",path:"/dashboard/academic/student-detail-bulk-update"},
+        {
+          title: "Attendance",
+          children: [
+            { title: "In/Out",
+              children: [
+                { title: "Take Attendance", path: "/dashboard/academic/in-out-attendance" },
+                { title: "Detail Report", path: "/dashboard/academic/in-out-attendance-detail-report" },
+                { title: "Summary Report", path: "/dashboard/academic/in-out-attendance-summary-report" },
+                { title: "Monthly Report", path: "/dashboard/academic/in-out-attendance-monthly-report" },
+                { title: "Yearly Report", path: "/dashboard/academic/in-out-attendance-yearly-report" }
+              ]
+            },
+            { title: "Lecture Wise Attendance",
+              children: [
+                { title: "Take Attendance", path: "/dashboard/academic/lecture-wise-attendance" },
+                { title: "Detail Report", path: "/dashboard/academic/lecture-wise-attendance-detail-report" },
+                { title: "Staff wise Report", path: "/dashboard/academic/lecture-wise-attendance-summary-report" },
+                
+              ]
+            },
+          ]
+        },
+        
 
       ]
     },
@@ -239,7 +262,7 @@ const MasterLayout = () => {
           title: "Fee Master",
           children: [
             { title: "Payment Setting", path: "/dashboard/accounts/fee-master/payment-setting" },
-            { title: "Payment Setting", path: "/dashboard/accounts/fee-master/fee-setting" },
+           
             { title: "bank", path: "/dashboard/accounts/fee-master/add-bank" },
             { title: "Bank Detail", path: "/dashboard/accounts/fee-master/add-bank-detail" },
             { title: "Fees Type", path: "/dashboard/accounts/fee-master/add-fees-type" },
