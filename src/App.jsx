@@ -70,11 +70,20 @@ const StudentBulkUpdatePage = lazy(() =>
   import("./pages/AdminPages/academic/StudentBulkUpdatePage")
 );
 const TakeInAndOutAttendancePage = lazy(() =>import("./pages/AdminPages/academic/TakeInAndOutAttendancePage"))
+const TakeSubjectwiseAttendancePage=lazy(() =>import("./pages/AdminPages/academic/TakeSubjectwiseAttendance"))
 const InAndOutDetailReportPage = lazy(() =>
   import("./pages/AdminPages/academic/InAndOutDetailReportPage")
 );
 const InAndOutSummaryReportPage = lazy(() =>import("./pages/AdminPages/academic/InAndOutSummaryReportPage"))
 const InAndOutMonthlyReportPage = lazy(() =>import("./pages/AdminPages/academic/InAndOutMonthlyReportPage"))
+
+const NotificationPage = lazy(() =>import("./pages/AdminPages/academic/NotificationPage"))
+const DiaryPage = lazy(() =>import("./pages/AdminPages/academic/DiaryPage"))
+const NotesPage = lazy(() =>import("./pages/AdminPages/academic/NotesPage"))
+const AssignmentPage = lazy(() =>import("./pages/AdminPages/academic/AssignmentPage"))
+const TimetablePage = lazy(() =>import("./pages/AdminPages/academic/TimetablePage"))
+
+
 //ending here academic module 
 
 const DocumentStage = lazy(() => import("./components/child/DocumentStage"));
@@ -383,11 +392,19 @@ function App() {
                 <Route path="student" element={<StudentPage />} />
                 <Route path="student-detail-bulk-update" element={<StudentBulkUpdatePage />} />
                 <Route path="in-out-attendance" element={<TakeInAndOutAttendancePage />} />
+                <Route path="lecture-wise-attendance" element={<TakeSubjectwiseAttendancePage />} />
 
                 <Route path="in-out-attendance-detail-report"  element={<InAndOutDetailReportPage />} />
                 <Route path="in-out-attendance-summary-report"  element={<InAndOutSummaryReportPage />} />
                 <Route path="in-out-attendance-monthly-report"  element={<InAndOutMonthlyReportPage/>} />
                 <Route path="in-out-attendance-yearly-report"  element={<InAndOutDetailReportPage />} />
+                <Route path="send-notification" element={<NotificationPage />} />
+                <Route path="send-diary" element={<DiaryPage />} />
+                <Route path="send-notes" element={<NotesPage />} />
+                <Route path="send-assignment" element={<AssignmentPage />} />
+                <Route path="send-time-table" element={<TimetablePage />} />
+              
+               
               </Route>
 
               <Route path="bus-fee">

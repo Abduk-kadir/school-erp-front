@@ -237,6 +237,62 @@ const MasterLayout = () => {
             },
           ]
         },
+        {
+          title: "Notification",
+          children: [
+            { title: "Send Notification",path:"/dashboard/academic/send-notification"
+              
+            },
+            { title: "Fiew Notification",path:"/dashboard/academic/view-notification"
+             
+            },
+          ]
+        },
+        
+        {
+          title: "Diary",
+          children: [
+            { title: "Send Diary",path:"/dashboard/academic/send-diary"
+              
+            },
+            { title: "Fiew Diary",path:"/dashboard/academic/view-diary"
+             
+            },
+          ]
+        },
+        {
+          title: "Notes",
+          children: [
+            { title: "Send Notes",path:"/dashboard/academic/send-notes"
+              
+            },
+            { title: "Fiew Notes",path:"/dashboard/academic/view-notes"
+             
+            },
+          ]
+        },
+        {
+          title: "Assignment",
+          children: [
+            { title: "Send Assignment",path:"/dashboard/academic/send-assignment"
+              
+            },
+            { title: "Fiew Assignment",path:"/dashboard/academic/view-assignment"
+             
+            },
+          ]
+        },
+        {
+          title: "Time Table",
+          children: [
+            { title: "Send Time Table",path:"/dashboard/academic/send-time-table"
+              
+            },
+            { title: "Fiew Time Table",path:"/dashboard/academic/view-time-table"
+             
+            },
+          ]
+        },
         
 
       ]

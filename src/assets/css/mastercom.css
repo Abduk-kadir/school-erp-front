@@ -274,8 +274,10 @@
 /* ---------- Grouped FieldArray box (e.g. multiple class dropdowns) ---------- */
 .chfi-root .class-array-box {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
   padding: 10px;
   border: 1px solid rgba(148, 163, 184, 0.45);
   border-radius: 12px;
@@ -357,6 +359,104 @@
 .chfi-root .cast-inline .cast-input {
   flex: 1;
   min-width: 260px;
+}
+
+/* ---------- Chip multi-select ---------- */
+.chfi-root .chip-select-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: text;
+  min-height: 42px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chfi-root .chip-select-box:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.chfi-root .chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px 2px 10px;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1d4ed8;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+.chfi-root .chip-remove {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #1d4ed8;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.7;
+  transition: opacity 0.1s ease;
+}
+
+.chfi-root .chip-remove:hover {
+  opacity: 1;
+}
+
+.chfi-root .chip-select-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.85rem;
+  color: #64748b;
+  cursor: pointer;
+  flex: 1;
+  min-width: 120px;
+}
+
+/* ---------- Tab bar (card body) ---------- */
+.chfi-wrapper .chfi-card .card-body .tab-bar {
+  display: flex;
+  gap: 6px;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.25);
+  padding-bottom: 0;
+}
+
+.chfi-wrapper .chfi-card .card-body .tab-btn {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  font-size: 0.83rem;
+  background: transparent;
+  color: #64748b;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  margin-bottom: -2px;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.chfi-wrapper .chfi-card .card-body .tab-btn:hover {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.chfi-wrapper .chfi-card .card-body .tab-btn-active {
+  color: #2563eb;
+  background: #ffffff;
+  border-color: rgba(148, 163, 184, 0.25);
+  border-bottom-color: #ffffff;
 }
 
 /* ---------- Responsive ---------- */
