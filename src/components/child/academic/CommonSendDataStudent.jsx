@@ -1,8 +1,11 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import baseURL from '../../../utils/baseUrl';
+import Loader from '../../../helper/Loader';
 import '../../../assets/css/mastercom.css';
-
 const fieldIcons = {
   batch: 'solar:diploma-bold-duotone',
   class: 'solar:square-academic-cap-bold-duotone',
@@ -19,55 +22,36 @@ const fieldIcons = {
   validFrom: 'solar:calendar-bold-duotone',
   timtablefile: 'solar:calendar-minimalistic-bold-duotone',
 };
-const dummyBatches = [
-  { label: "Batch 2024", value: "2024" },
-  { label: "Batch 2025", value: "2025" },
-  { label: "Batch 2026", value: "2026" },
-];
-
-const dummyClasses = [
-  { label: "Class 1", value: "1" },
-  { label: "Class 2", value: "2" },
-  { label: "Class 3", value: "3" },
-];
-
-const dummyDivisions = [
-  { label: "Division A", value: "a" },
-  { label: "Division B", value: "b" },
-  { label: "Division C", value: "c" },
-];
-
-const dummySubjects = [
-  { label: "Mathematics", value: "math" },
-  { label: "Science", value: "science" },
-  { label: "English", value: "english" },
-];
 
 const formConfigs = {
   notes: {
     title: "Send Notes",
     submitButtonText: "Send",
+    submitUrl: "/api/notes",
     fields: [
+      {
+        name: "batch",
+        label: "Batch",
+        type: "select",
+        required: true,
+      },
       {
         name: "class",
         label: "Class",
         type: "select",
         required: true,
-        options: dummyClasses,
       },
       {
         name: "division",
         label: "Division",
         type: "select",
         required: true,
-        options: dummyDivisions,
       },
       {
         name: "subject",
         label: "Subject",
         type: "select",
         required: true,
-        options: dummySubjects,
       },
       { name: "topic", label: "Topic", type: "text", required: true },
       { name: "uploadNotes", label: "Upload Notes", type: "file", required: true },
@@ -79,34 +63,31 @@ const formConfigs = {
   assignment: {
     title: "Send Assignment",
     submitButtonText: "Send",
+    submitUrl: "/api/assignments",
     fields: [
       {
         name: "batch",
         label: "Batch",
         type: "select",
         required: true,
-        options: dummyBatches,
       },
       {
         name: "class",
         label: "Class",
         type: "select",
         required: true,
-        options: dummyClasses,
       },
       {
         name: "division",
         label: "Division",
         type: "select",
         required: true,
-        options: dummyDivisions,
       },
       {
         name: "subject",
         label: "Subject",
         type: "select",
         required: true,
-        options: dummySubjects,
       },
       { name: "submissionDate", label: "Submission Date", type: "date", required: true },
       { name: "submissiontime", label: "Submission Time", type: "time", required: true },
@@ -118,32 +99,52 @@ const formConfigs = {
   timetable: {
     title: "Send Time Table",
     submitButtonText: "Send",
+    submitUrl: "/api/timetables",
     fields: [
       {
         name: "batch",
         label: "Batch",
         type: "select",
         required: true,
-        options: dummyBatches,
       },
       {
         name: "class",
         label: "Class",
         type: "select",
         required: true,
-        options: dummyClasses,
       },
       {
         name: "division",
         label: "Division",
         type: "select",
         required: true,
-        options: dummyDivisions,
       },
       { name: "validFrom", label: "Valid From", type: "date", required: true },
       { name: "timtablefile", label: "Time Table File", type: "file", required: true },
     ],
   },
+};
+
+const getOptionLabel = (fieldName, item) => {
+  if (fieldName === 'batch') return item?.batch_name ?? item?.name ?? item?.title ?? '';
+  if (fieldName === 'class') return item?.class_name ?? item?.name ?? '';
+  if (fieldName === 'division') return item?.division_name ?? item?.name ?? '';
+  if (fieldName === 'subject') return item?.subject_name ?? item?.name ?? item?.value ?? '';
+  return item?.name ?? '';
+};
+
+const getDropdownOptions = (fieldName, { batches, classes, divisions, subjects }) => {
+  const dataMap = {
+    batch: batches,
+    class: classes,
+    division: divisions,
+    subject: subjects,
+  };
+  const list = dataMap[fieldName] || [];
+  return list.map((item) => ({
+    value: item?.id ?? '',
+    label: getOptionLabel(fieldName, item),
+  }));
 };
 
 // Generate validation schema dynamically
@@ -179,10 +180,145 @@ const generateInitialValues = (fields, overrides = {}) => {
   return { ...defaults, ...overrides };
 };
 
-const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit = () => {} }) => {
+const buildFormData = (formType, values) => {
+  const formData = new FormData();
 
+  if (formType === 'notes') {
+    formData.append('batchId', values.batch);
+    formData.append('classId', values.class);
+    formData.append('division', values.division);
+    formData.append('subject', values.subject);
+    formData.append('topic', values.topic);
+    if (values.uploadNotes) {
+      formData.append('notes', values.uploadNotes);
+    }
+    if (values.chapter) {
+      formData.append('chapter', values.chapter);
+    }
+    if (values.url) {
+      formData.append('url', values.url);
+    }
+    return formData;
+  }
+
+  if (formType === 'assignment') {
+    formData.append('batchId', values.batch);
+    formData.append('classId', values.class);
+    formData.append('division', values.division);
+    formData.append('subject', values.subject);
+    formData.append('submission_date', values.submissionDate);
+    formData.append('submission_time', values.submissiontime);
+    formData.append('title', values.title);
+    if (values.assignmentfile) {
+      formData.append('assignment', values.assignmentfile);
+    }
+    return formData;
+  }
+
+  if (formType === 'timetable') {
+    formData.append('batchId', values.batch);
+    formData.append('classId', values.class);
+    formData.append('division', values.division);
+    formData.append('valid_from', values.validFrom);
+    if (values.timtablefile) {
+      formData.append('timetable', values.timtablefile);
+    }
+    return formData;
+  }
+
+  return formData;
+};
+
+const getApiMessage = (payload) => {
+  if (!payload) return '';
+  if (typeof payload === 'string') return payload;
+  return (
+    payload.message ||
+    payload.error ||
+    payload.msg ||
+    payload.data?.message ||
+    ''
+  );
+};
+
+const fileFieldsByFormType = {
+  notes: ['uploadNotes'],
+  assignment: ['assignmentfile'],
+  timetable: ['timtablefile'],
+};
+
+const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit }) => {
+  const [batches,setBatches]=useState([])
+  const [classes,setClasses]=useState([])
+  const [divisions,setDivisions]=useState([])
+  const [subjects,setSubjects]=useState([])
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const config = formConfigs[formType];
 
+  const handleFormSubmit = async (values, { setSubmitting, resetForm, setFieldValue }) => {
+    if (onSubmit) {
+      await onSubmit(values, { setSubmitting, resetForm, setFieldValue });
+      return;
+    }
+
+    if (!config?.submitUrl) return;
+
+    setLoading(true);
+    setSuccessMsg('');
+    setErrorMsg('');
+
+    try {
+      setSubmitting(true);
+      const formData = buildFormData(formType, values);
+
+      const res = await axios.post(`${baseURL}${config.submitUrl}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      setSuccessMsg(getApiMessage(res?.data) || 'Saved successfully');
+      resetForm({ values: generateInitialValues(config.fields, initialValues) });
+      (fileFieldsByFormType[formType] || []).forEach((fieldName) => {
+        setFieldValue(fieldName, null);
+      });
+    } catch (error) {
+      console.error(`Save ${formType} failed:`, error);
+      const msg =
+        getApiMessage(error.response?.data) ||
+        error.message ||
+        'Failed to save. Please try again.';
+      setErrorMsg(msg);
+    } finally {
+      setLoading(false);
+      setSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [batchesRes, classesRes, divisionsRes, subjectsRes] = await Promise.allSettled([
+        axios.get(`${baseURL}/api/batches`),
+        axios.get(`${baseURL}/api/classes`),
+        axios.get(`${baseURL}/api/divisions`),
+        axios.get(`${baseURL}/api/subjects`),
+      ]);
+
+      if (batchesRes.status === 'fulfilled') {
+        setBatches(batchesRes.value?.data?.data || batchesRes.value?.data || []);
+      }
+      if (classesRes.status === 'fulfilled') {
+        setClasses(classesRes.value?.data?.data || classesRes.value?.data || []);
+      }
+      if (divisionsRes.status === 'fulfilled') {
+        setDivisions(divisionsRes.value?.data?.data || divisionsRes.value?.data || []);
+      }
+      if (subjectsRes.status === 'fulfilled') {
+        setSubjects(subjectsRes.value?.data?.data || subjectsRes.value?.data || []);
+      }
+    };
+    fetchData();
+  }, []);
   if (!config) {
     return (
       <div className="chfi-wrapper mb-3">
@@ -210,14 +346,37 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit = () => 
         </div>
 
         <div className="card-body">
+          {successMsg && (
+            <div className="alert alert-success alert-dismissible fade show" role="alert">
+              {successMsg}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setSuccessMsg('')}
+              />
+            </div>
+          )}
+
+          {errorMsg && (
+            <div className="alert alert-danger alert-dismissible fade show" role="alert">
+              {errorMsg}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setErrorMsg('')}
+              />
+            </div>
+          )}
+
           <div className="form-area">
           <Formik
             initialValues={mergedInitialValues}
             validationSchema={validationSchema}
-            onSubmit={onSubmit}
+            onSubmit={handleFormSubmit}
           >
             {({ isSubmitting, setFieldValue }) => (
               <Form className="chfi-root">
+                {loading && <Loader message={`Saving ${config.title.trim()}...`} />}
                 {config.fields.map((field) => {
                   const icon = field.icon || fieldIcons[field.name] || 'solar:document-bold-duotone';
 
@@ -234,10 +393,16 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit = () => 
                       );
                     }
                     if (field.type === 'select') {
+                      const options = getDropdownOptions(field.name, {
+                        batches,
+                        classes,
+                        divisions,
+                        subjects,
+                      });
                       return (
                         <Field as="select" name={field.name} className="form-select">
                           <option value="">Select {field.label}</option>
-                          {field.options?.map((opt) => (
+                          {options.map((opt) => (
                             <option key={opt.value} value={opt.value}>
                               {opt.label}
                             </option>
@@ -294,7 +459,7 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit = () => 
                 <div className="actions d-flex justify-content-end">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loading}
                     className="btn btn-submit d-inline-flex align-items-center gap-2"
                   >
                     {isSubmitting ? "Processing..." : config.submitButtonText}

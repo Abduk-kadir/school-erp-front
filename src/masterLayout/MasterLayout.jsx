@@ -161,6 +161,7 @@ const MasterLayout = () => {
         { title: "Employee Master", path: "/dashboard/employee-master" },
         { title: "Academic Year Master", path: "/dashboard/academic-year-master" },
         { title: "Class Master", path: "/dashboard/class-master" },
+        { title: "Batch Master", path: "/dashboard/batch-master" },
         { title: "Division Master", path: "/dashboard/division-master" },
         { title: "Cast Master", path: "/dashboard/cast-master" },
         { title: "Add Declaration", path: "/dashboard/add-declaration" },

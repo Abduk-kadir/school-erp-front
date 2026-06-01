@@ -14,6 +14,7 @@ const CastPage = lazy(() => import("./pages/CastMasterPage"));
 const EmployeePage = lazy(() => import("./pages/EmployeePage"));
 const RolePage = lazy(() => import("./pages/RolePage"));
 const PhisallyDisablePage = lazy(() => import("./pages/PyisallyDisablePage"));
+const BatchPage=lazy(() => import("./pages/AdminPages/master/BatchPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 
 const StagePage = lazy(() => import("./pages/stagePage"));
@@ -309,6 +310,7 @@ function App() {
               <Route index element={<AdminDashBoardPage />} />
               <Route path="employee-master" element={<EmployeePage />} />
               <Route path="class-master" element={<ClassPage />} />
+              <Route path="batch-master" element={<BatchPage />} />
               <Route path="academic-year-master" element={<AcademicYearPage />} />
               <Route path="division-master" element={<DivisionPage />} />
               <Route path="cast-master" element={<CastPage />} />
