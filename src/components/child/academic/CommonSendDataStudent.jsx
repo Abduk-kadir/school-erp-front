@@ -8,7 +8,7 @@ import Loader from '../../../helper/Loader';
 import '../../../assets/css/mastercom.css';
 const fieldIcons = {
   batch: 'solar:diploma-bold-duotone',
-  class: 'solar:square-academic-cap-bold-duotone',
+  classId: 'solar:square-academic-cap-bold-duotone',
   division: 'solar:widget-bold-duotone',
   subject: 'solar:book-bold-duotone',
   topic: 'solar:document-text-bold-duotone',
@@ -36,7 +36,7 @@ const formConfigs = {
         required: true,
       },
       {
-        name: "class",
+        name: "classId",
         label: "Class",
         type: "select",
         required: true,
@@ -72,7 +72,7 @@ const formConfigs = {
         required: true,
       },
       {
-        name: "class",
+        name: "classId",
         label: "Class",
         type: "select",
         required: true,
@@ -108,7 +108,7 @@ const formConfigs = {
         required: true,
       },
       {
-        name: "class",
+        name: "classId",
         label: "Class",
         type: "select",
         required: true,
@@ -127,7 +127,7 @@ const formConfigs = {
 
 const getOptionLabel = (fieldName, item) => {
   if (fieldName === 'batch') return item?.batch_name ?? item?.name ?? item?.title ?? '';
-  if (fieldName === 'class') return item?.class_name ?? item?.name ?? '';
+  if (fieldName === 'classId') return item?.class_name ?? item?.name ?? '';
   if (fieldName === 'division') return item?.division_name ?? item?.name ?? '';
   if (fieldName === 'subject') return item?.subject_name ?? item?.name ?? item?.value ?? '';
   return item?.name ?? '';
@@ -136,7 +136,7 @@ const getOptionLabel = (fieldName, item) => {
 const getDropdownOptions = (fieldName, { batches, classes, divisions, subjects }) => {
   const dataMap = {
     batch: batches,
-    class: classes,
+    classId: classes,
     division: divisions,
     subject: subjects,
   };
@@ -185,7 +185,7 @@ const buildFormData = (formType, values) => {
 
   if (formType === 'notes') {
     formData.append('batchId', values.batch);
-    formData.append('classId', values.class);
+    formData.append('classId', values.classId);
     formData.append('division', values.division);
     formData.append('subject', values.subject);
     formData.append('topic', values.topic);
@@ -203,7 +203,7 @@ const buildFormData = (formType, values) => {
 
   if (formType === 'assignment') {
     formData.append('batchId', values.batch);
-    formData.append('classId', values.class);
+    formData.append('classId', values.classId);
     formData.append('division', values.division);
     formData.append('subject', values.subject);
     formData.append('submission_date', values.submissionDate);
@@ -217,7 +217,7 @@ const buildFormData = (formType, values) => {
 
   if (formType === 'timetable') {
     formData.append('batchId', values.batch);
-    formData.append('classId', values.class);
+    formData.append('classId', values.classId);
     formData.append('division', values.division);
     formData.append('valid_from', values.validFrom);
     if (values.timtablefile) {
@@ -239,6 +239,18 @@ const getApiMessage = (payload) => {
     payload.data?.message ||
     ''
   );
+};
+
+const parseProgramSubjects = (payload) => {
+  const list = Array.isArray(payload?.data) ? payload.data : [];
+  const subjectMap = new Map();
+  list.forEach((item) => {
+    const subject = item?.subject;
+    if (subject?.id && !subjectMap.has(subject.id)) {
+      subjectMap.set(subject.id, subject);
+    }
+  });
+  return Array.from(subjectMap.values());
 };
 
 const fileFieldsByFormType = {
@@ -297,28 +309,53 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [batchesRes, classesRes, divisionsRes, subjectsRes] = await Promise.allSettled([
-        axios.get(`${baseURL}/api/batches`),
-        axios.get(`${baseURL}/api/classes`),
-        axios.get(`${baseURL}/api/divisions`),
-        axios.get(`${baseURL}/api/subjects`),
-      ]);
-
-      if (batchesRes.status === 'fulfilled') {
-        setBatches(batchesRes.value?.data?.data || batchesRes.value?.data || []);
-      }
-      if (classesRes.status === 'fulfilled') {
-        setClasses(classesRes.value?.data?.data || classesRes.value?.data || []);
-      }
-      if (divisionsRes.status === 'fulfilled') {
-        setDivisions(divisionsRes.value?.data?.data || divisionsRes.value?.data || []);
-      }
-      if (subjectsRes.status === 'fulfilled') {
-        setSubjects(subjectsRes.value?.data?.data || subjectsRes.value?.data || []);
+      try {
+        const res = await axios.get(`${baseURL}/api/batches`);
+        setBatches(res?.data?.data || res?.data || []);
+      } catch (error) {
+        console.error('Failed to fetch batches', error);
       }
     };
     fetchData();
   }, []);
+
+  const fetchBatchRelations = async (batchId, setFieldValue) => {
+    setFieldValue('classId', '');
+    setFieldValue('division', '');
+    setFieldValue('subject', '');
+    setClasses([]);
+    setDivisions([]);
+    setSubjects([]);
+
+    if (!batchId) return;
+
+    try {
+      const res = await axios.get(`${baseURL}/api/batches/${batchId}/relations`);
+      const data = res?.data;
+      setClasses(data?.class || []);
+      setDivisions(data?.division || []);
+    } catch (error) {
+      console.error('Failed to fetch batch relations', error);
+    }
+  };
+
+  const fetchClassSubjects = async (classId, setFieldValue) => {
+    setFieldValue('subject', '');
+    setSubjects([]);
+
+    if (!classId) return;
+
+    try {
+      const res = await axios.get(
+        `${baseURL}/api/program-subjects?classId=${classId}`
+      );
+      setSubjects(parseProgramSubjects(res?.data));
+    } catch (error) {
+      console.error('Failed to fetch program subjects', error);
+    }
+  };
+
+  const hasSubjectField = config?.fields?.some((f) => f.name === 'subject');
   if (!config) {
     return (
       <div className="chfi-wrapper mb-3">
@@ -374,7 +411,7 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit }) => {
             validationSchema={validationSchema}
             onSubmit={handleFormSubmit}
           >
-            {({ isSubmitting, setFieldValue }) => (
+            {({ isSubmitting, setFieldValue, values }) => (
               <Form className="chfi-root">
                 {loading && <Loader message={`Saving ${config.title.trim()}...`} />}
                 {config.fields.map((field) => {
@@ -399,8 +436,69 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit }) => {
                         divisions,
                         subjects,
                       });
+
+                      if (field.name === 'batch') {
+                        return (
+                          <Field
+                            as="select"
+                            name={field.name}
+                            className="form-select"
+                            onChange={(e) => {
+                              const batchId = e.target.value;
+                              setFieldValue('batch', batchId);
+                              fetchBatchRelations(batchId, setFieldValue);
+                            }}
+                          >
+                            <option value="">Select {field.label}</option>
+                            {options.map((opt) => (
+                              <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </option>
+                            ))}
+                          </Field>
+                        );
+                      }
+
+                      if (field.name === 'classId') {
+                        return (
+                          <Field name="classId">
+                            {({ field: formikField, form }) => (
+                              <select
+                                {...formikField}
+                                className="form-select"
+                                disabled={!values.batch}
+                                onChange={(e) => {
+                                  const classId = e.target.value;
+                                  form.setFieldValue('classId', classId);
+                                  if (hasSubjectField) {
+                                    fetchClassSubjects(classId, form.setFieldValue);
+                                  }
+                                }}
+                              >
+                                <option value="">Select {field.label}</option>
+                                {options.map((opt) => (
+                                  <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                          </Field>
+                        );
+                      }
+
+                      const isClassOrDivision = field.name === 'classId' || field.name === 'division';
+                      const isSubject = field.name === 'subject';
                       return (
-                        <Field as="select" name={field.name} className="form-select">
+                        <Field
+                          as="select"
+                          name={field.name}
+                          className="form-select"
+                          disabled={
+                            (isClassOrDivision && !values.batch) ||
+                            (isSubject && !values.classId)
+                          }
+                        >
                           <option value="">Select {field.label}</option>
                           {options.map((opt) => (
                             <option key={opt.value} value={opt.value}>

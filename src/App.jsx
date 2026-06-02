@@ -83,6 +83,9 @@ const DiaryPage = lazy(() =>import("./pages/AdminPages/academic/DiaryPage"))
 const NotesPage = lazy(() =>import("./pages/AdminPages/academic/NotesPage"))
 const AssignmentPage = lazy(() =>import("./pages/AdminPages/academic/AssignmentPage"))
 const TimetablePage = lazy(() =>import("./pages/AdminPages/academic/TimetablePage"))
+const NotesReportPage = lazy(() =>import("./pages/AdminPages/academic/NotesReportPage"))
+const AssignmentReportPage = lazy(() =>import("./pages/AdminPages/academic/AssignmentReportPage"))
+const TimetableReportPage = lazy(() =>import("./pages/AdminPages/academic/TimetableReportPage"))
 
 
 //ending here academic module 
@@ -405,6 +408,10 @@ function App() {
                 <Route path="send-notes" element={<NotesPage />} />
                 <Route path="send-assignment" element={<AssignmentPage />} />
                 <Route path="send-time-table" element={<TimetablePage />} />
+                <Route path="notes-report" element={<NotesReportPage />} />
+                <Route path="view-notes" element={<NotesReportPage />} />
+                <Route path="view-assignment" element={<AssignmentReportPage />} />
+                <Route path="view-time-table" element={<TimetableReportPage />} />
               
                
               </Route>

@@ -267,7 +267,7 @@ const MasterLayout = () => {
             { title: "Send Notes",path:"/dashboard/academic/send-notes"
               
             },
-            { title: "Fiew Notes",path:"/dashboard/academic/view-notes"
+            { title: "View Notes",path:"/dashboard/academic/view-notes"
              
             },
           ]
@@ -278,7 +278,7 @@ const MasterLayout = () => {
             { title: "Send Assignment",path:"/dashboard/academic/send-assignment"
               
             },
-            { title: "Fiew Assignment",path:"/dashboard/academic/view-assignment"
+            { title: "View Assignment",path:"/dashboard/academic/view-assignment"
              
             },
           ]
@@ -289,7 +289,7 @@ const MasterLayout = () => {
             { title: "Send Time Table",path:"/dashboard/academic/send-time-table"
               
             },
-            { title: "Fiew Time Table",path:"/dashboard/academic/view-time-table"
+            { title: "View Time Table",path:"/dashboard/academic/view-time-table"
              
             },
           ]

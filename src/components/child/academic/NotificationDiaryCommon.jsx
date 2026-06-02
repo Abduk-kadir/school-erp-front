@@ -21,12 +21,21 @@ const validationSchema = Yup.object({
 const initialValues = {
   message: '',
   document: null,
-  batches: [''],
-  classes: [''],
-  divisions: [''],
+  batches: [],
+  classes: [],
+  divisions: [],
   staffGroup: '',
   subject: '',
 };
+
+const normalizeListResponse = (res) => {
+  const payload = res?.data;
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  return [];
+};
+
+const getOptionId = (item) => item?.id ?? item?._id ?? '';
 
 const NotificationDiaryCommon = ({isSubject=false}) => {
   const [activeTab, setActiveTab] = useState('student');
@@ -38,23 +47,54 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
 
   useEffect(() => {
     const fetchOptions = async () => {
-      try {
-        const [classRes, divRes, staffGroupRes, subjectRes] = await Promise.all([
-          axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`),
-          axios.get(`${baseURL}/api/staff-groups`),
-          axios.get(`${baseURL}/api/subjects`),
-        ]);
-        setClassOptions(classRes?.data?.data || classRes?.data || []);
-        setDivisionOptions(divRes?.data?.data || divRes?.data || []);
-        setStaffGroupOptions(staffGroupRes?.data?.data || staffGroupRes?.data || []);
-        setSubjectOptions(subjectRes?.data?.data || subjectRes?.data || []);
-      } catch (error) {
-        console.error('Failed to fetch dropdown options', error);
+      const [batchRes, staffGroupRes, subjectRes] = await Promise.allSettled([
+        axios.get(`${baseURL}/api/batches`),
+        axios.get(`${baseURL}/api/staff-groups`),
+        axios.get(`${baseURL}/api/subjects`),
+      ]);
+
+      if (batchRes.status === 'fulfilled') {
+        setBatchOptions(normalizeListResponse(batchRes.value));
+      }
+      if (staffGroupRes.status === 'fulfilled') {
+        setStaffGroupOptions(normalizeListResponse(staffGroupRes.value));
+      }
+      if (subjectRes.status === 'fulfilled') {
+        setSubjectOptions(normalizeListResponse(subjectRes.value));
       }
     };
     fetchOptions();
   }, []);
+
+  const fetchBatchRelations = async (batchIds, setFieldValue) => {
+    setFieldValue('classes', []);
+    setFieldValue('divisions', []);
+    setClassOptions([]);
+    setDivisionOptions([]);
+
+    const ids = (batchIds || []).filter(Boolean);
+    if (!ids.length) return;
+
+    try {
+      const results = await Promise.all(
+        ids.map((id) => axios.get(`${baseURL}/api/batches/${id}/relations`))
+      );
+      const classMap = new Map();
+      const divisionMap = new Map();
+      results.forEach((res) => {
+        (res?.data?.class || []).forEach((item) => {
+          classMap.set(getOptionId(item), item);
+        });
+        (res?.data?.division || []).forEach((item) => {
+          divisionMap.set(getOptionId(item), item);
+        });
+      });
+      setClassOptions(Array.from(classMap.values()));
+      setDivisionOptions(Array.from(divisionMap.values()));
+    } catch (error) {
+      console.error('Failed to fetch batch relations', error);
+    }
+  };
 
   const handleSubmit = (values) => {
     const formData = new FormData();
@@ -87,23 +127,38 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
     </div>
   );
 
-  const MultiChipSelect = ({ label, fieldName, options, optionLabel, values, setFieldValue }) => {
-    const selected = values[fieldName] || [];
-    const available = options.filter(o => !selected.includes(String(o.id)));
+  const MultiChipSelect = ({
+    label,
+    fieldName,
+    options,
+    optionLabel,
+    values,
+    setFieldValue,
+    disabled = false,
+    onSelectionChange,
+  }) => {
+    const selected = (values[fieldName] || []).filter(Boolean).map(String);
+    const available = options.filter(
+      (o) => !selected.includes(String(getOptionId(o)))
+    );
 
     const handleAdd = (e) => {
       const val = e.target.value;
-      if (!val) return;
-      setFieldValue(fieldName, [...selected, String(val)]);
+      if (!val || selected.includes(String(val))) return;
+      const nextSelected = [...selected, String(val)];
+      setFieldValue(fieldName, nextSelected);
       e.target.value = '';
+      onSelectionChange?.(nextSelected);
     };
 
     const handleRemove = (val) => {
-      setFieldValue(fieldName, selected.filter(v => v !== val));
+      const nextSelected = selected.filter((v) => v !== val);
+      setFieldValue(fieldName, nextSelected);
+      onSelectionChange?.(nextSelected);
     };
 
     const getLabel = (id) => {
-      const opt = options.find(o => String(o.id) === String(id));
+      const opt = options.find((o) => String(getOptionId(o)) === String(id));
       return opt ? optionLabel(opt) : id;
     };
 
@@ -122,10 +177,15 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
               </button>
             </span>
           ))}
-          <select className="chip-select-input" onChange={handleAdd} value="">
+          <select
+            className="chip-select-input"
+            onChange={handleAdd}
+            value=""
+            disabled={disabled}
+          >
             <option value="">+ Select {label}</option>
             {available.map((o) => (
-              <option key={o.id} value={o.id}>
+              <option key={getOptionId(o)} value={getOptionId(o)}>
                 {optionLabel(o)}
               </option>
             ))}
@@ -144,6 +204,7 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
         optionLabel={(b) => b?.batch_name ?? b?.name ?? b?.title}
         values={values}
         setFieldValue={setFieldValue}
+        onSelectionChange={(batchIds) => fetchBatchRelations(batchIds, setFieldValue)}
       />
       <MultiChipSelect
         label="Class"
@@ -152,6 +213,7 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
         optionLabel={(c) => c?.class_name ?? c?.name}
         values={values}
         setFieldValue={setFieldValue}
+        disabled={!values.batches?.length}
       />
       <MultiChipSelect
         label="Division"
@@ -160,6 +222,7 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
         optionLabel={(d) => d?.division_name ?? d?.name}
         values={values}
         setFieldValue={setFieldValue}
+        disabled={!values.batches?.length}
       />
       {isSubject && (
         <div>
