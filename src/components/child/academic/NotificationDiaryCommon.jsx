@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import baseURL from '../../../utils/baseUrl';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import Loader from '../../../helper/Loader';
 import '../../../assets/css/mastercom.css';
 
 const validationSchema = Yup.object({
@@ -35,15 +36,40 @@ const normalizeListResponse = (res) => {
   return [];
 };
 
-const getOptionId = (item) => item?.id ?? item?._id ?? '';
+const getOptionId = (item) => item?.optionId ?? item?.id ?? item?._id ?? '';
 
-const NotificationDiaryCommon = ({isSubject=false}) => {
+const getRawId = (item) => item?.id ?? item?._id ?? '';
+
+const buildSubmitTargets = (selectedDivisionKeys, divisionOptions, message, subjectId) =>
+  selectedDivisionKeys
+    .map((key) =>
+      divisionOptions.find((o) => String(getOptionId(o)) === String(key))
+    )
+    .filter(Boolean)
+    .map((o) => ({
+      batch: Number(o.batchId),
+      class: Number(o.classId),
+      division: Number(getRawId(o)),
+      message,
+      ...(subjectId ? { subject: Number(subjectId) } : {}),
+    }));
+
+const getApiMessage = (payload) => {
+  if (!payload) return '';
+  if (typeof payload === 'string') return payload;
+  return payload.message || payload.error || payload.msg || payload.data?.message || '';
+};
+
+const NotificationDiaryCommon = ({ isSubject = false }) => {
   const [activeTab, setActiveTab] = useState('student');
   const [batchOptions, setBatchOptions] = useState([]);
   const [classOptions, setClassOptions] = useState([]);
   const [divisionOptions, setDivisionOptions] = useState([]);
   const [staffGroupOptions, setStaffGroupOptions] = useState([]);
   const [subjectOptions, setSubjectOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -82,12 +108,50 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
       const classMap = new Map();
       const divisionMap = new Map();
       results.forEach((res) => {
-        (res?.data?.class || []).forEach((item) => {
-          classMap.set(getOptionId(item), item);
+        const batch = res?.data?.batch || {};
+        const batchId = batch?.id;
+        const batchName = batch?.batch_name ?? batch?.name ?? '';
+        const classes = res?.data?.class || [];
+        const divisions = res?.data?.division || [];
+        const batchmasters = res?.data?.batchmasters || res?.data?.batchMasters || [];
+
+        classes.forEach((item) => {
+          const classId = getRawId(item);
+          const optionId = `${batchId}-${classId}`;
+          classMap.set(optionId, {
+            ...item,
+            batchId,
+            batch_name: batchName,
+            optionId,
+          });
         });
-        (res?.data?.division || []).forEach((item) => {
-          divisionMap.set(getOptionId(item), item);
-        });
+
+        const addDivisionOption = (cls, div) => {
+          const classId = getRawId(cls);
+          const divisionId = getRawId(div);
+          const optionId = `${batchId}-${classId}-${divisionId}`;
+          divisionMap.set(optionId, {
+            ...div,
+            classId,
+            class_name: cls?.class_name ?? cls?.name ?? '',
+            batchId,
+            optionId,
+          });
+        };
+
+        if (batchmasters.length) {
+          batchmasters.forEach((bm) => {
+            const cls = classes.find((c) => String(c.id) === String(bm.classId));
+            const div = divisions.find(
+              (d) => String(d.id) === String(bm.divisionId ?? bm.divId)
+            );
+            if (cls && div) addDivisionOption(cls, div);
+          });
+        } else {
+          classes.forEach((cls) => {
+            divisions.forEach((div) => addDivisionOption(cls, div));
+          });
+        }
       });
       setClassOptions(Array.from(classMap.values()));
       setDivisionOptions(Array.from(divisionMap.values()));
@@ -96,11 +160,59 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
     }
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    setLoading(true);
+    setSuccessMsg('');
+    setErrorMsg('');
+
     const formData = new FormData();
-    formData.append('message', values.message);
-    formData.append('document', values.document);
-    // axios.post(`${baseURL}/api/notification-diary`, formData);
+    const submitUrl = isSubject
+      ? `${baseURL}/api/diaries`
+      : `${baseURL}/api/student-notifications`;
+
+    try {
+      setSubmitting(true);
+
+      if (activeTab === 'staff') {
+        formData.append('message', values.message);
+        formData.append('staffGroup', values.staffGroup);
+        if (values.document) formData.append('document', values.document);
+      } else {
+        const rows = buildSubmitTargets(
+          values.divisions,
+          divisionOptions,
+          values.message,
+          isSubject ? values.subject : ''
+        );
+
+        if (!rows.length) {
+          setErrorMsg('Select at least one batch, class and division combination.');
+          setLoading(false);
+          setSubmitting(false);
+          return;
+        }
+
+        formData.append('rows', JSON.stringify(rows));
+        if (values.document) formData.append('document', values.document);
+      }
+
+      const res = await axios.post(submitUrl, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      setSuccessMsg(getApiMessage(res?.data) || 'Sent successfully');
+      resetForm();
+    } catch (error) {
+      console.error('Send failed:', error);
+      setErrorMsg(
+        getApiMessage(error.response?.data) ||
+          error.message ||
+          'Failed to send. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+      setSubmitting(false);
+    }
   };
 
   const staffView = () => (
@@ -210,7 +322,11 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
         label="Class"
         fieldName="classes"
         options={classOptions}
-        optionLabel={(c) => c?.class_name ?? c?.name}
+        optionLabel={(c) => {
+          const batchName = c?.batch_name ?? '';
+          const className = c?.class_name ?? c?.name ?? '';
+          return batchName ? `${batchName} - ${className}` : className;
+        }}
         values={values}
         setFieldValue={setFieldValue}
         disabled={!values.batches?.length}
@@ -219,7 +335,11 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
         label="Division"
         fieldName="divisions"
         options={divisionOptions}
-        optionLabel={(d) => d?.division_name ?? d?.name}
+        optionLabel={(d) => {
+          const className = d?.class_name ?? '';
+          const divisionName = d?.division_name ?? d?.name ?? '';
+          return className ? `${className} - ${divisionName}` : divisionName;
+        }}
         values={values}
         setFieldValue={setFieldValue}
         disabled={!values.batches?.length}
@@ -263,6 +383,18 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
         </div>
 
         <div className="card-body">
+          {successMsg && (
+            <div className="alert alert-success alert-dismissible fade show" role="alert">
+              {successMsg}
+              <button type="button" className="btn-close" onClick={() => setSuccessMsg('')} />
+            </div>
+          )}
+          {errorMsg && (
+            <div className="alert alert-danger alert-dismissible fade show" role="alert">
+              {errorMsg}
+              <button type="button" className="btn-close" onClick={() => setErrorMsg('')} />
+            </div>
+          )}
           <div className="form-area">
           <div className="chfi-root d-flex gap-2 mb-3">
             <button
@@ -273,22 +405,23 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
               <Icon icon="solar:user-bold-duotone" width="15" />
               Student
             </button>
-            <button
+            {!isSubject &&<button
               type="button"
               className={activeTab === 'staff' ? 'btn-submit' : 'btn-reset'}
               onClick={() => setActiveTab('staff')}
             >
               <Icon icon="solar:user-id-bold-duotone" width="15" />
               Staff
-            </button>
+            </button>}
           </div>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting, setFieldValue, values }) => (
+            {({ isSubmitting, setFieldValue, values, resetForm }) => (
               <Form className="chfi-root d-flex flex-column gap-3">
+                {loading && <Loader message="Sending..." />}
 
                 <div>
                   {activeTab === 'student' ? studentView(values, setFieldValue) : staffView()}
@@ -342,7 +475,7 @@ const NotificationDiaryCommon = ({isSubject=false}) => {
                   <button
                     type="submit"
                     className="btn btn-submit d-inline-flex align-items-center gap-2"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loading}
                   >
                     {isSubmitting ? (
                       <>

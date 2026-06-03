@@ -29,13 +29,13 @@
 
 .student-parent-dashboard__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
   gap: 1rem;
 }
 
 @media (min-width: 576px) {
   .student-parent-dashboard__grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
     gap: 1.125rem;
   }
 }
@@ -51,38 +51,40 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  min-height: 168px;
-  padding: 1.1rem 1rem 1rem;
+  min-height: 188px;
+  padding: 1.25rem 1.15rem 1.15rem;
   border-radius: var(--spd-radius);
-  border: var(--spd-border);
-  background: var(--card-bg, #fff);
-  box-shadow: var(--spd-shadow);
+  border: var(--spd-border-hover, var(--spd-border));
+  background: var(--card-bg, #1e293b);
+  box-shadow:
+    var(--spd-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   text-decoration: none;
   color: inherit;
   transition:
-    transform 0.28s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease,
-    background 0.38s ease;
+    transform 0.32s cubic-bezier(0.34, 1.2, 0.64, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    background 0.4s ease;
   position: relative;
   overflow: hidden;
 }
 
-/* Soft colored glow in corner */
+/* Colored ambient glow — stronger on dark default */
 .student-parent-card::after {
   content: "";
   position: absolute;
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  background: var(--spd-glow, rgba(255, 255, 255, 0.5));
-  filter: blur(28px);
-  opacity: 0.5;
-  top: -40px;
-  right: -35px;
+  background: var(--spd-glow, rgba(255, 255, 255, 0.12));
+  filter: blur(32px);
+  opacity: 0.72;
+  top: -50px;
+  right: -40px;
   pointer-events: none;
   z-index: 0;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease;
 }
 
 .student-parent-card__top {
@@ -104,25 +106,25 @@
 }
 
 .student-parent-card__stat {
-  font-size: 1.35rem;
+  font-size: 1.75rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  color: var(--spd-stat-color, #0f172a);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition: color 0.3s ease, text-shadow 0.3s ease;
+  color: var(--spd-stat-light, #f8fafc);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  transition: color 0.35s ease, text-shadow 0.35s ease;
 }
 
 .student-parent-card__stat-hint {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--spd-hint-color, rgba(15, 23, 42, 0.55));
+  color: var(--spd-hint-light, rgba(248, 250, 252, 0.82));
   margin-top: 0.2rem;
   max-width: 7.5rem;
   line-height: 1.25;
-  transition: color 0.3s ease;
+  transition: color 0.35s ease;
 }
 
 .student-parent-card::before {
@@ -130,61 +132,47 @@
   position: absolute;
   inset: 0 0 auto 0;
   height: 3px;
-  background: var(--spd-accent, linear-gradient(90deg, #3b82f6, #8b5cf6));
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  background: var(
+    --spd-accent-hover,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.85))
+  );
+  opacity: 0.55;
+  transition: opacity 0.35s ease, background 0.35s ease;
 }
 
 .student-parent-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px) scale(1.015);
   box-shadow: var(--spd-shadow-hover);
-  border: var(--spd-border-hover, var(--spd-border));
-  background: var(--card-bg-hover, var(--card-bg));
+  border: var(--spd-border, var(--spd-border-hover));
+  background: var(--card-bg-hover, #f8fafc);
 }
 
 .student-parent-card:hover::before {
   opacity: 1;
   background: var(
-    --spd-accent-hover,
-    linear-gradient(90deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.95))
+    --spd-accent,
+    linear-gradient(90deg, #3b82f6, #8b5cf6)
   );
 }
 
 .student-parent-card:hover::after {
-  opacity: 0.85;
-  transform: scale(1.08);
+  opacity: 0.35;
+  transform: scale(1.15);
+  filter: blur(40px);
 }
 
 .student-parent-card:hover .student-parent-card__stat {
-  color: #f8fafc;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  color: var(--spd-stat-color, #0f172a);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .student-parent-card:hover .student-parent-card__stat-hint {
-  color: rgba(248, 250, 252, 0.92);
+  color: var(--spd-hint-color, rgba(15, 23, 42, 0.58));
 }
 
 .student-parent-card:hover .student-parent-card__label {
-  color: #ffffff;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
-}
-
-.student-parent-card:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.12) 100%
-  );
-  color: #f8fafc;
-  border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease,
-    color 0.3s ease;
-}
-
-.student-parent-card:hover .student-parent-card__chevron {
-  color: rgba(248, 250, 252, 0.95);
-  opacity: 0.95;
+  color: var(--spd-label-color, #0f172a);
+  text-shadow: none;
 }
 
 .student-parent-card:focus-visible {
@@ -193,70 +181,91 @@
 }
 
 .student-parent-card__icon-wrap {
-  width: 2.85rem;
-  height: 2.85rem;
-  border-radius: 0.85rem;
+  width: 3.15rem;
+  height: 3.15rem;
+  border-radius: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 0;
-  font-size: 1.55rem;
+  font-size: 1.85rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.1);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  color: rgba(248, 250, 252, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
   position: relative;
   z-index: 1;
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease,
-    color 0.3s ease;
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease,
+    color 0.35s ease, transform 0.35s ease;
+}
+
+.student-parent-card:hover .student-parent-card__icon-wrap {
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
 }
 
 .student-parent-card__label {
-  font-size: 0.88rem;
+  font-size: 1.05rem;
   font-weight: 600;
   line-height: 1.35;
-  color: var(--spd-label-color, #0f172a);
+  color: var(--spd-label-light, rgba(248, 250, 252, 0.95));
   margin: 0;
   flex: 1;
   position: relative;
   z-index: 1;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
+  transition: color 0.35s ease, text-shadow 0.35s ease;
 }
 
 .student-parent-card__chevron {
   position: absolute;
   top: 0.85rem;
   right: 0.85rem;
-  opacity: 0.35;
-  font-size: 1.1rem;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0.55;
+  font-size: 1.25rem;
+  color: rgba(248, 250, 252, 0.9);
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
 }
 
 .student-parent-card:hover .student-parent-card__chevron {
-  opacity: 0.7;
-  transform: translateX(2px);
+  opacity: 0.85;
+  transform: translateX(3px);
+  color: var(--spd-label-color, #334155);
 }
 
-/* Accent variants — light default, darker + shifted hue on hover */
+/* Accent variants — dark default, light pastel on hover */
 .spd-accent-emerald.student-parent-card {
   --card-bg: linear-gradient(
-    152deg,
-    #f0fdf4 0%,
-    #ecfdf5 38%,
-    #d1fae5 100%
-  );
-  --card-bg-hover: linear-gradient(
     152deg,
     #047857 0%,
     #059669 38%,
     #0d9488 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #f0fdf4 0%,
+    #ecfdf5 38%,
+    #d1fae5 100%
+  );
   --spd-border: 1px solid rgba(16, 185, 129, 0.22);
   --spd-border-hover: 1px solid rgba(4, 120, 87, 0.75);
-  --spd-glow: rgba(16, 185, 129, 0.28);
+  --spd-glow: rgba(16, 185, 129, 0.45);
+  --spd-stat-light: #d1fae5;
   --spd-stat-color: #065f46;
-  --spd-hint-color: rgba(6, 78, 59, 0.6);
+  --spd-hint-light: rgba(209, 250, 229, 0.85);
+  --spd-hint-color: rgba(6, 78, 59, 0.62);
+  --spd-label-light: #ecfdf5;
   --spd-label-color: #064e3b;
+  --spd-shadow: 0 10px 32px rgba(4, 120, 87, 0.35);
+  --spd-shadow-hover: 0 14px 36px rgba(16, 185, 129, 0.22);
 }
-.spd-accent-emerald .student-parent-card__icon-wrap {
+.spd-accent-emerald:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #ecfdf5 100%);
   color: #059669;
   border: 1px solid rgba(16, 185, 129, 0.18);
@@ -269,24 +278,29 @@
 .spd-accent-sky.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #f0f9ff 0%,
-    #e0f2fe 40%,
-    #bae6fd 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #0369a1 0%,
     #0284c7 42%,
     #1d4ed8 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #f0f9ff 0%,
+    #e0f2fe 40%,
+    #bae6fd 100%
+  );
   --spd-border: 1px solid rgba(14, 165, 233, 0.22);
   --spd-border-hover: 1px solid rgba(3, 105, 161, 0.7);
-  --spd-glow: rgba(56, 189, 248, 0.3);
+  --spd-glow: rgba(56, 189, 248, 0.48);
+  --spd-stat-light: #e0f2fe;
   --spd-stat-color: #0c4a6e;
+  --spd-hint-light: rgba(224, 242, 254, 0.85);
   --spd-hint-color: rgba(12, 74, 110, 0.65);
+  --spd-label-light: #f0f9ff;
   --spd-label-color: #0c4a6e;
+  --spd-shadow: 0 10px 32px rgba(3, 105, 161, 0.38);
+  --spd-shadow-hover: 0 14px 36px rgba(14, 165, 233, 0.2);
 }
-.spd-accent-sky .student-parent-card__icon-wrap {
+.spd-accent-sky:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #e0f2fe 100%);
   color: #0284c7;
   border: 1px solid rgba(14, 165, 233, 0.2);
@@ -299,24 +313,29 @@
 .spd-accent-violet.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #faf5ff 0%,
-    #f3e8ff 40%,
-    #e9d5ff 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #6d28d9 0%,
     #7c3aed 40%,
     #86198f 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #faf5ff 0%,
+    #f3e8ff 40%,
+    #e9d5ff 100%
+  );
   --spd-border: 1px solid rgba(167, 139, 250, 0.35);
   --spd-border-hover: 1px solid rgba(91, 33, 182, 0.75);
-  --spd-glow: rgba(167, 139, 250, 0.32);
+  --spd-glow: rgba(167, 139, 250, 0.5);
+  --spd-stat-light: #ede9fe;
   --spd-stat-color: #5b21b6;
+  --spd-hint-light: rgba(237, 233, 254, 0.85);
   --spd-hint-color: rgba(91, 33, 182, 0.65);
+  --spd-label-light: #f5f3ff;
   --spd-label-color: #5b21b6;
+  --spd-shadow: 0 10px 32px rgba(91, 33, 182, 0.4);
+  --spd-shadow-hover: 0 14px 36px rgba(167, 139, 250, 0.22);
 }
-.spd-accent-violet .student-parent-card__icon-wrap {
+.spd-accent-violet:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #f5f3ff 100%);
   color: #7c3aed;
   border: 1px solid rgba(139, 92, 246, 0.22);
@@ -329,24 +348,29 @@
 .spd-accent-amber.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #fffbeb 0%,
-    #fef3c7 42%,
-    #fde68a 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #b45309 0%,
     #d97706 40%,
     #ea580c 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #fffbeb 0%,
+    #fef3c7 42%,
+    #fde68a 100%
+  );
   --spd-border: 1px solid rgba(251, 191, 36, 0.4);
   --spd-border-hover: 1px solid rgba(146, 64, 14, 0.75);
-  --spd-glow: rgba(251, 191, 36, 0.35);
+  --spd-glow: rgba(251, 191, 36, 0.48);
+  --spd-stat-light: #fef3c7;
   --spd-stat-color: #92400e;
+  --spd-hint-light: rgba(254, 243, 199, 0.88);
   --spd-hint-color: rgba(146, 64, 14, 0.68);
+  --spd-label-light: #fffbeb;
   --spd-label-color: #92400e;
+  --spd-shadow: 0 10px 32px rgba(146, 64, 14, 0.38);
+  --spd-shadow-hover: 0 14px 36px rgba(251, 191, 36, 0.22);
 }
-.spd-accent-amber .student-parent-card__icon-wrap {
+.spd-accent-amber:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #fffbeb 100%);
   color: #d97706;
   border: 1px solid rgba(245, 158, 11, 0.28);
@@ -359,24 +383,29 @@
 .spd-accent-rose.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #fff1f2 0%,
-    #ffe4e6 42%,
-    #fecdd3 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #9f1239 0%,
     #be123c 42%,
     #c2410c 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #fff1f2 0%,
+    #ffe4e6 42%,
+    #fecdd3 100%
+  );
   --spd-border: 1px solid rgba(251, 113, 133, 0.35);
   --spd-border-hover: 1px solid rgba(136, 19, 55, 0.72);
-  --spd-glow: rgba(251, 113, 133, 0.3);
+  --spd-glow: rgba(251, 113, 133, 0.45);
+  --spd-stat-light: #ffe4e6;
   --spd-stat-color: #9f1239;
+  --spd-hint-light: rgba(255, 228, 230, 0.88);
   --spd-hint-color: rgba(136, 19, 55, 0.65);
+  --spd-label-light: #fff1f2;
   --spd-label-color: #9f1239;
+  --spd-shadow: 0 10px 32px rgba(136, 19, 55, 0.38);
+  --spd-shadow-hover: 0 14px 36px rgba(251, 113, 133, 0.2);
 }
-.spd-accent-rose .student-parent-card__icon-wrap {
+.spd-accent-rose:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #fff1f2 100%);
   color: #e11d48;
   border: 1px solid rgba(244, 63, 94, 0.22);
@@ -389,24 +418,29 @@
 .spd-accent-slate.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #f8fafc 0%,
-    #f1f5f9 45%,
-    #e2e8f0 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #334155 0%,
     #475569 45%,
     #1e293b 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #f8fafc 0%,
+    #f1f5f9 45%,
+    #e2e8f0 100%
+  );
   --spd-border: 1px solid rgba(148, 163, 184, 0.35);
   --spd-border-hover: 1px solid rgba(51, 65, 85, 0.85);
-  --spd-glow: rgba(148, 163, 184, 0.28);
+  --spd-glow: rgba(148, 163, 184, 0.42);
+  --spd-stat-light: #e2e8f0;
   --spd-stat-color: #334155;
+  --spd-hint-light: rgba(226, 232, 240, 0.85);
   --spd-hint-color: rgba(51, 65, 85, 0.62);
+  --spd-label-light: #f1f5f9;
   --spd-label-color: #334155;
+  --spd-shadow: 0 10px 32px rgba(15, 23, 42, 0.45);
+  --spd-shadow-hover: 0 14px 36px rgba(148, 163, 184, 0.25);
 }
-.spd-accent-slate .student-parent-card__icon-wrap {
+.spd-accent-slate:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #f8fafc 100%);
   color: #475569;
   border: 1px solid rgba(100, 116, 139, 0.22);
@@ -419,24 +453,29 @@
 .spd-accent-orange.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #fff7ed 0%,
-    #ffedd5 42%,
-    #fed7aa 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #c2410c 0%,
     #ea580c 42%,
     #dc2626 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #fff7ed 0%,
+    #ffedd5 42%,
+    #fed7aa 100%
+  );
   --spd-border: 1px solid rgba(253, 186, 116, 0.45);
   --spd-border-hover: 1px solid rgba(154, 52, 18, 0.75);
-  --spd-glow: rgba(251, 146, 60, 0.32);
+  --spd-glow: rgba(251, 146, 60, 0.48);
+  --spd-stat-light: #ffedd5;
   --spd-stat-color: #9a3412;
+  --spd-hint-light: rgba(255, 237, 213, 0.88);
   --spd-hint-color: rgba(154, 52, 18, 0.68);
+  --spd-label-light: #fff7ed;
   --spd-label-color: #9a3412;
+  --spd-shadow: 0 10px 32px rgba(154, 52, 18, 0.38);
+  --spd-shadow-hover: 0 14px 36px rgba(251, 146, 60, 0.22);
 }
-.spd-accent-orange .student-parent-card__icon-wrap {
+.spd-accent-orange:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #fff7ed 100%);
   color: #ea580c;
   border: 1px solid rgba(249, 115, 22, 0.25);
@@ -449,24 +488,29 @@
 .spd-accent-teal.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #f0fdfa 0%,
-    #ccfbf1 42%,
-    #99f6e4 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #0f766e 0%,
     #0d9488 42%,
     #0369a1 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #f0fdfa 0%,
+    #ccfbf1 42%,
+    #99f6e4 100%
+  );
   --spd-border: 1px solid rgba(45, 212, 191, 0.35);
   --spd-border-hover: 1px solid rgba(15, 118, 110, 0.75);
-  --spd-glow: rgba(45, 212, 191, 0.3);
+  --spd-glow: rgba(45, 212, 191, 0.45);
+  --spd-stat-light: #ccfbf1;
   --spd-stat-color: #115e59;
+  --spd-hint-light: rgba(204, 251, 241, 0.88);
   --spd-hint-color: rgba(17, 94, 89, 0.65);
+  --spd-label-light: #f0fdfa;
   --spd-label-color: #115e59;
+  --spd-shadow: 0 10px 32px rgba(15, 118, 110, 0.38);
+  --spd-shadow-hover: 0 14px 36px rgba(45, 212, 191, 0.2);
 }
-.spd-accent-teal .student-parent-card__icon-wrap {
+.spd-accent-teal:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #f0fdfa 100%);
   color: #0d9488;
   border: 1px solid rgba(20, 184, 166, 0.22);
@@ -479,24 +523,29 @@
 .spd-accent-indigo.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #eef2ff 0%,
-    #e0e7ff 45%,
-    #c7d2fe 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #4338ca 0%,
     #4f46e5 45%,
     #312e81 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #eef2ff 0%,
+    #e0e7ff 45%,
+    #c7d2fe 100%
+  );
   --spd-border: 1px solid rgba(165, 180, 252, 0.45);
   --spd-border-hover: 1px solid rgba(55, 48, 163, 0.8);
-  --spd-glow: rgba(129, 140, 248, 0.32);
+  --spd-glow: rgba(129, 140, 248, 0.48);
+  --spd-stat-light: #e0e7ff;
   --spd-stat-color: #3730a3;
+  --spd-hint-light: rgba(224, 231, 255, 0.88);
   --spd-hint-color: rgba(55, 48, 163, 0.65);
+  --spd-label-light: #eef2ff;
   --spd-label-color: #3730a3;
+  --spd-shadow: 0 10px 32px rgba(55, 48, 163, 0.4);
+  --spd-shadow-hover: 0 14px 36px rgba(129, 140, 248, 0.22);
 }
-.spd-accent-indigo .student-parent-card__icon-wrap {
+.spd-accent-indigo:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #eef2ff 100%);
   color: #4f46e5;
   border: 1px solid rgba(129, 140, 248, 0.28);
@@ -509,24 +558,29 @@
 .spd-accent-red.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #fef2f2 0%,
-    #fee2e2 42%,
-    #fecaca 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #991b1b 0%,
     #b91c1c 42%,
     #7f1d1d 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #fef2f2 0%,
+    #fee2e2 42%,
+    #fecaca 100%
+  );
   --spd-border: 1px solid rgba(252, 165, 165, 0.45);
   --spd-border-hover: 1px solid rgba(127, 29, 29, 0.8);
-  --spd-glow: rgba(252, 165, 165, 0.3);
+  --spd-glow: rgba(252, 165, 165, 0.45);
+  --spd-stat-light: #fee2e2;
   --spd-stat-color: #991b1b;
+  --spd-hint-light: rgba(254, 226, 226, 0.88);
   --spd-hint-color: rgba(127, 29, 29, 0.68);
+  --spd-label-light: #fef2f2;
   --spd-label-color: #991b1b;
+  --spd-shadow: 0 10px 32px rgba(127, 29, 29, 0.4);
+  --spd-shadow-hover: 0 14px 36px rgba(252, 165, 165, 0.22);
 }
-.spd-accent-red .student-parent-card__icon-wrap {
+.spd-accent-red:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #fef2f2 100%);
   color: #dc2626;
   border: 1px solid rgba(248, 113, 113, 0.28);
@@ -539,24 +593,29 @@
 .spd-accent-cyan.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
-    #ecfeff 0%,
-    #cffafe 42%,
-    #a5f3fc 100%
-  );
-  --card-bg-hover: linear-gradient(
-    152deg,
     #0e7490 0%,
     #0891b2 42%,
     #1e40af 100%
   );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #ecfeff 0%,
+    #cffafe 42%,
+    #a5f3fc 100%
+  );
   --spd-border: 1px solid rgba(103, 232, 249, 0.45);
   --spd-border-hover: 1px solid rgba(8, 145, 178, 0.78);
-  --spd-glow: rgba(103, 232, 249, 0.32);
+  --spd-glow: rgba(103, 232, 249, 0.48);
+  --spd-stat-light: #cffafe;
   --spd-stat-color: #155e75;
+  --spd-hint-light: rgba(207, 250, 254, 0.88);
   --spd-hint-color: rgba(21, 94, 117, 0.65);
+  --spd-label-light: #ecfeff;
   --spd-label-color: #155e75;
+  --spd-shadow: 0 10px 32px rgba(8, 145, 178, 0.38);
+  --spd-shadow-hover: 0 14px 36px rgba(103, 232, 249, 0.2);
 }
-.spd-accent-cyan .student-parent-card__icon-wrap {
+.spd-accent-cyan:hover .student-parent-card__icon-wrap {
   background: linear-gradient(145deg, #ffffffe6 0%, #ecfeff 100%);
   color: #0891b2;
   border: 1px solid rgba(34, 211, 238, 0.25);
