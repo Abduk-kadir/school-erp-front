@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import "../assets/css/studentParentDashboard.css";
+import {useState,useEffect} from "react";
+import {onMessageListener} from "../services/fcmService";
 
 const DASHBOARD_CARDS = [
   {
@@ -20,7 +22,7 @@ const DASHBOARD_CARDS = [
     statHint: "This month",
   },
   {
-    slug: "notification-diary",
+    slug: "student-diary",
     label: "Notification Diary",
     icon: "solar:bell-bing-bold-duotone",
     accent: "spd-accent-violet",
@@ -94,6 +96,7 @@ const DASHBOARD_CARDS = [
 ];
 
 const DashBoardLayerTwo = () => {
+ 
   return (
     <section className="student-parent-dashboard">
       <header className="student-parent-dashboard__header">

@@ -14,6 +14,7 @@ import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personal
 import banner1 from '../assets/images/banners/image1.jpg';
 import banner2 from '../assets/images/banners/image2.jpg';
 import banner3 from '../assets/images/banners/image3.jpg';
+import { getFCMToken } from '../services/fcmService';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -32,10 +33,19 @@ const loginSchema = Yup.object().shape({
 const LoginPage = () => {
   const navigate = useNavigate();
   const [personalInformations,setPersonalInformations]=useState([])
+  const [isParmanentStudent,setIsParmanentStudent]=useState(false)
+  const [fcmToken, setFcmToken] = useState(null)
   const dispatch=useDispatch()
-   useEffect(() => {
-          dispatch(getPersonalInformationForm({}));
-      }, []);
+
+  useEffect(() => {
+    dispatch(getPersonalInformationForm({}));
+  }, []);
+
+  useEffect(() => {
+    console.log('fcm token is calling')
+    getFCMToken().then(setFcmToken);
+    console.log('fcm toen is calling end')
+  }, []);
 
 
  console.log('personal information is:',personalInformations)
@@ -107,86 +117,130 @@ const LoginPage = () => {
                   
                 }}
                // validationSchema={loginSchema}
-                onSubmit={async (values, { setSubmitting, resetForm }) => {
+                onSubmit={async (values, { setSubmitting }) => {
+                  console.log('user is:', values.loginAs);
+                  //changing on submit
+                  try {
+                    if (values.loginAs === 'Parent') {
+                      // Step 1: load students only once (skip if dropdown already populated)
+                      if (personalInformations.length === 0) {
+                        const permanentRes = await axios.get(
+                          `${baseUrl}/api/parmanent-personal-information/email/${values.email}`
+                        );
+                        const permanentRecords = permanentRes.data?.data ?? [];
+                        if (permanentRecords.length > 0) {
+                          setPersonalInformations(permanentRecords);
+                          setIsParmanentStudent(true);
+                        } else {
+                          const allRes = await axios.post(
+                            `${baseUrl}/api/personal-information/all`,
+                            { email: values.email }
+                          );
+                          setPersonalInformations(allRes.data?.data ?? []);
+                        }
+                      }
 
-                  console.log('user is:',values.loginAs)
-                  try{
-                 if(values.loginAs=='Parent'){
-                  let res=await axios.post(`${baseUrl}/api/personal-information/all`,{email:values.email})
-                  setPersonalInformations(res.data.data)
-                  console.log('form value is:',values)
-                  if(personalInformations.length>0){
-                 let {data}=await axios.post(`${baseUrl}/api/personal-information/login`,{email:values.email,reg_no:values.reg_no})
-                 alert('login successfully')
-                 let reg_no=data?.reg_no 
-                 let token=data?.token
-                 localStorage.setItem("token",token)
-                 localStorage.setItem("reg_no",reg_no)
-                 let res2=await axios.get(`${baseUrl}/api/form-status/${values.reg_no}`)
-                 dispatch(setRegistrationNo({ reg_no:values.reg_no }))
-                 let current_step=res2?.data?.data?.current_step
-                 let status=res2?.data?.data?.form_status
-                 console.log('current step',current_step)
-                 switch(current_step){
-                   case 1:
-                     navigate(`/registration?step=${current_step}&reg_no=${reg_no}`);
-                     break;
-                   case 2:
-                     navigate(`personal-information?step=${current_step}&reg_no=${reg_no}`)
-                     break; 
-                      case 3:
-                     navigate(`/educational-detail-stage?step=${current_step}&reg_no=${reg_no}`);
-                     break;
-                   case 4:
-                     navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`)
-                     break; 
-                      case 5:
-                      navigate(`/parent-particular-stage?step=${current_step}&reg_no=${reg_no}`)
-                     break;
-                   case 6:
-                     navigate(`/transport-detail-stage?step=${current_step}&reg_no=${reg_no}`)
-                     break; 
-                     case 7:
-                     navigate(`/other-information-stage?step=${current_step}&reg_no=${reg_no}`)
-                     break; 
-                     case 8:
-                     navigate(`/declaration-stage?step=${current_step}&reg_no=${reg_no}`)
-                     break; 
-                      case 9:
-                     navigate(`/document-stage?step=${current_step}&reg_no=${reg_no}`)
-                     break;  
-                      break; 
-                      case 10:
-                       if(Number(status)==1){
-                         navigate(`/studentdashboard?reg_no=${reg_no}`)
-                       }
-                       else{
-                         navigate(`/studentdashboard/admission-accept-status?reg_no=${reg_no}`)
-                       }
-                    
-                     break;  
-                 }
+                      // Step 1 ends here — show student dropdown, no login yet
+                      if (!values.reg_no) {
+                        return;
+                      }
 
+                      console.log('form value is:', values);
+
+                      // Step 2: login after student is selected
+                     
+                      if (isParmanentStudent) {
+                        console.log('in parmanent section')
+                        const { data } = await axios.post(
+                          `${baseUrl}/api/parmanent-personal-information/login`,
+                          {
+                            email: values.email,
+                            password: values.password,
+                            reg_no: values.reg_no,
+                            fcmToken: fcmToken,
+                          }
+                        );
+                        const reg_no = data?.reg_no;
+                        const token = data?.token;
+                        localStorage.setItem('token', token);
+                        localStorage.setItem('reg_no', reg_no);
+                        alert('login successfully');
+                        navigate(`/studentdashboard?reg_no=${reg_no}`);
+                      } else if (personalInformations.length > 0) {
+                        const { data } = await axios.post(
+                          `${baseUrl}/api/personal-information/login`,
+                          {
+                            email: values.email,
+                            reg_no: values.reg_no,
+                            password: values.password,
+                            fcmToken: fcmToken,
+                          }
+                        );
+                        alert('login successfully');
+                        const reg_no = data?.reg_no;
+                        const token = data?.token;
+                        localStorage.setItem('token', token);
+                        localStorage.setItem('reg_no', reg_no);
+                        const res2 = await axios.get(
+                          `${baseUrl}/api/form-status/${values.reg_no}`
+                        );
+                        dispatch(setRegistrationNo({ reg_no: values.reg_no }));
+                        const current_step = res2?.data?.data?.current_step;
+                        const status = res2?.data?.data?.form_status;
+                        console.log('current step', current_step);
+                        switch (current_step) {
+                          case 1:
+                            navigate(`/registration?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 2:
+                            navigate(`personal-information?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 3:
+                            navigate(`/educational-detail-stage?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 4:
+                            navigate(`/subject-stage?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 5:
+                            navigate(`/parent-particular-stage?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 6:
+                            navigate(`/transport-detail-stage?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 7:
+                            navigate(`/other-information-stage?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 8:
+                            navigate(`/declaration-stage?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 9:
+                            navigate(`/document-stage?step=${current_step}&reg_no=${reg_no}`);
+                            break;
+                          case 10:
+                            if (Number(status) === 1) {
+                              navigate(`/studentdashboard?reg_no=${reg_no}`);
+                            } else {
+                              navigate(`/studentdashboard/admission-accept-status?reg_no=${reg_no}`);
+                            }
+                            break;
+                          default:
+                            break;
+                        }
+                      }
+                    } else if (values.loginAs === 'Staff') {
+                      const res = await axios.post(`${baseUrl}/api/staff/login`, {
+                        email: values.email,
+                        password: values.password,
+                        fcmToken:fcmToken,
+                      });
+                      navigate('/dashboard');
+                      console.log('staff is login successfully', res?.data?.data);
+                    }
+                  } catch (err) {
+                    alert(err?.response?.data?.message);
+                  } finally {
+                    setSubmitting(false);
                   }
-
-                 }
-                 else if(values.loginAs=='Staff'){
-                  let res=await axios.post(`${baseUrl}/api/staff/login`,{email:values.email,password:values.password})
-                  navigate('/dashboard')
-                  console.log('staff is login successfully',res?.data?.data)
-
-                 }
-                  
-            
-                   
-
-                  }
-                  catch(err){
-                    alert(err?.response?.data?.message)
-                  }
-                 
-
-                  
                 }}
               >
                 {({ isSubmitting, touched, errors }) => (

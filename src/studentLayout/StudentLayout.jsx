@@ -3,11 +3,35 @@ import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, useLocation,Outlet } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
+import {onMessageListener} from "../services/fcmService";
 
 const StudentLayout = () => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
   const location = useLocation(); // Hook to get the current route
+
+  const requestNotificationPermission = async () => {
+    try {
+      if (!("Notification" in window)) {
+        console.log("This browser does not support notifications");
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("✅ Notification permission granted");
+      } else {
+        console.log("❌ Notification permission denied");
+      }
+    } catch (err) {
+      console.error("Permission error:", err);
+    }
+  };
+
+  useEffect(()=>{
+    requestNotificationPermission();
+    onMessageListener()
+  },[])
 
   useEffect(() => {
     const handleDropdownClick = (event) => {

@@ -114,6 +114,8 @@ const SubRoutePage = lazy(() =>
 );
 const CompletedStage = lazy(() => import("./components/child/CompletedStage"));
 const ClassFiledPage = lazy(() => import("./pages/ClassFieldPage"));
+
+
 const StudentLayout = lazy(() => import("./studentLayout/StudentLayout"));
 const StudentDashboard = lazy(() =>
   import("./pages/studentPages/StudentDashboardPage")
@@ -121,6 +123,9 @@ const StudentDashboard = lazy(() =>
 const StudentFee = lazy(() =>
   import("./components/child/student/StudentFee")
 );
+const StudentDiaryPage=lazy(() => import("./pages/studentPages/StudentDiaryPage"))
+
+
 const ClasswiseSchoolPage = lazy(() =>
   import("./pages/AdminPages/classwiseSchool/classwiseSchoolPage")
 );
@@ -530,7 +535,7 @@ function App() {
                 element={<StudentFee />}
               />
 
-
+              <Route path="student-diary" element={<StudentDiaryPage />} />
               {/* student  route end*/}
             </Route>
           </Route>

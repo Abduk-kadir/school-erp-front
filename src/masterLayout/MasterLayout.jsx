@@ -5,7 +5,7 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
-
+import {onMessageListener} from "../services/fcmService";
 
 // ── Recursive Sidebar Menu Item Component ────────────────────────────────
 function SidebarMenuItem({ item, level = 0 }) {
@@ -13,6 +13,29 @@ function SidebarMenuItem({ item, level = 0 }) {
   const hasChildren = !!item.children?.length;
   const location = useLocation();
   // Auto open when child/grandchild route is active
+  const requestNotificationPermission = async () => {
+    try {
+      if (!("Notification" in window)) {
+        console.log("This browser does not support notifications");
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("✅ Notification permission granted");
+      } else {
+        console.log("❌ Notification permission denied");
+      }
+    } catch (err) {
+      console.error("Permission error:", err);
+    }
+  };
+
+  useEffect(()=>{
+    requestNotificationPermission();
+    onMessageListener()
+  },[])
+
   useEffect(() => {
     if (hasChildren) {
       const isActiveSomewhere = item.children.some((child) => {

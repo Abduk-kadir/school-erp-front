@@ -7,6 +7,7 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import Loader from '../../../helper/Loader';
 import '../../../assets/css/mastercom.css';
 
+
 const validationSchema = Yup.object({
   message: Yup.string().required('Message is required'),
   document: Yup.mixed()
@@ -199,7 +200,8 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
       const res = await axios.post(submitUrl, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-
+   
+      
       setSuccessMsg(getApiMessage(res?.data) || 'Sent successfully');
       resetForm();
     } catch (error) {
