@@ -23,11 +23,19 @@ const DASHBOARD_CARDS = [
   },
   {
     slug: "student-diary",
-    label: "Notification Diary",
+    label: "Diary",
+    icon: "solar:notebook-bookmark-bold-duotone",
+    accent: "spd-accent-rose",
+    stat: "200",
+    statHint: "Total",
+  },
+  {
+    slug: "notification",
+    label: "Notification",
     icon: "solar:bell-bing-bold-duotone",
     accent: "spd-accent-violet",
     stat: "200",
-    statHint: "Unread",
+    statHint: "Total",
   },
   {
     slug: "timetable",
@@ -41,7 +49,7 @@ const DASHBOARD_CARDS = [
     slug: "assignment",
     label: "Assignment",
     icon: "solar:document-text-bold-duotone",
-    accent: "spd-accent-rose",
+    accent: "spd-accent-lime",
     stat: "5",
     statHint: "Pending",
   },
@@ -96,7 +104,7 @@ const DASHBOARD_CARDS = [
 ];
 
 const DashBoardLayerTwo = () => {
- 
+   
   return (
     <section className="student-parent-dashboard">
       <header className="student-parent-dashboard__header">

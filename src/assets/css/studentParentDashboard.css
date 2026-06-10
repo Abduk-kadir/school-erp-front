@@ -140,11 +140,12 @@
   transition: opacity 0.35s ease, background 0.35s ease;
 }
 
-.student-parent-card:hover {
+.student-parent-card:hover,
+.student-parent-card:focus-visible {
   transform: translateY(-6px) scale(1.015);
   box-shadow: var(--spd-shadow-hover);
-  border: var(--spd-border, var(--spd-border-hover));
-  background: var(--card-bg-hover, #f8fafc);
+  border: var(--spd-border-hover, var(--spd-border));
+  background: var(--card-bg);
 }
 
 .student-parent-card:hover::before {
@@ -161,22 +162,25 @@
   filter: blur(40px);
 }
 
-.student-parent-card:hover .student-parent-card__stat {
-  color: var(--spd-stat-color, #0f172a);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+.student-parent-card:hover .student-parent-card__stat,
+.student-parent-card:focus-visible .student-parent-card__stat {
+  color: var(--spd-stat-light);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
-.student-parent-card:hover .student-parent-card__stat-hint {
-  color: var(--spd-hint-color, rgba(15, 23, 42, 0.58));
+.student-parent-card:hover .student-parent-card__stat-hint,
+.student-parent-card:focus-visible .student-parent-card__stat-hint {
+  color: var(--spd-hint-light);
 }
 
-.student-parent-card:hover .student-parent-card__label {
-  color: var(--spd-label-color, #0f172a);
+.student-parent-card:hover .student-parent-card__label,
+.student-parent-card:focus-visible .student-parent-card__label {
+  color: var(--spd-label-light);
   text-shadow: none;
 }
 
 .student-parent-card:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid rgba(255, 255, 255, 0.55);
   outline-offset: 2px;
 }
 
@@ -206,9 +210,19 @@
     color 0.35s ease, transform 0.35s ease;
 }
 
-.student-parent-card:hover .student-parent-card__icon-wrap {
+.student-parent-card:hover .student-parent-card__icon-wrap,
+.student-parent-card:focus-visible .student-parent-card__icon-wrap {
   transform: scale(1.06);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  color: rgba(248, 250, 252, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .student-parent-card__label {
@@ -233,13 +247,14 @@
   transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
 }
 
-.student-parent-card:hover .student-parent-card__chevron {
+.student-parent-card:hover .student-parent-card__chevron,
+.student-parent-card:focus-visible .student-parent-card__chevron {
   opacity: 0.85;
   transform: translateX(3px);
-  color: var(--spd-label-color, #334155);
+  color: rgba(248, 250, 252, 0.9);
 }
 
-/* Accent variants — dark default, light pastel on hover */
+/* Accent variants — rich gradient cards */
 .spd-accent-emerald.student-parent-card {
   --card-bg: linear-gradient(
     152deg,
@@ -264,11 +279,6 @@
   --spd-label-color: #064e3b;
   --spd-shadow: 0 10px 32px rgba(4, 120, 87, 0.35);
   --spd-shadow-hover: 0 14px 36px rgba(16, 185, 129, 0.22);
-}
-.spd-accent-emerald:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #ecfdf5 100%);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.18);
 }
 .spd-accent-emerald {
   --spd-accent: linear-gradient(90deg, #6ee7b7, #34d399);
@@ -300,11 +310,6 @@
   --spd-shadow: 0 10px 32px rgba(3, 105, 161, 0.38);
   --spd-shadow-hover: 0 14px 36px rgba(14, 165, 233, 0.2);
 }
-.spd-accent-sky:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #e0f2fe 100%);
-  color: #0284c7;
-  border: 1px solid rgba(14, 165, 233, 0.2);
-}
 .spd-accent-sky {
   --spd-accent: linear-gradient(90deg, #7dd3fc, #38bdf8);
   --spd-accent-hover: linear-gradient(90deg, #bae6fd, #7dd3fc);
@@ -334,11 +339,6 @@
   --spd-label-color: #5b21b6;
   --spd-shadow: 0 10px 32px rgba(91, 33, 182, 0.4);
   --spd-shadow-hover: 0 14px 36px rgba(167, 139, 250, 0.22);
-}
-.spd-accent-violet:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #f5f3ff 100%);
-  color: #7c3aed;
-  border: 1px solid rgba(139, 92, 246, 0.22);
 }
 .spd-accent-violet {
   --spd-accent: linear-gradient(90deg, #c4b5fd, #a78bfa);
@@ -370,11 +370,6 @@
   --spd-shadow: 0 10px 32px rgba(146, 64, 14, 0.38);
   --spd-shadow-hover: 0 14px 36px rgba(251, 191, 36, 0.22);
 }
-.spd-accent-amber:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #fffbeb 100%);
-  color: #d97706;
-  border: 1px solid rgba(245, 158, 11, 0.28);
-}
 .spd-accent-amber {
   --spd-accent: linear-gradient(90deg, #fcd34d, #fbbf24);
   --spd-accent-hover: linear-gradient(90deg, #fde68a, #fcd34d);
@@ -404,11 +399,6 @@
   --spd-label-color: #9f1239;
   --spd-shadow: 0 10px 32px rgba(136, 19, 55, 0.38);
   --spd-shadow-hover: 0 14px 36px rgba(251, 113, 133, 0.2);
-}
-.spd-accent-rose:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #fff1f2 100%);
-  color: #e11d48;
-  border: 1px solid rgba(244, 63, 94, 0.22);
 }
 .spd-accent-rose {
   --spd-accent: linear-gradient(90deg, #fda4af, #fb7185);
@@ -440,11 +430,6 @@
   --spd-shadow: 0 10px 32px rgba(15, 23, 42, 0.45);
   --spd-shadow-hover: 0 14px 36px rgba(148, 163, 184, 0.25);
 }
-.spd-accent-slate:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #f8fafc 100%);
-  color: #475569;
-  border: 1px solid rgba(100, 116, 139, 0.22);
-}
 .spd-accent-slate {
   --spd-accent: linear-gradient(90deg, #cbd5e1, #94a3b8);
   --spd-accent-hover: linear-gradient(90deg, #e2e8f0, #cbd5e1);
@@ -474,11 +459,6 @@
   --spd-label-color: #9a3412;
   --spd-shadow: 0 10px 32px rgba(154, 52, 18, 0.38);
   --spd-shadow-hover: 0 14px 36px rgba(251, 146, 60, 0.22);
-}
-.spd-accent-orange:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #fff7ed 100%);
-  color: #ea580c;
-  border: 1px solid rgba(249, 115, 22, 0.25);
 }
 .spd-accent-orange {
   --spd-accent: linear-gradient(90deg, #fdba74, #fb923c);
@@ -510,11 +490,6 @@
   --spd-shadow: 0 10px 32px rgba(15, 118, 110, 0.38);
   --spd-shadow-hover: 0 14px 36px rgba(45, 212, 191, 0.2);
 }
-.spd-accent-teal:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #f0fdfa 100%);
-  color: #0d9488;
-  border: 1px solid rgba(20, 184, 166, 0.22);
-}
 .spd-accent-teal {
   --spd-accent: linear-gradient(90deg, #5eead4, #2dd4bf);
   --spd-accent-hover: linear-gradient(90deg, #99f6e4, #5eead4);
@@ -544,11 +519,6 @@
   --spd-label-color: #3730a3;
   --spd-shadow: 0 10px 32px rgba(55, 48, 163, 0.4);
   --spd-shadow-hover: 0 14px 36px rgba(129, 140, 248, 0.22);
-}
-.spd-accent-indigo:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #eef2ff 100%);
-  color: #4f46e5;
-  border: 1px solid rgba(129, 140, 248, 0.28);
 }
 .spd-accent-indigo {
   --spd-accent: linear-gradient(90deg, #a5b4fc, #818cf8);
@@ -580,11 +550,6 @@
   --spd-shadow: 0 10px 32px rgba(127, 29, 29, 0.4);
   --spd-shadow-hover: 0 14px 36px rgba(252, 165, 165, 0.22);
 }
-.spd-accent-red:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #fef2f2 100%);
-  color: #dc2626;
-  border: 1px solid rgba(248, 113, 113, 0.28);
-}
 .spd-accent-red {
   --spd-accent: linear-gradient(90deg, #fca5a5, #f87171);
   --spd-accent-hover: linear-gradient(90deg, #fecaca, #fca5a5);
@@ -615,14 +580,39 @@
   --spd-shadow: 0 10px 32px rgba(8, 145, 178, 0.38);
   --spd-shadow-hover: 0 14px 36px rgba(103, 232, 249, 0.2);
 }
-.spd-accent-cyan:hover .student-parent-card__icon-wrap {
-  background: linear-gradient(145deg, #ffffffe6 0%, #ecfeff 100%);
-  color: #0891b2;
-  border: 1px solid rgba(34, 211, 238, 0.25);
-}
 .spd-accent-cyan {
   --spd-accent: linear-gradient(90deg, #67e8f9, #22d3ee);
   --spd-accent-hover: linear-gradient(90deg, #a5f3fc, #67e8f9);
+}
+
+.spd-accent-lime.student-parent-card {
+  --card-bg: linear-gradient(
+    152deg,
+    #4d7c0f 0%,
+    #65a30d 42%,
+    #3f6212 100%
+  );
+  --card-bg-hover: linear-gradient(
+    152deg,
+    #f7fee7 0%,
+    #ecfccb 42%,
+    #d9f99d 100%
+  );
+  --spd-border: 1px solid rgba(163, 230, 53, 0.4);
+  --spd-border-hover: 1px solid rgba(77, 124, 15, 0.78);
+  --spd-glow: rgba(163, 230, 53, 0.45);
+  --spd-stat-light: #ecfccb;
+  --spd-stat-color: #3f6212;
+  --spd-hint-light: rgba(236, 252, 203, 0.88);
+  --spd-hint-color: rgba(63, 98, 18, 0.65);
+  --spd-label-light: #f7fee7;
+  --spd-label-color: #3f6212;
+  --spd-shadow: 0 10px 32px rgba(63, 98, 18, 0.38);
+  --spd-shadow-hover: 0 14px 36px rgba(163, 230, 53, 0.22);
+}
+.spd-accent-lime {
+  --spd-accent: linear-gradient(90deg, #bef264, #84cc16);
+  --spd-accent-hover: linear-gradient(90deg, #d9f99d, #bef264);
 }
 
 /* Dark theme — keep gradient cards; deepen shadow only */

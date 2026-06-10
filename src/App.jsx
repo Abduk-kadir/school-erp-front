@@ -124,6 +124,7 @@ const StudentFee = lazy(() =>
   import("./components/child/student/StudentFee")
 );
 const StudentDiaryPage=lazy(() => import("./pages/studentPages/StudentDiaryPage"))
+const StudentNotesPage=lazy(() => import("./pages/studentPages/StudentNotesPage"))
 
 
 const ClasswiseSchoolPage = lazy(() =>
@@ -534,8 +535,9 @@ function App() {
                 path="dues-fees"
                 element={<StudentFee />}
               />
+              <Route path='notes' element={<StudentNotesPage />} />
 
-              <Route path="student-diary" element={<StudentDiaryPage />} />
+              <Route path=":slug" element={<StudentDiaryPage />} />
               {/* student  route end*/}
             </Route>
           </Route>
