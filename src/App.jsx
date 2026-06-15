@@ -1,8 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import RouteScrollToTop from "./helper/RouteScrollToTop";
-import { getByLabelText } from "@testing-library/react";
-
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const MasterLayout = lazy(() => import("./masterLayout/MasterLayout"));
 
@@ -11,12 +9,18 @@ const ClassPage = lazy(() => import("./pages/ClassPage"));
 const AcademicYearPage = lazy(() => import("./pages/AcademicYearPage"));
 const DivisionPage = lazy(() => import("./pages/DivisionPage"));
 const CastPage = lazy(() => import("./pages/CastMasterPage"));
+const AddAboutSchoolPage=lazy(() => import("./pages/AdminPages/academic/AddAboutSchoolPage"))
 const EmployeePage = lazy(() => import("./pages/EmployeePage"));
 const RolePage = lazy(() => import("./pages/RolePage"));
 const PhisallyDisablePage = lazy(() => import("./pages/PyisallyDisablePage"));
 const BatchPage=lazy(() => import("./pages/AdminPages/master/BatchPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
-
+const HolidayMasterPage = lazy(() =>
+  import("./pages/AdminPages/academic/HolidayMasterPage")
+);
+const EventMasterPage = lazy(() =>
+  import("./pages/AdminPages/academic/EventMasterPage")
+);
 const StagePage = lazy(() => import("./pages/stagePage"));
 const FiledTypePage = lazy(() => import("./pages/FieldTypePae"));
 const AllFiledPage = lazy(() => import("./pages/AllFieldPage"));
@@ -81,6 +85,7 @@ const InAndOutMonthlyReportPage = lazy(() =>import("./pages/AdminPages/academic/
 const NotificationPage = lazy(() =>import("./pages/AdminPages/academic/NotificationPage"))
 const DiaryPage = lazy(() =>import("./pages/AdminPages/academic/DiaryPage"))
 const NotesPage = lazy(() =>import("./pages/AdminPages/academic/NotesPage"))
+const AboutSchoolPage = lazy(() =>import("./pages/studentPages/aboutSchoolPage"))
 const AssignmentPage = lazy(() =>import("./pages/AdminPages/academic/AssignmentPage"))
 const TimetablePage = lazy(() =>import("./pages/AdminPages/academic/TimetablePage"))
 const NotesReportPage = lazy(() =>import("./pages/AdminPages/academic/NotesReportPage"))
@@ -125,6 +130,8 @@ const StudentFee = lazy(() =>
 );
 const StudentDiaryPage=lazy(() => import("./pages/studentPages/StudentDiaryPage"))
 const StudentNotesPage=lazy(() => import("./pages/studentPages/StudentNotesPage"))
+const StudentEventPage=lazy(() => import("./pages/studentPages/StudentEventPage"))
+const HolidayPage=lazy(() => import("./pages/studentPages/HolidayPage"))
 const StudentAttendancePage=lazy(() => import("./pages/studentPages/StudentAttendancePage"))
 
 
@@ -329,6 +336,9 @@ function App() {
               <Route path="role-master" element={<RolePage />} />
               <Route path="add-declaration" element={<DeclarationPage />} />
               <Route path="phisally-disable" element={<PhisallyDisablePage />} />
+              <Route path="holiday-master" element={<HolidayMasterPage />} />
+              <Route path="event-master" element={<EventMasterPage />} />
+              <Route path="add-about-school" element={<AddAboutSchoolPage />} />
               <Route
                 path="admission-form-master/stages"
                 element={<StagePage />}
@@ -537,6 +547,9 @@ function App() {
                 element={<StudentFee />}
               />
               <Route path='notes' element={<StudentNotesPage />} />
+              <Route path='event' element={<StudentEventPage />} />
+              <Route path='holiday' element={<HolidayPage />} />
+              <Route path='about-school' element={<AboutSchoolPage />} />
               <Route path='attendance' element={<StudentAttendancePage />} />
               <Route path=":slug" element={<StudentDiaryPage />} />
               {/* student  route end*/}

@@ -10,6 +10,7 @@ import { useEffect, useState,useMemo } from 'react'
 
 import '../../../assets/css/attendance.css'
 import MyCalender from '../MyCalender'
+import AttendanceStudentModal from './AttendanceStudentModal'
 
 
 
@@ -51,6 +52,7 @@ const Attendance = () => {
   const [view, setView] = useState('today')
   const [todayData, setTodayData] = useState([])
   const [monthlyData, setMontlyData] = useState([])
+  const [detattofaDay,setDetattofaDay]=useState({})
   const reg_no=localStorage.getItem('reg_no')
 
   let date = new Date()
@@ -60,14 +62,18 @@ const Attendance = () => {
 
   const [selectedDate, setSelectedDate]=useState(yearMonth)
   
-  const  getDatefromMyCalender=(date)=>{
-    let formattedDate=date.toISOString().split("T")[0]
-    formattedDate=formattedDate.split('-').slice(0, 2).join('-');
-    console.log('date.toISOString().split("T")[0] ***************:',date.toISOString().split("T")[0])
+  const getDatefromMyCalender = (date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const formattedDate = `${year}-${month}-${day}`
+    console.log('selected attendance date:', formattedDate)
 
-   
+    const data = monthlyData.find((item) => item.attendance_date === formattedDate)
+    setDetattofaDay(data || {})
   }
   console.log('monthly data **************:',monthlyData)
+  console.log('detattofaDay **************:',detattofaDay)
   const  getYearMonthfromMyCalender=(yearMonth)=>{
     console.log('yearMonth ***************:',yearMonth)
     setSelectedDate(yearMonth)
@@ -268,6 +274,8 @@ const Attendance = () => {
         </div>
 
       </div>
+
+      <AttendanceStudentModal data={detattofaDay} onClose={() => setDetattofaDay({})} />
 
     </div>
 

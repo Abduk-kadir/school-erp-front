@@ -196,6 +196,9 @@ const MasterLayout = () => {
           ]
         },
         { title: "Phisally Disable", path: "/dashboard/phisally-disable" },
+        {title:"Holiday Master",path:"/dashboard/holiday-master"},
+        {title:"Event Master",path:"/dashboard/event-master"},
+        {title:"About School",path:"/dashboard/add-about-school"},
 
         {
           title: 'Admision Form master',

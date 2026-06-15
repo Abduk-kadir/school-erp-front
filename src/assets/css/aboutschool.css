@@ -1,0 +1,264 @@
+.about-school-page {
+  --about-primary: #4f46e5;
+  --about-primary-soft: #eef2ff;
+  --about-accent: #0ea5e9;
+  --about-text: #0f172a;
+  --about-muted: #64748b;
+  --about-border: #e2e8f0;
+  --about-card-bg: #ffffff;
+  --about-shadow: 0 10px 40px rgba(79, 70, 229, 0.12);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0.5rem 0.75rem 1.5rem;
+}
+
+.about-school-page__title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--about-text);
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+.about-school-page__title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+  color: #fff;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+.about-school-page__card {
+  background: var(--about-card-bg);
+  border: 1px solid var(--about-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: var(--about-shadow);
+}
+
+.about-school-page__carousel-wrap {
+  position: relative;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+
+.about-school-page__carousel {
+  border-radius: 0;
+}
+
+.about-school-page__carousel .carousel-inner {
+  border-radius: 0;
+}
+
+.about-school-page__carousel .carousel-item {
+  height: 220px;
+}
+
+.about-school-page__carousel-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.about-school-page__carousel .carousel-indicators {
+  margin-bottom: 0.75rem;
+  gap: 0.35rem;
+}
+
+.about-school-page__carousel .carousel-indicators [data-bs-target] {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.55);
+  opacity: 1;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.about-school-page__carousel .carousel-indicators .active {
+  background-color: #fff;
+  transform: scale(1.2);
+}
+
+.about-school-page__carousel .carousel-control-prev,
+.about-school-page__carousel .carousel-control-next {
+  width: 2.5rem;
+  opacity: 0.85;
+}
+
+.about-school-page__carousel .carousel-control-prev-icon,
+.about-school-page__carousel .carousel-control-next-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: rgba(15, 23, 42, 0.45);
+  background-size: 55%;
+}
+
+.about-school-page__image-count {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.55);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.about-school-page__content {
+  padding: 1.25rem 1.125rem 1.375rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.about-school-page__content-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.875rem;
+}
+
+.about-school-page__content-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  background: var(--about-primary-soft);
+  color: var(--about-primary);
+  font-size: 1rem;
+}
+
+.about-school-page__content-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--about-primary);
+}
+
+.about-school-page__text {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--about-text);
+  word-wrap: break-word;
+}
+
+.about-school-page__text h1,
+.about-school-page__text h2,
+.about-school-page__text h3,
+.about-school-page__text h4 {
+  margin: 0 0 0.75rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--about-text);
+}
+
+.about-school-page__text h3 {
+  font-size: 1.25rem;
+}
+
+.about-school-page__text p {
+  margin: 0 0 0.875rem;
+}
+
+.about-school-page__text p:last-child {
+  margin-bottom: 0;
+}
+
+.about-school-page__text strong {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.about-school-page__text ul,
+.about-school-page__text ol {
+  margin: 0 0 0.875rem;
+  padding-left: 1.25rem;
+}
+
+.about-school-page__text a {
+  color: var(--about-primary);
+  text-decoration: underline;
+}
+
+.about-school-page__empty,
+.about-school-page__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 200px;
+  padding: 2rem 1rem;
+  border-radius: 1rem;
+  border: 1px dashed var(--about-border);
+  background: #fff;
+  color: var(--about-muted);
+  font-size: 1rem;
+  text-align: center;
+}
+
+.about-school-page__empty-icon {
+  font-size: 2.5rem;
+  color: #a5b4fc;
+}
+
+.about-school-page__placeholder-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 220px;
+  color: var(--about-muted);
+  font-size: 0.95rem;
+}
+
+.about-school-page__placeholder-image svg,
+.about-school-page__placeholder-image .iconify {
+  font-size: 2.75rem;
+  color: #c7d2fe;
+}
+
+@media (min-width: 576px) {
+  .about-school-page__carousel .carousel-item,
+  .about-school-page__carousel-image,
+  .about-school-page__placeholder-image {
+    height: 280px;
+  }
+
+  .about-school-page__content {
+    padding: 1.5rem 1.375rem 1.625rem;
+  }
+
+  .about-school-page__text {
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .about-school-page {
+    padding: 0.75rem 1rem 2rem;
+  }
+
+  .about-school-page__carousel .carousel-item,
+  .about-school-page__carousel-image,
+  .about-school-page__placeholder-image {
+    height: 320px;
+  }
+}
