@@ -8,6 +8,7 @@ const MasterLayout = lazy(() => import("./masterLayout/MasterLayout"));
 const ClassPage = lazy(() => import("./pages/ClassPage"));
 const AcademicYearPage = lazy(() => import("./pages/AcademicYearPage"));
 const DivisionPage = lazy(() => import("./pages/DivisionPage"));
+const ClassDivisionPage = lazy(() => import("./pages/AdminPages/master/ClassDivisionPage"));
 const CastPage = lazy(() => import("./pages/CastMasterPage"));
 const AddAboutSchoolPage=lazy(() => import("./pages/AdminPages/academic/AddAboutSchoolPage"))
 const EmployeePage = lazy(() => import("./pages/EmployeePage"));
@@ -332,6 +333,7 @@ function App() {
               <Route path="batch-master" element={<BatchPage />} />
               <Route path="academic-year-master" element={<AcademicYearPage />} />
               <Route path="division-master" element={<DivisionPage />} />
+              <Route path="class-division-master" element={<ClassDivisionPage />} />
               <Route path="cast-master" element={<CastPage />} />
               <Route path="role-master" element={<RolePage />} />
               <Route path="add-declaration" element={<DeclarationPage />} />

@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Funnel, MagnifyingGlass, UsersThree } from "@phosphor-icons/react";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
+import Loader from "../../../helper/Loader";
+import "../../../assets/css/mastercom.css";
+import "../../../assets/css/studentBulkUpdate.css";
 
 const normalizeColumns = (cols) => {
   if (!Array.isArray(cols) || cols.length === 0) return [];
@@ -49,7 +52,7 @@ const BulkStudentUpdate = () => {
         const [classRes, divRes, colRes] = await Promise.all([
           axios.get(`${baseURL}/api/classes`),
           axios.get(`${baseURL}/api/divisions`),
-          axios.get(`${baseURL}/api/personal-information/columns`),
+          axios.get(`${baseURL}/api/parmanent-personal-information/columns`),
         ]);
         if (cancelled) return;
         setClasses(classRes?.data?.data || []);
@@ -73,13 +76,12 @@ const BulkStudentUpdate = () => {
     setLoading(true);
     setHasSearched(true);
     try {
-      const res = await axios.get(`${baseURL}/api/personal-information/all`, {
-        params: {
-          start: 0,
-          length: 1000,
-          "filter[className]": selectedClass,
-          "filter[programName]": selectedDivision,
-        },
+      const params = {};
+      if (selectedClass) params.class = selectedClass;
+      if (selectedDivision) params.division = selectedDivision;
+
+      const res = await axios.get(`${baseURL}/api/parmanent-personal-information`, {
+        params,
       });
       const data = res?.data?.data || [];
       setStudents(data);
@@ -144,7 +146,7 @@ const BulkStudentUpdate = () => {
 
     setUpdating(true);
     try {
-      await axios.put(`${baseURL}/api/personal-information/bulk-update`, { records });
+      await axios.put(`${baseURL}/api/parmanent-personal-information/bulk-update`, { records });
       alert("Students updated successfully.");
       setEditedData({});
       await handleSearch();
@@ -165,84 +167,94 @@ const BulkStudentUpdate = () => {
     hasSearched && !loading && students.length === 0;
 
   return (
-    <div className="bulk-student-update">
+    <div className="chfi-wrapper sbu-page d-flex flex-column gap-3 pb-2">
       {loadError && (
-        <div className="alert alert-warning border-0 shadow-sm mb-3" role="alert">
-          {loadError}
-        </div>
+        <section className="chfi-card" aria-label="Load error">
+          <div className="card-body py-3">
+            <p className="text-danger small mb-0 d-flex align-items-center gap-2">
+              <Icon icon="solar:danger-triangle-bold-duotone" width="18" />
+              {loadError}
+            </p>
+          </div>
+        </section>
       )}
 
-      <div className="card border-0 shadow-sm mt-3 overflow-hidden">
-        <div
-          className="card-header py-2 border-bottom"
-          style={{
-            backgroundColor: "color-mix(in srgb, var(--bs-primary-bg-subtle) 92%, var(--bs-primary) 8%)",
-            borderBottomColor: "rgb(var(--bs-primary-rgb) / 0.22)",
-          }}
-        >
-          <div className="d-flex align-items-center gap-2">
-            <span className="d-inline-flex align-items-center justify-content-center rounded-circle bg-white text-body-secondary p-2 shadow-sm">
-              <Funnel size={20} weight="duotone" aria-hidden />
+      <section className="chfi-card" aria-label="Find students">
+        <div className="card-header">
+          <div className="header-row">
+            <span className="header-icon">
+              <Icon icon="solar:filter-bold-duotone" width="22" />
             </span>
             <div>
-              <h5 className="card-title mb-0 text-body">Find students</h5>
-              <p className="text-body-secondary small mb-0 mt-1">
-                Choose a class and/or division, then search to load the list.
-              </p>
+              <h5 className="card-title">Find Students</h5>
             </div>
           </div>
         </div>
-        <div className="card-body pt-0">
-          <div className="row g-3 align-items-end">
-            <div className="col-md-5 col-lg-4">
-              <label className="form-label small text-body-secondary mb-1">Class</label>
-              <select
-                className="form-select"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-              >
-                <option value="">All classes</option>
-                {classes.map((c) => (
-                  <option key={c?.class_name ?? c?.id} value={c?.class_name}>
-                    {c?.class_name}
-                  </option>
-                ))}
-              </select>
+        <div className="card-body chfi-root">
+          <div className="sbu-filter-grid">
+            <div className="sbu-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Class
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:square-academic-cap-bold-duotone" width="18" />
+                </span>
+                <select
+                  className="form-select"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All classes</option>
+                  {classes.map((c) => (
+                    <option key={c?.id ?? c?.class_name} value={c?.id ?? ""}>
+                      {c?.class_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="col-md-5 col-lg-4">
-              <label className="form-label small text-body-secondary mb-1">Division</label>
-              <select
-                className="form-select"
-                value={selectedDivision}
-                onChange={(e) => setSelectedDivision(e.target.value)}
-              >
-                <option value="">All divisions</option>
-                {divisions.map((d) => (
-                  <option key={d?.division_name ?? d?.id} value={d?.division_name}>
-                    {d?.division_name}
-                  </option>
-                ))}
-              </select>
+
+            <div className="sbu-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Division
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:widget-bold-duotone" width="18" />
+                </span>
+                <select
+                  className="form-select"
+                  value={selectedDivision}
+                  onChange={(e) => setSelectedDivision(e.target.value)}
+                >
+                  <option value="">All divisions</option>
+                  {divisions.map((d) => (
+                    <option key={d?.id ?? d?.division_name} value={d?.id ?? ""}>
+                      {d?.division_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="col-md-2 col-lg-4">
+
+            <div className="sbu-filter-field sbu-filter-action">
               <button
                 type="button"
-                className="btn btn-success d-inline-flex align-items-center gap-2 px-4 shadow-sm"
+                className="btn-submit"
                 onClick={handleSearch}
                 disabled={loading}
               >
                 {loading ? (
                   <>
-                    <span
-                      className="spinner-border spinner-border-sm text-light"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                    Loading
+                    <Icon icon="line-md:loading-loop" width="16" />
+                    Loading...
                   </>
                 ) : (
                   <>
-                    <MagnifyingGlass size={18} weight="bold" aria-hidden />
+                    <Icon icon="solar:magnifer-bold-duotone" width="18" />
                     Search
                   </>
                 )}
@@ -250,66 +262,59 @@ const BulkStudentUpdate = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {loading && students.length === 0 && hasSearched && (
-        <div className="card border-0 shadow-sm mt-4 overflow-hidden">
-          <div className="card-body text-center py-5 text-body-secondary">
-            <div
-              className="spinner-border text-primary mb-3"
-              role="status"
-              aria-label="Loading"
-            />
-            <p className="mb-0">Loading students…</p>
+        <section className="chfi-card" aria-label="Loading students">
+          <div className="card-body">
+            <Loader message="Loading students..." />
           </div>
-        </div>
+        </section>
       )}
 
       {students.length > 0 && (
-        <div className="card basic-data-table border-0 shadow-sm mt-4 overflow-hidden">
-          <div className="card-header bg-success-subtle border-bottom border-success-subtle py-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div className="d-flex align-items-center gap-2">
-              <span className="d-inline-flex rounded-circle bg-white text-success p-2 shadow-sm">
-                <UsersThree size={22} weight="duotone" aria-hidden />
-              </span>
-              <div>
-                <h5 className="card-title mb-1 text-success-emphasis">Edit & update</h5>
-                <div className="d-flex flex-wrap gap-2 align-items-center">
-                  <span className="badge rounded-pill bg-white text-body-secondary border">
-                    {students.length} loaded
-                  </span>
-                  <span className="badge rounded-pill bg-white text-body-secondary border">
-                    {selectedStudents.length} selected
-                  </span>
+        <section className="chfi-card sbu-table-card" aria-label="Bulk student update table">
+          <div className="card-header">
+            <div className="sbu-table-header">
+              <div className="header-row" style={{ gap: 8, minWidth: 0 }}>
+                <span className="header-icon">
+                  <Icon icon="solar:users-group-rounded-bold-duotone" width="22" />
+                </span>
+                <div className="min-w-0">
+                  <h5 className="card-title">Edit &amp; Update</h5>
+                  <div className="sbu-stat-group">
+                    <span className="sbu-stat-pill">{students.length} loaded</span>
+                    <span className="sbu-stat-pill">{selectedStudents.length} selected</span>
+                  </div>
                 </div>
               </div>
+              <button
+                type="button"
+                className="sbu-save-btn"
+                onClick={handleBulkUpdate}
+                disabled={updating || selectedStudents.length === 0}
+              >
+                {updating ? (
+                  <>
+                    <Icon icon="line-md:loading-loop" width="16" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Icon icon="solar:diskette-bold-duotone" width="18" />
+                    Save changes ({selectedStudents.length})
+                  </>
+                )}
+              </button>
             </div>
-            <button
-              type="button"
-              className="btn btn-success px-4 shadow-sm"
-              onClick={handleBulkUpdate}
-              disabled={updating || selectedStudents.length === 0}
-            >
-              {updating ? (
-                <>
-                  <span
-                    className="spinner-border spinner-border-sm me-2 text-light"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                  Updating…
-                </>
-              ) : (
-                `Save changes (${selectedStudents.length})`
-              )}
-            </button>
           </div>
-          <div className="card-body p-0">
-            <div className="table-responsive">
-              <table className="table bordered-table mb-0 align-middle">
-                <thead className="table-light">
+          <div className="card-body">
+            {updating && <Loader message="Updating students..." />}
+            <div className="sbu-table-wrap">
+              <table className="table sbu-table mb-0 align-middle">
+                <thead>
                   <tr>
-                    <th scope="col" className="text-nowrap" style={{ width: 48 }}>
+                    <th scope="col" className="sbu-check-col">
                       <input
                         ref={headerCheckboxRef}
                         type="checkbox"
@@ -335,7 +340,7 @@ const BulkStudentUpdate = () => {
                         key={student.id}
                         className={isSelected ? "table-success" : undefined}
                       >
-                        <td>
+                        <td className="sbu-check-col">
                           <input
                             type="checkbox"
                             className="form-check-input"
@@ -346,12 +351,16 @@ const BulkStudentUpdate = () => {
                         </td>
                         <td className="fw-medium text-nowrap">{student.reg_no}</td>
                         {editableColumns.map((col) => (
-                          <td key={col.key} className="text-nowrap">
+                          <td key={col.key}>
                             <input
                               type="text"
-                              className="form-control form-control-sm"
-                              placeholder={String(student[col.key] ?? "") || col.label}
-                              value={editedData[student.reg_no]?.[col.key] ?? ""}
+                              className="sbu-cell-input"
+                              placeholder={col.label}
+                              value={
+                                editedData[student.reg_no]?.[col.key] ??
+                                student[col.key] ??
+                                ""
+                              }
                               onChange={(e) =>
                                 handleFieldChange(
                                   student.reg_no,
@@ -369,17 +378,21 @@ const BulkStudentUpdate = () => {
               </table>
             </div>
           </div>
-        </div>
+        </section>
       )}
 
       {showEmptyAfterSearch && (
-        <div className="card border-0 shadow-sm mt-4 overflow-hidden">
-          <div className="card-body text-center text-body-secondary py-5">
-            <UsersThree size={40} className="mb-3 opacity-50" weight="duotone" aria-hidden />
-            <p className="mb-0 fs-6">No students match this filter.</p>
-            <p className="small mb-0 mt-2">Try different class or division options.</p>
+        <section className="chfi-card" aria-label="No students found">
+          <div className="card-body sbu-empty-state">
+            <Icon
+              icon="solar:users-group-rounded-bold-duotone"
+              width="40"
+              className="text-muted mb-2"
+            />
+            <p>No students match this filter.</p>
+            <p className="mt-1">Try different class or division options.</p>
           </div>
-        </div>
+        </section>
       )}
     </div>
   );

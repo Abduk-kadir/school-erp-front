@@ -1,38 +1,42 @@
-import React from 'react'
-import AddBankDetail from '../../../components/child/feeMaster/AddBankDetail'
-import GenericTableDataLayer from '../../../components/GenericTable'
-import axios from 'axios'
-import baseURL from '../../../utils/baseUrl'
-const BankDetailPage = () => {
+
+import GenericTableDataLayer from "../../../components/GenericTable";
+import AddSubject from "../../../components/child/subjectMaster/AddSubject";
+import AddClassDivision from "../../../components/child/master/AddClassDivision";
+import axios from "axios"
+import baseURL from "../../../utils/baseUrl";
+import { useState } from "react";
+const ClassDivisionPage = () => {
+ 
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
     try {
       console.log(id)
-      let { data } = await axios.delete(`${baseURL}/api/bank-details/${id}`)
-      alert('Bank detail is deleted successfully')
+      let { data } = await axios.delete(`${baseURL}/api/class-div-map-masters/${id}`)
+      alert('Institute is deleted successfully')
       table.ajax.reload(); // refresh table
     }
     catch (error) {
       alert(error.response.data.message||error.message)
     }
   };
+
   const handleEdit = (id) => {
-    console.log("Edit bank detail:", id);
+    console.log("Edit institute:", id);
     // open modal or set edit state
   };
+
   return (
-    <div className='container'>
-      <AddBankDetail/>
+    <>
+
+      <AddClassDivision />
       <GenericTableDataLayer
-
-
-        url={'http://localhost:5000/api/bank-details'}
+        url={'http://localhost:5000/api/class-div-map-masters'}
         columns={[
           { data: "id", name: "id", title: "ID" },
-          { data: "bank.bank_name", title: "Bank Name" },
-          { data: "account_number", title: "Account Number" },
-          { data: "ifsc_code", title: "Ifsc code" },
+          { data: "classInfo.class_name", title: "Class Name" },
+          { data: "divisionInfo.division_name", title: "Division Name" },
+        
           {
             data: null,
             title: "Actions",
@@ -51,10 +55,13 @@ const BankDetailPage = () => {
         ]}
         onEdit={handleEdit}
         onDelete={handleDelete}
+
       />
 
-    </div>
-  )
-}
 
-export default BankDetailPage
+
+    </>
+  );
+};
+
+export default ClassDivisionPage;

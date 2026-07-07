@@ -96,7 +96,7 @@
 
 .chfi-root .field-row {
   display: grid;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: minmax(180px, 38%) 1fr;
   column-gap: 12px;
   row-gap: 2px;
   align-items: center;
@@ -107,11 +107,14 @@
   font-weight: 600;
   color: #1e293b;
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   margin-bottom: 0;
   font-size: 0.85rem;
-  white-space: nowrap;
+  line-height: 1.35;
+  white-space: normal;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .chfi-root .field-row > .field-error,
@@ -125,6 +128,8 @@
   border-radius: 999px;
   background: #2563eb;
   display: inline-block;
+  flex-shrink: 0;
+  margin-top: 0.35em;
 }
 
 /* ---------- Icon field ---------- */

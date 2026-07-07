@@ -12,9 +12,7 @@ const validationSchema = Yup.object().shape({
     .typeError("Status is required")
     .oneOf([0, 1], "Status is invalid")
     .required("Status is required"),
-  fall_in_category: Yup.string()
-    .oneOf(["primary", "preprimary", "secondary", "higher_secondary", "other"])
-    .required("fall_in_category is required"),
+ 
   admission_form_fee: Yup.number()
     .typeError("Admission Form Fee must be a number")
     .min(0, "Admission Form Fee must be 0 or more")
@@ -43,7 +41,7 @@ const AddClass = () => {
               class_name: "",
               class_code: "",
               status: 1,
-              fall_in_category: "",
+            
               admission_form_fee: "",
             }}
             validationSchema={validationSchema}
@@ -55,7 +53,7 @@ const AddClass = () => {
                 alert("Class saved successfully!");
               } catch (e) {
                 console.error("Failed to save class:", e);
-                alert("Failed to save class. Please try again.");
+                alert(e.response.data.message||e.message);
               } finally {
                 setSubmitting(false);
               }
@@ -118,26 +116,7 @@ const AddClass = () => {
                   <ErrorMessage name="status" component="div" className="text-danger field-error" />
                 </div>
 
-                <div className='field-row'>
-                  <label className='form-label'>
-                    <span className='label-dot' />
-                    fall_in_category
-                  </label>
-                  <div className='icon-field'>
-                    <span className='icon'>
-                      <Icon icon='solar:layers-bold-duotone' width='18' />
-                    </span>
-                    <Field as="select" name="fall_in_category" className='form-select'>
-                      <option value="">Select fall_in_category</option>
-                      <option value="preprimary">PrePrimary</option>
-                      <option value="primary">Primary</option>
-                      <option value="secondary">Secondary</option>
-                      <option value="higher_secondary">Higher Secondary</option>
-                      <option value="other">Other</option>
-                    </Field>
-                  </div>
-                  <ErrorMessage name="fall_in_category" component="div" className="text-danger field-error" />
-                </div>
+               
 
                 <div className='field-row'>
                   <label className='form-label'>

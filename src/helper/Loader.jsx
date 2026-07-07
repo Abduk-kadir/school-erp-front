@@ -1,6 +1,7 @@
 // components/Loader.jsx
 import React from "react";
 
+
 const Loader = ({ message }) => {
   return (
     <div className="d-flex flex-column justify-content-center align-items-center my-5">

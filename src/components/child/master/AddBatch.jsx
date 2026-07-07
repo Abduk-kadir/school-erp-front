@@ -26,16 +26,11 @@ const validationSchema = Yup.object({
   divisions: Yup.array().min(1, 'Division is required'),
   starttime: Yup.string().required('Start time is required'),
   endtime: Yup.string().required('End time is required'),
-  personname: Yup.string().trim().required('Person name is required'),
+  
   contactperson: Yup.string()
     .trim()
-    .required('Contact person is required')
     .matches(/^[0-9]{10}$/, 'Enter a valid 10-digit contact number'),
-}).test(
-  'class-division-pair',
-  'Select the same number of classes and divisions',
-  (values) => (values?.classes?.length || 0) === (values?.divisions?.length || 0)
-);
+});
 
 const normalizeListResponse = (res) => {
   const payload = res?.data;
@@ -49,7 +44,43 @@ const formatTimeForApi = (time) => {
   return time.length === 5 ? `${time}:00` : time;
 };
 
-const getOptionId = (item) => item?.id ?? item?._id ?? '';
+const getOptionId = (item) => item?.optionId ?? item?.id ?? item?._id ?? '';
+
+const buildOptionsFromMappings = (mappings) => {
+  const classMap = new Map();
+  const divisionOptions = [];
+
+  mappings.forEach((row) => {
+    const classId = row?.classid ?? row?.classInfo?.id;
+    const divisionId = row?.divisionid ?? row?.divisionInfo?.id;
+    if (!classId || !divisionId) return;
+
+    const className = row?.classInfo?.class_name ?? '';
+    const divisionName = row?.divisionInfo?.division_name ?? '';
+
+    if (!classMap.has(classId)) {
+      classMap.set(classId, {
+        id: classId,
+        class_name: className,
+        class_code: row?.classInfo?.class_code ?? '',
+        optionId: String(classId),
+      });
+    }
+
+    divisionOptions.push({
+      classId,
+      divisionId,
+      class_name: className,
+      division_name: divisionName,
+      optionId: `${classId}-${divisionId}`,
+    });
+  });
+
+  return {
+    classOptions: Array.from(classMap.values()),
+    divisionOptions,
+  };
+};
 
 const getApiMessage = (payload) => {
   if (!payload) return '';
@@ -57,7 +88,16 @@ const getApiMessage = (payload) => {
   return payload.message || payload.error || payload.msg || payload.data?.message || '';
 };
 
-const MultiChipSelect = ({ fieldName, options, optionLabel, values, setFieldValue, placeholder }) => {
+const MultiChipSelect = ({
+  fieldName,
+  options,
+  optionLabel,
+  values,
+  setFieldValue,
+  placeholder,
+  disabled = false,
+  onSelectionChange,
+}) => {
   const selected = (values[fieldName] || []).filter(Boolean).map(String);
   const available = options.filter(
     (o) => !selected.includes(String(getOptionId(o)))
@@ -66,12 +106,16 @@ const MultiChipSelect = ({ fieldName, options, optionLabel, values, setFieldValu
   const handleAdd = (e) => {
     const val = e.target.value;
     if (!val || selected.includes(String(val))) return;
-    setFieldValue(fieldName, [...selected, String(val)]);
+    const nextSelected = [...selected, String(val)];
+    setFieldValue(fieldName, nextSelected);
     e.target.value = '';
+    onSelectionChange?.(nextSelected);
   };
 
   const handleRemove = (val) => {
-    setFieldValue(fieldName, selected.filter((v) => v !== val));
+    const nextSelected = selected.filter((v) => v !== val);
+    setFieldValue(fieldName, nextSelected);
+    onSelectionChange?.(nextSelected);
   };
 
   const getLabel = (id) => {
@@ -89,7 +133,12 @@ const MultiChipSelect = ({ fieldName, options, optionLabel, values, setFieldValu
           </button>
         </span>
       ))}
-      <select className="chip-select-input" onChange={handleAdd} value="">
+      <select
+        className="chip-select-input"
+        onChange={handleAdd}
+        value=""
+        disabled={disabled}
+      >
         <option value="">{placeholder}</option>
         {available.map((o) => (
           <option key={getOptionId(o)} value={getOptionId(o)}>
@@ -107,29 +156,40 @@ const AddBatch = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [classOptions, setClassOptions] = useState([]);
-  const [divisionOptions, setDivisionOptions] = useState([]);
+  const [allDivisionOptions, setAllDivisionOptions] = useState([]);
 
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [classRes, divRes] = await Promise.all([
-          axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`),
-        ]);
-        setClassOptions(normalizeListResponse(classRes));
-        setDivisionOptions(normalizeListResponse(divRes));
+        const res = await axios.get(`${baseURL}/api/class-div-map-masters`);
+        const mappings = normalizeListResponse(res);
+        const { classOptions: classes, divisionOptions } =
+          buildOptionsFromMappings(mappings);
+        setClassOptions(classes);
+        setAllDivisionOptions(divisionOptions);
       } catch (error) {
-        console.error('Failed to fetch dropdown options', error);
+        console.error('Failed to fetch class-division mappings', error);
       }
     };
     fetchOptions();
   }, []);
 
-  const buildBatchmasters = (classes, divisions) =>
-    classes.map((classId, index) => ({
-      classId: Number(classId),
-      divisionId: Number(divisions[index]),
-    }));
+  const handleClassSelectionChange = (selectedClassIds, setFieldValue, values) => {
+    const selected = selectedClassIds.map(String);
+    const validDivisions = (values.divisions || []).filter((key) =>
+      selected.includes(String(key).split('-')[0])
+    );
+    setFieldValue('divisions', validDivisions);
+  };
+
+  const buildBatchmasters = (divisionKeys) =>
+    divisionKeys.map((key) => {
+      const [classId, divisionId] = String(key).split('-');
+      return {
+        classId: Number(classId),
+        divisionId: Number(divisionId),
+      };
+    });
 
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     setLoading(true);
@@ -137,11 +197,10 @@ const AddBatch = () => {
     setSuccessMsg('');
     setErrorMsg('');
 
-    const classIds = values.classes.filter(Boolean);
-    const divisionIds = values.divisions.filter(Boolean);
+    const divisionKeys = values.divisions.filter(Boolean);
 
-    if (classIds.length !== divisionIds.length) {
-      setErrorMsg('Select the same number of classes and divisions');
+    if (!divisionKeys.length) {
+      setErrorMsg('Select at least one division');
       setLoading(false);
       setSubmitting(false);
       return;
@@ -153,7 +212,7 @@ const AddBatch = () => {
       endtime: formatTimeForApi(values.endtime),
       personname: values.personname.trim(),
       contactperson: values.contactperson.trim(),
-      batchmasters: buildBatchmasters(classIds, divisionIds),
+      batchmasters: buildBatchmasters(divisionKeys),
     };
 
     try {
@@ -217,7 +276,13 @@ const AddBatch = () => {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ isSubmitting, resetForm, setFieldValue, values, errors, submitCount }) => (
+              {({ isSubmitting, resetForm, setFieldValue, values }) => {
+                const selectedClassIds = (values.classes || []).map(String);
+                const filteredDivisionOptions = allDivisionOptions.filter((o) =>
+                  selectedClassIds.includes(String(o.classId))
+                );
+
+                return (
                 <Form className="chfi-root">
                   {loading && <Loader message={message} />}
 
@@ -256,6 +321,9 @@ const AddBatch = () => {
                       values={values}
                       setFieldValue={setFieldValue}
                       placeholder="+ Select Class"
+                      onSelectionChange={(classIds) =>
+                        handleClassSelectionChange(classIds, setFieldValue, values)
+                      }
                     />
                     <ErrorMessage
                       name="classes"
@@ -271,11 +339,18 @@ const AddBatch = () => {
                     </label>
                     <MultiChipSelect
                       fieldName="divisions"
-                      options={divisionOptions}
-                      optionLabel={(d) => d?.division_name ?? d?.name}
+                      options={filteredDivisionOptions}
+                      optionLabel={(d) => {
+                        const className = d?.class_name ?? '';
+                        const divisionName = d?.division_name ?? d?.name ?? '';
+                        return className
+                          ? `${className} - ${divisionName}`
+                          : divisionName;
+                      }}
                       values={values}
                       setFieldValue={setFieldValue}
                       placeholder="+ Select Division"
+                      disabled={!values.classes?.length}
                     />
                     <ErrorMessage
                       name="divisions"
@@ -283,10 +358,6 @@ const AddBatch = () => {
                       className="text-danger field-error"
                     />
                   </div>
-
-                  {submitCount > 0 && errors[''] && (
-                    <div className="text-danger field-error mb-2">{errors['']}</div>
-                  )}
 
                   <div className="field-row">
                     <label className="form-label">
@@ -327,7 +398,7 @@ const AddBatch = () => {
                   <div className="field-row">
                     <label className="form-label">
                       <span className="label-dot" />
-                      Person Name
+                      Emergency Contact Person 
                     </label>
                     <div className="icon-field">
                       <span className="icon">
@@ -350,7 +421,7 @@ const AddBatch = () => {
                   <div className="field-row">
                     <label className="form-label">
                       <span className="label-dot" />
-                      Contact Person
+                      Emergency Contact Number
                     </label>
                     <div className="icon-field">
                       <span className="icon">
@@ -399,7 +470,8 @@ const AddBatch = () => {
                     </button>
                   </div>
                 </Form>
-              )}
+                );
+              }}
             </Formik>
           </div>
         </div>
