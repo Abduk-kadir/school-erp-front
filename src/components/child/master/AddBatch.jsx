@@ -23,7 +23,7 @@ const validationSchema = Yup.object({
     .required('Batch name is required')
     .min(2, 'Minimum 2 characters'),
   classes: Yup.array().min(1, 'Class is required'),
-  divisions: Yup.array().min(1, 'Division is required'),
+  
   starttime: Yup.string().required('Start time is required'),
   endtime: Yup.string().required('End time is required'),
   
@@ -182,8 +182,8 @@ const AddBatch = () => {
     setFieldValue('divisions', validDivisions);
   };
 
-  const buildBatchmasters = (divisionKeys) =>
-    divisionKeys.map((key) => {
+  const buildBatchmasters = (classIds, divisionKeys) => {
+    const masters = divisionKeys.map((key) => {
       const [classId, divisionId] = String(key).split('-');
       return {
         classId: Number(classId),
@@ -191,20 +191,30 @@ const AddBatch = () => {
       };
     });
 
+    const classIdsWithDivision = new Set(
+      masters.map((entry) => String(entry.classId))
+    );
+
+    (classIds || []).filter(Boolean).forEach((classId) => {
+      if (!classIdsWithDivision.has(String(classId))) {
+        masters.push({
+          classId: Number(classId),
+          divisionId: null,
+        });
+      }
+    });
+
+    return masters;
+  };
+
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     setLoading(true);
     setMessage('Saving batch...');
     setSuccessMsg('');
     setErrorMsg('');
 
+    const classIds = values.classes.filter(Boolean);
     const divisionKeys = values.divisions.filter(Boolean);
-
-    if (!divisionKeys.length) {
-      setErrorMsg('Select at least one division');
-      setLoading(false);
-      setSubmitting(false);
-      return;
-    }
 
     const payload = {
       batch_name: values.batch_name.trim(),
@@ -212,7 +222,7 @@ const AddBatch = () => {
       endtime: formatTimeForApi(values.endtime),
       personname: values.personname.trim(),
       contactperson: values.contactperson.trim(),
-      batchmasters: buildBatchmasters(divisionKeys),
+      batchmasters: buildBatchmasters(classIds, divisionKeys),
     };
 
     try {

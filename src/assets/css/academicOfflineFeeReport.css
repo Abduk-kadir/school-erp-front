@@ -374,6 +374,54 @@
   font-style: italic;
 }
 
+/* Present / Absent status pills in in-out detail report */
+.chfi-wrapper .report-table .attendance-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 78px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.06);
+  white-space: nowrap;
+}
+
+.chfi-wrapper .report-table .attendance-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chfi-wrapper .report-table .attendance-status--present {
+  color: #15803d;
+  background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.chfi-wrapper .report-table .attendance-status--present::before {
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.chfi-wrapper .report-table .attendance-status--absent {
+  color: #b91c1c;
+  background: linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%);
+  border-color: rgba(244, 63, 94, 0.38);
+}
+
+.chfi-wrapper .report-table .attendance-status--absent::before {
+  background: #f43f5e;
+  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.18);
+}
+
 /* =====================================================================
  * DataTables controls (works for BOTH legacy v1.x .dataTables_wrapper
  * and modern v2.x .dt-container wrappers).

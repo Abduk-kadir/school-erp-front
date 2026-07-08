@@ -10,6 +10,7 @@ import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personal
 import { setRegistrationNo } from "../redux/slices/registrationNo";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import "../assets/css/academicOfflineFeeReport.css";
+import "../assets/css/editdelete.css";
 
 const InAndOutSummaryDataTable = ({
   url,
@@ -72,19 +73,31 @@ const InAndOutSummaryDataTable = ({
     const fetchData = async () => {
       try {
         const [res1, res2, res3] = await Promise.all([
-          axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`)
-          
+          axios.get(`${baseURL}/api/batches`),     
         ]);
-        setClasses(res1?.data?.data || []);
-        setDivisions(res2?.data?.data || []);
-        setBatches(res3?.data?.data || []);
+        setBatches(res1?.data?.data || []);
+        
       } catch (err) {
         console.error("Failed to load filter options", err);
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${baseURL}/api/batches/${batchFilter}/relations`);
+        setClasses(res?.data?.class || []);
+        setDivisions(res?.data?.division || []);
+
+        
+      } catch (err) {
+        console.error("Failed to load filter options", err);
+      }
+    };
+    fetchData();
+  }, [batchFilter]);
 
   const handleFilter = () => {
     if (datatableRef.current) {
@@ -173,6 +186,16 @@ const InAndOutSummaryDataTable = ({
      
     
     });
+    $("#dataTable").on("click", ".table-action-show-students", function () {
+      const classid = $(this).data("class_id");
+      const divisionid = $(this).data("division_id");
+      window.open(
+        `/dashboard/academic/in-out-attendance-detail-report?class_id=${classid}&division_id=${divisionid}`,
+        "_blank"
+      );
+    
+    });
+  
 
     return () => {
       if (datatableRef.current) {
@@ -233,7 +256,7 @@ const InAndOutSummaryDataTable = ({
                   <option value="">Select Batch</option>
                   {batches.map((b) => (
                     <option key={b.id} value={b.id}>
-                      {b.academic_year}
+                      {b.batch_name}
                     </option>
                   ))}
                 </select>

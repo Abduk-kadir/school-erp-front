@@ -29,6 +29,8 @@ const BatchPage = () => {
       <GenericTableDataLayer url='http://localhost:5000/api/batches' columns={[
         {data:"id",name:"id",title:"ID"},
         {data:"batch_name",name:"batch_name",title:"Batch Name"},
+        {data:"class_names",name:"class_names",title:"Classes"},
+        {data:"division_names",name:"division_names",title:"Divisions"},
         {data:"starttime",name:"starttime",title:"Start Time"},
         {data:"endtime",name:"endtime",title:"End Time"},
         {data:"personname",name:"personname",title:"Person Name"},

@@ -4,12 +4,14 @@ import "datatables.net-dt";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useSearchParams  } from "react-router-dom";
+
 import { setStaffId } from "../redux/slices/dynamicForm/editByStaffSlice";
 import { getPersonalInformationForm } from '../redux/slices/dynamicForm/personalInfoFormSlice';
 import { setRegistrationNo } from "../redux/slices/registrationNo";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import "../assets/css/academicOfflineFeeReport.css";
+
 
 const InAndOutDataTable = ({
   url,
@@ -19,17 +21,20 @@ const InAndOutDataTable = ({
 }) => {
   const dispatch=useDispatch()
   const navigate=useNavigate()
+  const [searchParams] = useSearchParams();
+  const classId = searchParams.get("class_id");
+  const divisionId = searchParams.get("division_id");
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
   const [classes, setClasses] = useState([]);
   const [divisions, setDivisions] = useState([]);
   const [batches, setBatches] = useState([]);
 
-  // Controlled filter values
-  const [classFilter, setClassFilter] = useState("");
+  // Controlled filter values (pre-fill from URL when opened from summary report)
+  const [classFilter, setClassFilter] = useState(() => classId || "");
   const [dateFilter, setDateFilter] = useState("");
   const [batchFilter, setBatchFilter] = useState("");
-  const [divisionFilter, setDivisionFilter] = useState("");
+  const [divisionFilter, setDivisionFilter] = useState(() => divisionId || "");
 
   const [exportingFormat, setExportingFormat] = useState(null);
 
@@ -46,10 +51,10 @@ const InAndOutDataTable = ({
   };
 
   // Refs to hold current filter values for DataTable ajax
-  const classFilterRef = useRef("");
+  const classFilterRef = useRef(classId || "");
   const dateFilterRef = useRef("");
   const batchFilterRef = useRef("");
-  const divisionFilterRef = useRef("");
+  const divisionFilterRef = useRef(divisionId || "");
 
   // Update refs when state changes
   useEffect(() => {
@@ -72,13 +77,10 @@ const InAndOutDataTable = ({
     const fetchData = async () => {
       try {
         const [res1, res2, res3] = await Promise.all([
-          axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`)
-          
+          axios.get(`${baseURL}/api/batches`),     
         ]);
-        setClasses(res1?.data?.data || []);
-        setDivisions(res2?.data?.data || []);
-        setBatches(res3?.data?.data || []);
+        setBatches(res1?.data?.data || []);
+        
       } catch (err) {
         console.error("Failed to load filter options", err);
       }
@@ -86,9 +88,37 @@ const InAndOutDataTable = ({
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${baseURL}/api/batches/${batchFilter}/relations`);
+        setClasses(res?.data?.class || []);
+        setDivisions(res?.data?.division || []);
+        
+      } catch (err) {
+        console.error("Failed to load filter options", err);
+      }
+    };
+    fetchData();
+  }, [batchFilter]);
+
+  useEffect(() => {
+    if (!classId || !divisionId) return;
+
+    classFilterRef.current = classId;
+    divisionFilterRef.current = divisionId;
+
+    if (datatableRef.current) {
+      datatableRef.current.draw();
+    }
+  }, [classId, divisionId]);
+
+
+
+
   const handleFilter = () => {
     if (datatableRef.current) {
-      datatableRef.current.draw(); // ← this triggers new ajax call
+      datatableRef.current.draw();
     }
   };
 
@@ -151,6 +181,12 @@ const InAndOutDataTable = ({
   useEffect(() => {
     if (!tableRef.current) return;
 
+    // Apply URL filters before first ajax (search-params effect may run before table exists)
+    if (classId && divisionId) {
+      classFilterRef.current = classId;
+      divisionFilterRef.current = divisionId;
+    }
+
     datatableRef.current = $(tableRef.current).DataTable({
       pageLength: 10,
       processing: true,
@@ -184,7 +220,7 @@ const InAndOutDataTable = ({
   return (
     <div className="chfi-wrapper d-flex flex-column gap-3 pb-2">
       {/* ---------- Filter card ---------- */}
-      <section className="chfi-card" aria-label="Report filters">
+     {!classId && !divisionId && <section className="chfi-card" aria-label="Report filters">
         <div className="card-header">
           <div className="header-row">
             <span className="header-icon">
@@ -233,7 +269,7 @@ const InAndOutDataTable = ({
                   <option value="">Select Batch</option>
                   {batches.map((b) => (
                     <option key={b.id} value={b.id}>
-                      {b.academic_year}
+                      {b.batch_name}
                     </option>
                   ))}
                 </select>
@@ -301,6 +337,7 @@ const InAndOutDataTable = ({
           </div>
         </div>
       </section>
+     }
 
       {/* ---------- Table card ---------- */}
       <section className="chfi-card report-table-card" aria-label="Report data">

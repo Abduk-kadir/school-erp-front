@@ -6,6 +6,7 @@
  *   <div class="table-action-group">
  *     <button type="button" class="table-action-btn table-action-edit" data-id="1">Edit</button>
  *     <button type="button" class="table-action-btn table-action-delete" data-id="1">Delete</button>
+ *     <button type="button" class="table-action-btn table-action-show-students" data-id="1">Show Students</button>
  *   </div>
  * ===================================================================== */
 
@@ -101,6 +102,25 @@
   background: linear-gradient(180deg, #fee2e2 0%, #fecaca 100%);
   border-color: rgba(220, 38, 38, 0.45);
   box-shadow: 0 8px 18px -10px rgba(220, 38, 38, 0.6);
+}
+
+/* ---------- Show Students ---------- */
+.table-action-show-students {
+  color: #6d28d9;
+  background: linear-gradient(180deg, #faf5ff 0%, #ede9fe 100%);
+  border-color: rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px -8px rgba(124, 58, 237, 0.48);
+}
+
+.table-action-show-students::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236d28d9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E");
+}
+
+.table-action-show-students:hover:not(:disabled) {
+  color: #5b21b6;
+  background: linear-gradient(180deg, #ede9fe 0%, #ddd6fe 100%);
+  border-color: rgba(124, 58, 237, 0.45);
+  box-shadow: 0 8px 18px -10px rgba(124, 58, 237, 0.62);
 }
 
 /* Align action column content in report tables */
