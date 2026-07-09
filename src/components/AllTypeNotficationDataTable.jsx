@@ -4,7 +4,15 @@ import "datatables.net-dt";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import "../assets/css/mastercom.css";
 import "../assets/css/academicOfflineFeeReport.css";
+import DocumentViewer from "./child/DocumentViewer";
+import { downloadFile } from "../utils/downloadFile";
+
+const buildFileUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${baseURL}${path}`;
+};
 
 const AllTypeNotficationDataTable = ({ url, columns }) => {
   const tableRef = useRef(null);
@@ -18,12 +26,18 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
   const [toDate, setToDate] = useState("");
   const [batchFilter, setBatchFilter] = useState("");
   const [divisionFilter, setDivisionFilter] = useState("");
+  const [viewUrl, setViewUrl] = useState(null);
 
   const classFilterRef = useRef("");
   const fromDateRef = useRef("");
   const toDateRef = useRef("");
   const batchFilterRef = useRef("");
   const divisionFilterRef = useRef("");
+  const setViewUrlRef = useRef(setViewUrl);
+
+  useEffect(() => {
+    setViewUrlRef.current = setViewUrl;
+  }, []);
 
   useEffect(() => {
     classFilterRef.current = classFilter;
@@ -49,19 +63,31 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
     const fetchData = async () => {
       try {
         const [res1, res2, res3] = await Promise.all([
-          axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`),
-          axios.get(`${baseURL}/api/batches`),
+          axios.get(`${baseURL}/api/batches`),     
         ]);
-        setClasses(res1?.data?.data || []);
-        setDivisions(res2?.data?.data || []);
-        setBatches(res3?.data?.data || res3?.data || []);
+        setBatches(res1?.data?.data || []);
+        
       } catch (err) {
         console.error("Failed to load filter options", err);
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${baseURL}/api/batches/${batchFilter}/relations`);
+        setClasses(res?.data?.class || []);
+        setDivisions(res?.data?.division || []);
+
+        
+      } catch (err) {
+        console.error("Failed to load filter options", err);
+      }
+    };
+    fetchData();
+  }, [batchFilter]);
 
   const handleFilter = () => {
     if (datatableRef.current) {
@@ -92,10 +118,34 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
         },
       },
       columns,
+      createdRow: function (row, data) {
+        const documentUrl =
+          data?.diary_url ||
+          data?.notes_url ||
+          data?.assignment_url ||
+          data?.timetable_url ||
+          data?.document_url ||
+          "";
+
+        $(row).find(".table-action-view-document").on("click", function () {
+          if (!documentUrl) return;
+          setViewUrlRef.current(buildFileUrl(documentUrl));
+        });
+
+        $(row).find(".table-action-download-document").on("click", async function () {
+          if (!documentUrl) return;
+          try {
+            await downloadFile(documentUrl);
+          } catch (err) {
+            console.error("Download failed:", err);
+          }
+        });
+      },
 
       headerCallback: function (thead) {
         $(thead).find("th").css("white-space", "nowrap");
       },
+
     });
 
     return () => {
@@ -107,115 +157,143 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
 
   return (
     <div className="fee-report-scope d-flex flex-column gap-4 pb-2">
-      <section
-        className="card fee-report-card border-0 mb-0"
-        aria-label="Report filters"
-      >
-        <div className="card-header border-0 bg-success bg-opacity-10 py-3 px-4">
-          <div className="d-flex align-items-center gap-3">
-            <span className="fee-report-icon-wrap bg-success text-white shadow-sm">
-              <Icon icon="solar:filter-bold-duotone" className="fs-4" />
-            </span>
-            <div>
-              <h6 className="card-title mb-0 fw-semibold text-dark">
-                Filter notification report
-              </h6>
-              <p className="small text-muted mb-0 mt-1">
-                Narrow results, then apply to refresh the table
-              </p>
+      <div className="chfi-wrapper">
+        <section className="chfi-card" aria-label="Report filters">
+          <div className="card-header">
+            <div className="header-row">
+              <span className="header-icon">
+                <Icon icon="solar:filter-bold-duotone" width="22" />
+              </span>
+              <div>
+                <h5 className="card-title">Filter notification report</h5>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="card-body px-4 pb-4 pt-3">
-          <div className="row g-3 g-lg-4 align-items-end">
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label small fw-semibold text-secondary mb-1">
-                From date
-              </label>
-              <input
-                className="form-control rounded-3"
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-              />
-            </div>
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label small fw-semibold text-secondary mb-1">
-                To date
-              </label>
-              <input
-                className="form-control rounded-3"
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-              />
-            </div>
 
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label small fw-semibold text-secondary mb-1">
-                Batch
-              </label>
-              <select
-                className="form-select rounded-3"
-                value={batchFilter}
-                onChange={(e) => setBatchFilter(e.target.value)}
-              >
-                <option value="">Select batch</option>
-                {batches.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.batch_name ?? b.academic_year}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label small fw-semibold text-secondary mb-1">
-                Class
-              </label>
-              <select
-                className="form-select rounded-3"
-                value={classFilter}
-                onChange={(e) => setClassFilter(e.target.value)}
-              >
-                <option value="">Select class</option>
-                {classes.map((elem) => (
-                  <option key={elem?.id} value={elem?.id ?? elem?.class_name}>
-                    {elem?.class_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label small fw-semibold text-secondary mb-1">
-                Division
-              </label>
-              <select
-                className="form-select rounded-3"
-                value={divisionFilter}
-                onChange={(e) => setDivisionFilter(e.target.value)}
-              >
-                <option value="">Select division</option>
-                {divisions.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.division_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="card-body">
+            <div className="report-filter-grid">
+              <div className="report-filter-field">
+                <label className="form-label">
+                  <span className="label-dot" />
+                  From date
+                </label>
+                <div className="icon-field">
+                  <span className="icon">
+                    <Icon icon="solar:calendar-bold-duotone" width="18" />
+                  </span>
+                  <input
+                    className="form-control"
+                    type="date"
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                  />
+                </div>
+              </div>
 
-            <div className="col-md-6 col-lg-3 d-flex align-items-end">
-              <button
-                type="button"
-                className="btn btn-success rounded-pill px-4 w-100 d-inline-flex align-items-center justify-content-center gap-2 shadow-sm"
-                onClick={handleFilter}
-              >
-                <Icon icon="solar:magnifer-bold" className="fs-5" />
-                Apply filters
-              </button>
+              <div className="report-filter-field">
+                <label className="form-label">
+                  <span className="label-dot" />
+                  To date
+                </label>
+                <div className="icon-field">
+                  <span className="icon">
+                    <Icon icon="solar:calendar-bold-duotone" width="18" />
+                  </span>
+                  <input
+                    className="form-control"
+                    type="date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="report-filter-field">
+                <label className="form-label">
+                  <span className="label-dot" />
+                  Batch
+                </label>
+                <div className="icon-field">
+                  <span className="icon">
+                    <Icon icon="solar:layers-bold-duotone" width="18" />
+                  </span>
+                  <select
+                    className="form-select"
+                    value={batchFilter}
+                    onChange={(e) => setBatchFilter(e.target.value)}
+                  >
+                    <option value="">Select batch</option>
+                    {batches.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.batch_name ?? b.academic_year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="report-filter-field">
+                <label className="form-label">
+                  <span className="label-dot" />
+                  Class
+                </label>
+                <div className="icon-field">
+                  <span className="icon">
+                    <Icon icon="solar:square-academic-cap-bold-duotone" width="18" />
+                  </span>
+                  <select
+                    className="form-select"
+                    value={classFilter}
+                    onChange={(e) => setClassFilter(e.target.value)}
+                  >
+                    <option value="">Select class</option>
+                    {classes.map((elem) => (
+                      <option key={elem?.id} value={elem?.id ?? elem?.class_name}>
+                        {elem?.class_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="report-filter-field">
+                <label className="form-label">
+                  <span className="label-dot" />
+                  Division
+                </label>
+                <div className="icon-field">
+                  <span className="icon">
+                    <Icon icon="solar:widget-bold-duotone" width="18" />
+                  </span>
+                  <select
+                    className="form-select"
+                    value={divisionFilter}
+                    onChange={(e) => setDivisionFilter(e.target.value)}
+                  >
+                    <option value="">Select division</option>
+                    {divisions.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.division_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="report-filter-field report-filter-action">
+                <button
+                  type="button"
+                  className="btn-submit chfi-root"
+                  onClick={handleFilter}
+                >
+                  <Icon icon="solar:magnifer-bold-duotone" width="18" />
+                  Apply filters
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <section
         className="card fee-report-card fee-report-table-card basic-data-table border-0 mb-0"
@@ -246,6 +324,11 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
           </div>
         </div>
       </section>
+      <DocumentViewer
+        url={viewUrl}
+        show={!!viewUrl}
+        onClose={() => setViewUrl(null)}
+      />
     </div>
   );
 };

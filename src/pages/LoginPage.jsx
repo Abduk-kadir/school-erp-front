@@ -233,6 +233,8 @@ const LoginPage = () => {
                         password: values.password,
                         fcmToken:fcmToken,
                       });
+                      let token=res?.data?.token;
+                      localStorage.setItem('token',token)
                       navigate('/dashboard');
                       console.log('staff is login successfully', res?.data?.data);
                     }

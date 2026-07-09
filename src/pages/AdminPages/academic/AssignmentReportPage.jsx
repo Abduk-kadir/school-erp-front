@@ -10,7 +10,22 @@ const AssignmentReportPage = () => {
         {data:"division_name",title:"Division"},
         {data:"title",title:"Title"},
         {data:"subject_name",title:"Subject", defaultContent:""},
-        {data:"teacher_name",title:"Teacher", defaultContent:""},
+       
+        {data:"staff_name",title:"Teacher", defaultContent:""},
+        {
+          data: null,
+          title: "Actions",
+          orderable: false,
+          searchable: false,
+          render: (data, type, row) => {
+            return `
+              <div class="table-action-group">
+                <button type="button" class="table-action-btn table-action-view-document" data-id="${row.id}" title="View document">View</button>
+                <button type="button" class="table-action-btn table-action-download-document" data-id="${row.id}" title="Download document">Download</button>
+              </div>
+            `;
+          },
+        },
     ]
   return (
     <div>

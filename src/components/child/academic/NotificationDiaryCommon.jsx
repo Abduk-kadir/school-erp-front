@@ -6,6 +6,8 @@ import baseURL from '../../../utils/baseUrl';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import Loader from '../../../helper/Loader';
 import '../../../assets/css/mastercom.css';
+import {useDispatch,useSelector} from "react-redux";
+import { getStaffData } from "../../../redux/slices/registrationNo";
 
 
 const validationSchema = Yup.object({
@@ -41,7 +43,7 @@ const getOptionId = (item) => item?.optionId ?? item?.id ?? item?._id ?? '';
 
 const getRawId = (item) => item?.id ?? item?._id ?? '';
 
-const buildSubmitTargets = (selectedDivisionKeys, divisionOptions, message, subjectId) =>
+const buildSubmitTargets = (selectedDivisionKeys, divisionOptions, message, subjectId, staffId) =>
   selectedDivisionKeys
     .map((key) =>
       divisionOptions.find((o) => String(getOptionId(o)) === String(key))
@@ -52,6 +54,7 @@ const buildSubmitTargets = (selectedDivisionKeys, divisionOptions, message, subj
       class: Number(o.classId),
       division: Number(getRawId(o)),
       message,
+      staffid: Number(staffId),
       ...(subjectId ? { subject: Number(subjectId) } : {}),
     }));
 
@@ -71,6 +74,20 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const staff = useSelector((state) => state.registrationNo.staff?.data);
+  const staffid = staff?.id;
+
+  const dispatch=useDispatch();
+
+  useEffect(()=>{
+    console.log('calling use effect in dashboard admin')
+    const token=localStorage.getItem('token');
+    console.log('token**********************:',token)
+    if(!staffid){
+      dispatch(getStaffData({token:token}))
+    }
+    console.log("end")
+  },[])
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -183,7 +200,8 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
           values.divisions,
           divisionOptions,
           values.message,
-          isSubject ? values.subject : ''
+          isSubject ? values.subject : '',
+          staffid
         );
 
         if (!rows.length) {

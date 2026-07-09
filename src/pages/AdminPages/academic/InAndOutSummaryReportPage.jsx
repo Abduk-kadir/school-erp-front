@@ -3,6 +3,7 @@ import InAndOutSummaryDataTable from "../../../components/InAndOutSummaryDataTab
 import baseURL from "../../../utils/baseUrl";
 import "../../../assets/css/editdelete.css";
 
+
 const feeReportColumns = [
   { data: "class", title: "Class", defaultContent: "" },
   { data: "div", title: "Division", defaultContent: "" },
@@ -35,6 +36,7 @@ const feeReportColumns = [
 ];
 
 const InAndOutSummaryReportPage = () => {
+  
   return (
     <div>
       <InAndOutSummaryDataTable url={`${baseURL}/api/in-out-attendance/reports/summary`} columns={feeReportColumns} />

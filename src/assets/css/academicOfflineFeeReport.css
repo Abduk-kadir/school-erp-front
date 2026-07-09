@@ -923,6 +923,108 @@
 }
 
 /* =====================================================================
+ * Notification report — View / Download document actions
+ * Scoped under .fee-report-scope (AllTypeNotficationDataTable)
+ * ===================================================================== */
+.fee-report-scope .table-action-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fee-report-scope .table-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.15px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.fee-report-scope .table-action-btn::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.fee-report-scope .table-action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.fee-report-scope .table-action-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.fee-report-scope .table-action-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- View document ---------- */
+.fee-report-scope .table-action-view-document {
+  color: #0369a1;
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: rgba(14, 165, 233, 0.3);
+  box-shadow: 0 4px 12px -8px rgba(14, 165, 233, 0.5);
+}
+
+.fee-report-scope .table-action-view-document::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230369a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+}
+
+.fee-report-scope .table-action-view-document:hover:not(:disabled) {
+  color: #075985;
+  background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%);
+  border-color: rgba(14, 165, 233, 0.45);
+  box-shadow: 0 8px 18px -10px rgba(14, 165, 233, 0.62);
+}
+
+/* ---------- Download document ---------- */
+.fee-report-scope .table-action-download-document {
+  color: #b91c1c;
+  background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+  border-color: rgba(220, 38, 38, 0.28);
+  box-shadow: 0 4px 12px -8px rgba(220, 38, 38, 0.5);
+}
+
+.fee-report-scope .table-action-download-document::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b91c1c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3Cline x1='12' y1='15' x2='12' y2='3'/%3E%3C/svg%3E");
+}
+
+.fee-report-scope .table-action-download-document:hover:not(:disabled) {
+  color: #991b1b;
+  background: linear-gradient(180deg, #fee2e2 0%, #fecaca 100%);
+  border-color: rgba(220, 38, 38, 0.45);
+  box-shadow: 0 8px 18px -10px rgba(220, 38, 38, 0.6);
+}
+
+.fee-report-scope .table tbody td .table-action-group {
+  min-width: max-content;
+}
+
+/* =====================================================================
  * Responsive
  * ===================================================================== */
 @media (max-width: 991.98px) {

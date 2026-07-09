@@ -6,6 +6,8 @@ import axios from 'axios';
 import baseURL from '../../../utils/baseUrl';
 import Loader from '../../../helper/Loader';
 import '../../../assets/css/mastercom.css';
+import {useDispatch,useSelector} from "react-redux";
+import { getStaffData } from "../../../redux/slices/registrationNo";
 const fieldIcons = {
   batch: 'solar:diploma-bold-duotone',
   classId: 'solar:square-academic-cap-bold-duotone',
@@ -180,7 +182,7 @@ const generateInitialValues = (fields, overrides = {}) => {
   return { ...defaults, ...overrides };
 };
 
-const buildFormData = (formType, values) => {
+const buildFormData = (formType, values, staffId) => {
   const formData = new FormData();
 
   if (formType === 'notes') {
@@ -189,6 +191,7 @@ const buildFormData = (formType, values) => {
     formData.append('division', values.division);
     formData.append('subject', values.subject);
     formData.append('topic', values.topic);
+    formData.append('staffid', staffId);
     if (values.uploadNotes) {
       formData.append('notes', values.uploadNotes);
     }
@@ -209,6 +212,7 @@ const buildFormData = (formType, values) => {
     formData.append('submission_date', values.submissionDate);
     formData.append('submission_time', values.submissiontime);
     formData.append('title', values.title);
+    formData.append('staffid', staffId);
     if (values.assignmentfile) {
       formData.append('assignment', values.assignmentfile);
     }
@@ -220,6 +224,7 @@ const buildFormData = (formType, values) => {
     formData.append('classId', values.classId);
     formData.append('division', values.division);
     formData.append('valid_from', values.validFrom);
+    formData.append('staffid', staffId);
     if (values.timtablefile) {
       formData.append('timetable', values.timtablefile);
     }
@@ -268,6 +273,23 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit }) => {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const config = formConfigs[formType];
+  const staff = useSelector((state) => state.registrationNo.staff?.data);
+  const staffid = staff?.id;
+
+  const dispatch=useDispatch();
+
+  useEffect(()=>{
+    console.log('calling use effect in dashboard admin')
+    const token=localStorage.getItem('token');
+    console.log('token**********************:',token)
+    if(!staffid){
+      dispatch(getStaffData({token:token}))
+    }
+    console.log("end")
+  },[])
+
+
+
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm, setFieldValue }) => {
     if (onSubmit) {
@@ -283,7 +305,7 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit }) => {
 
     try {
       setSubmitting(true);
-      const formData = buildFormData(formType, values);
+      const formData = buildFormData(formType, values, staffid);
 
       const res = await axios.post(`${baseURL}${config.submitUrl}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
