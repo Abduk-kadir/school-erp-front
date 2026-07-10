@@ -64,6 +64,18 @@ const getApiMessage = (payload) => {
   return payload.message || payload.error || payload.msg || payload.data?.message || '';
 };
 
+const parseProgramSubjects = (payload) => {
+  const list = Array.isArray(payload?.data) ? payload.data : [];
+  const subjectMap = new Map();
+  list.forEach((item) => {
+    const subject = item?.subject;
+    if (subject?.id && !subjectMap.has(subject.id)) {
+      subjectMap.set(subject.id, subject);
+    }
+  });
+  return Array.from(subjectMap.values());
+};
+
 const NotificationDiaryCommon = ({ isSubject = false }) => {
   const [activeTab, setActiveTab] = useState('student');
   const [batchOptions, setBatchOptions] = useState([]);
@@ -91,10 +103,9 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const [batchRes, staffGroupRes, subjectRes] = await Promise.allSettled([
+      const [batchRes, staffGroupRes] = await Promise.allSettled([
         axios.get(`${baseURL}/api/batches`),
         axios.get(`${baseURL}/api/staff-groups`),
-        axios.get(`${baseURL}/api/subjects`),
       ]);
 
       if (batchRes.status === 'fulfilled') {
@@ -103,9 +114,6 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
       if (staffGroupRes.status === 'fulfilled') {
         setStaffGroupOptions(normalizeListResponse(staffGroupRes.value));
       }
-      if (subjectRes.status === 'fulfilled') {
-        setSubjectOptions(normalizeListResponse(subjectRes.value));
-      }
     };
     fetchOptions();
   }, []);
@@ -113,8 +121,10 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
   const fetchBatchRelations = async (batchIds, setFieldValue) => {
     setFieldValue('classes', []);
     setFieldValue('divisions', []);
+    setFieldValue('subject', '');
     setClassOptions([]);
     setDivisionOptions([]);
+    setSubjectOptions([]);
 
     const ids = (batchIds || []).filter(Boolean);
     if (!ids.length) return;
@@ -178,6 +188,39 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
     }
   };
 
+  const fetchClassSubjects = async (classOptionKeys, setFieldValue) => {
+    setFieldValue('subject', '');
+    const classIds = (classOptionKeys || [])
+      .map((key) =>
+        classOptions.find((c) => String(getOptionId(c)) === String(key))
+      )
+      .filter(Boolean)
+      .map((c) => String(getRawId(c)));
+    const uniqueClassIds = [...new Set(classIds)];
+
+    if (!uniqueClassIds.length) {
+      setSubjectOptions([]);
+      return;
+    }
+
+    try {
+      const results = await Promise.all(
+        uniqueClassIds.map((id) =>
+          axios.get(`${baseURL}/api/program-subjects?classId=${id}`)
+        )
+      );
+      const subjectMap = new Map();
+      results.forEach((res) => {
+        parseProgramSubjects(res?.data).forEach((s) => {
+          if (s?.id && !subjectMap.has(s.id)) subjectMap.set(s.id, s);
+        });
+      });
+      setSubjectOptions(Array.from(subjectMap.values()));
+    } catch (error) {
+      console.error('Failed to fetch program subjects', error);
+    }
+  };
+
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     setLoading(true);
     setSuccessMsg('');
@@ -236,8 +279,8 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
   };
 
   const staffView = () => (
-    <div className="chfi-root d-flex flex-column gap-3">
-      <div>
+    <div className="chfi-root">
+      <div className="field-row">
         <label className="form-label mb-1">
           <span className="label-dot" />
           Staff Group
@@ -268,6 +311,7 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
     setFieldValue,
     disabled = false,
     onSelectionChange,
+    icon,
   }) => {
     const selected = (values[fieldName] || []).filter(Boolean).map(String);
     const available = options.filter(
@@ -295,12 +339,17 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
     };
 
     return (
-      <div>
+      <div className="field-row">
         <label className="form-label mb-1">
           <span className="label-dot" />
           {label}
         </label>
-        <div className="chip-select-box">
+        <div className={`chip-select-box${icon ? ' has-icon' : ''}`}>
+          {icon && (
+            <span className="chip-select-icon">
+              <Icon icon={icon} width="16" />
+            </span>
+          )}
           {selected.map((val) => (
             <span className="chip-item" key={val}>
               {getLabel(val)}
@@ -327,8 +376,33 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
     );
   };
 
-  const studentView = (values, setFieldValue) => (
-    <div className="chfi-root d-flex flex-column gap-3">
+  const studentView = (values, setFieldValue) => {
+    const selectedClassKeys = (values.classes || []).filter(Boolean).map(String);
+    const filteredDivisionOptions = selectedClassKeys.length
+      ? divisionOptions.filter((d) =>
+          selectedClassKeys.includes(`${d.batchId}-${d.classId}`)
+        )
+      : [];
+
+    const handleClassChange = (nextClassKeys) => {
+      const classKeys = (nextClassKeys || []).map(String);
+      const validDivisions = (values.divisions || [])
+        .filter(Boolean)
+        .map(String)
+        .filter((divKey) => {
+          const div = divisionOptions.find(
+            (d) => String(getOptionId(d)) === divKey
+          );
+          return div && classKeys.includes(`${div.batchId}-${div.classId}`);
+        });
+      setFieldValue('divisions', validDivisions);
+      if (isSubject) {
+        fetchClassSubjects(classKeys, setFieldValue);
+      }
+    };
+
+    return (
+    <div className="chfi-root">
       <MultiChipSelect
         label="Batch"
         fieldName="batches"
@@ -337,6 +411,7 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
         values={values}
         setFieldValue={setFieldValue}
         onSelectionChange={(batchIds) => fetchBatchRelations(batchIds, setFieldValue)}
+        icon="solar:diploma-bold-duotone"
       />
       <MultiChipSelect
         label="Class"
@@ -350,11 +425,13 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
         values={values}
         setFieldValue={setFieldValue}
         disabled={!values.batches?.length}
+        onSelectionChange={handleClassChange}
+        icon="solar:square-academic-cap-bold-duotone"
       />
       <MultiChipSelect
         label="Division"
         fieldName="divisions"
-        options={divisionOptions}
+        options={filteredDivisionOptions}
         optionLabel={(d) => {
           const className = d?.class_name ?? '';
           const divisionName = d?.division_name ?? d?.name ?? '';
@@ -362,10 +439,11 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
         }}
         values={values}
         setFieldValue={setFieldValue}
-        disabled={!values.batches?.length}
+        disabled={!selectedClassKeys.length}
+        icon="solar:widget-bold-duotone"
       />
       {isSubject && (
-        <div>
+        <div className="field-row">
           <label className="form-label mb-1">
             <span className="label-dot" />
             Subject
@@ -374,7 +452,12 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
             <span className="icon">
               <Icon icon="solar:book-bold-duotone" width="16" />
             </span>
-            <Field as="select" name="subject" className="form-select">
+            <Field
+              as="select"
+              name="subject"
+              className="form-select"
+              disabled={!selectedClassKeys.length}
+            >
               <option value="">Select Subject</option>
               {subjectOptions.map((s) => (
                 <option key={s?.id} value={s?.id ?? ''}>
@@ -386,7 +469,8 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
         </div>
       )}
     </div>
-  );
+    );
+  };
 
   return (
     <div className="chfi-wrapper mb-3">
@@ -417,14 +501,14 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
           )}
           <div className="form-area">
           <div className="chfi-root d-flex gap-2 mb-3">
-            <button
+            {!isSubject && <button
               type="button"
               className={activeTab === 'student' ? 'btn-submit' : 'btn-reset'}
               onClick={() => setActiveTab('student')}
             >
               <Icon icon="solar:user-bold-duotone" width="15" />
               Student
-            </button>
+            </button>}
             {!isSubject &&<button
               type="button"
               className={activeTab === 'staff' ? 'btn-submit' : 'btn-reset'}
@@ -440,54 +524,58 @@ const NotificationDiaryCommon = ({ isSubject = false }) => {
             onSubmit={handleSubmit}
           >
             {({ isSubmitting, setFieldValue, values, resetForm }) => (
-              <Form className="chfi-root d-flex flex-column gap-3">
+              <Form className="chfi-root">
                 {loading && <Loader message="Sending..." />}
 
                 <div>
                   {activeTab === 'student' ? studentView(values, setFieldValue) : staffView()}
                 </div>
 
-                <div>
+                <div className="field-row">
                   <label className="form-label mb-1">
                     <span className="label-dot" />
                     Message <span className="text-danger">*</span>
                   </label>
-                  <Field
-                    as="textarea"
-                    name="message"
-                    rows={5}
-                    className="form-control"
-                    placeholder="Enter notification message..."
-                  />
-                  <div style={{ minHeight: '1.25rem' }}>
-                    <ErrorMessage
+                  <div>
+                    <Field
+                      as="textarea"
                       name="message"
-                      component="div"
-                      className="text-danger small mt-1"
+                      rows={5}
+                      className="form-control"
+                      placeholder="Enter notification message..."
                     />
+                    <div style={{ minHeight: '1.25rem' }}>
+                      <ErrorMessage
+                        name="message"
+                        component="div"
+                        className="text-danger small mt-1"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div>
+                <div className="field-row">
                   <label className="form-label mb-1">
                     <span className="label-dot" />
                     Document <span className="text-muted fw-normal">( Upload PDF or JPG. Maximum file size: 1 MB. )</span>
                   </label>
-                  <input
-                    type="file"
-                    name="document"
-                    className="form-control"
-                    accept=".pdf,.jpg,.jpeg"
-                    onChange={(e) =>
-                      setFieldValue('document', e.currentTarget.files[0] || null)
-                    }
-                  />
-                  <div style={{ minHeight: '1.25rem' }}>
-                    <ErrorMessage
+                  <div>
+                    <input
+                      type="file"
                       name="document"
-                      component="div"
-                      className="text-danger small mt-1"
+                      className="form-control"
+                      accept=".pdf,.jpg,.jpeg"
+                      onChange={(e) =>
+                        setFieldValue('document', e.currentTarget.files[0] || null)
+                      }
                     />
+                    <div style={{ minHeight: '1.25rem' }}>
+                      <ErrorMessage
+                        name="document"
+                        component="div"
+                        className="text-danger small mt-1"
+                      />
+                    </div>
                   </div>
                 </div>
 

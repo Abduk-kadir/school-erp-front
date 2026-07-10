@@ -94,7 +94,7 @@ const DASHBOARD_CARDS = [
     statHint: "Profile complete",
   },
   {
-    slug: "emergency-call",
+    slug: "emergency-contact",
     label: "Emergency call to Institute",
     icon: "solar:phone-calling-bold-duotone",
     accent: "spd-accent-red",

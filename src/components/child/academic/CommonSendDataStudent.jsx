@@ -268,6 +268,7 @@ const CommonSendDataStudent = ({ formType, initialValues = {}, onSubmit }) => {
   const [batches,setBatches]=useState([])
   const [classes,setClasses]=useState([])
   const [divisions,setDivisions]=useState([])
+  const [batchmasters,setBatchmasters]=useState([])
   const [subjects,setSubjects]=useState([])
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');

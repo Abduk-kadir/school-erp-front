@@ -548,3 +548,77 @@
     font-size: 1.5rem;
   }
 }
+
+/* Emergency contact cards */
+.diary-page--emergency-contact .emergency-contact-card__body {
+  gap: 0;
+  padding: 0.625rem 0.875rem 1rem;
+}
+
+.diary-page--emergency-contact .emergency-contact-row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 8.5rem) 1fr;
+  gap: 0.75rem 1rem;
+  align-items: center;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid var(--diary-border);
+}
+
+.diary-page--emergency-contact .emergency-contact-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0.35rem;
+}
+
+.diary-page--emergency-contact .emergency-contact-row__label {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--diary-muted);
+  text-align: left;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+}
+
+.diary-page--emergency-contact .emergency-contact-row__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--diary-text);
+  text-align: right;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.diary-page--emergency-contact .emergency-contact-row__phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  color: #dc2626;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 800;
+  transition: color 0.15s ease;
+}
+
+.diary-page--emergency-contact .emergency-contact-row__phone:hover {
+  color: #b91c1c;
+}
+
+.diary-page--emergency-contact .diary-card__subject-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+@media (min-width: 576px) {
+  .diary-page--emergency-contact .emergency-contact-row__label {
+    font-size: 1.35rem;
+  }
+
+  .diary-page--emergency-contact .emergency-contact-row__value,
+  .diary-page--emergency-contact .emergency-contact-row__phone {
+    font-size: 1.8rem;
+  }
+
+  .diary-page--emergency-contact .diary-card__subject-text {
+    font-size: 1.8rem;
+  }
+}

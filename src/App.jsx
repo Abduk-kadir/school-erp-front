@@ -134,7 +134,7 @@ const StudentNotesPage=lazy(() => import("./pages/studentPages/StudentNotesPage"
 const StudentEventPage=lazy(() => import("./pages/studentPages/StudentEventPage"))
 const HolidayPage=lazy(() => import("./pages/studentPages/HolidayPage"))
 const StudentAttendancePage=lazy(() => import("./pages/studentPages/StudentAttendancePage"))
-
+const EmergencyContactPage=lazy(() => import("./pages/studentPages/EmergencyContactPage"))
 
 const ClasswiseSchoolPage = lazy(() =>
   import("./pages/AdminPages/classwiseSchool/classwiseSchoolPage")
@@ -553,6 +553,7 @@ function App() {
               <Route path='holiday' element={<HolidayPage />} />
               <Route path='about-school' element={<AboutSchoolPage />} />
               <Route path='attendance' element={<StudentAttendancePage />} />
+              <Route path='emergency-contact' element={<EmergencyContactPage />} />
               <Route path=":slug" element={<StudentDiaryPage />} />
               {/* student  route end*/}
             </Route>
