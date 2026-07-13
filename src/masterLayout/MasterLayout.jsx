@@ -188,6 +188,8 @@ const MasterLayout = () => {
         { title: "Batch Master", path: "/dashboard/batch-master" },
         { title: "Division Master", path: "/dashboard/division-master" },
         { title: "Cast Master", path: "/dashboard/cast-master" },
+        {title:"Department Master",path:"/dashboard/department-master"},
+        {title:"Designation Mater",path:"/dashboard/designation-master"},
         { title: "Add Declaration", path: "/dashboard/add-declaration" },
         {
           title: "Document Master",

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -17,8 +17,10 @@ const initialValues = {
   gender: "",
   email: "",
   mobile_number: "",
-  department: "",
-  designation: "",
+  departmentid: "",
+  designationid: "",
+  staff_photo: null,
+  staff_sig_photo: null,
   userType: "staff",
   address: "",
   date_of_join: "",
@@ -43,8 +45,10 @@ const validationSchema = Yup.object({
   mobile_number: Yup.string()
     .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
     .required("Mobile number is required"),
-  department: Yup.string().required("Department is required"),
-  designation: Yup.string().required("Designation is required"),
+  departmentid: Yup.string().required("Department is required"),
+  designationid: Yup.string().required("Designation is required"),
+  staff_photo: Yup.mixed().required("Staff photo is required"),
+  staff_sig_photo: Yup.mixed().required("Staff signature photo is required"),
   userType: Yup.string().required(),
   address: Yup.string().trim().required("Address is required").min(5, "Too short"),
   date_of_join: Yup.date()
@@ -61,35 +65,53 @@ const validationSchema = Yup.object({
     .required("Password is required"),
 });
 
-const departments = [
-  "Science",
-  "Mathematics",
-  "English",
-  "Social Studies",
-  "Computer Science",
-  "Physical Education",
-  "Arts",
-  "Administration",
-];
+const normalizeListResponse = (res) => {
+  const payload = res?.data;
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.rows)) return payload.rows;
+  return [];
+};
 
-const designations = [
-  "Teacher",
-  "Senior Teacher",
-  "Head of Department",
-  "Principal",
-  "Vice Principal",
-  "Coordinator",
-  "Counselor",
-  "Librarian",
-  "Lab Assistant",
-  "Administrator",
-];
+const getOptionId = (item) =>
+  item?.id ?? item?._id ?? item?.departmentid ?? item?.designationid ?? item?.value ?? "";
+
+const getDepartmentLabel = (item) =>
+  item?.department_name ?? item?.name ?? item?.label ?? "";
+
+const getDesignationLabel = (item) =>
+  item?.designation_name ?? item?.name ?? item?.label ?? "";
 
 const StaffRegistrationComponent = () => {
   const [loading, setLoading] = useState(false);
   const [loaderMessage, setLoaderMessage] = useState("");
   const [feedback, setFeedback] = useState(null); // { type: 'success' | 'error', text: string }
   const [showPassword, setShowPassword] = useState(false);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+  const [designationOptions, setDesignationOptions] = useState([]);
+  const [fileInputKey, setFileInputKey] = useState(0);
+
+  useEffect(() => {
+    const fetchWorkOptions = async () => {
+      try {
+        const [departmentRes, designationRes] = await Promise.all([
+          axios.get(`${baseURL}/api/departments`),
+          axios.get(`${baseURL}/api/designations`),
+        ]);
+
+        setDepartmentOptions(normalizeListResponse(departmentRes));
+        setDesignationOptions(normalizeListResponse(designationRes));
+      } catch (error) {
+        console.error("Failed to fetch department/designation options", error);
+        setFeedback({
+          type: "error",
+          text: "Failed to load departments and designations.",
+        });
+      }
+    };
+
+    fetchWorkOptions();
+  }, []);
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
@@ -97,13 +119,23 @@ const StaffRegistrationComponent = () => {
       setLoaderMessage("Registering staff...");
       setFeedback(null);
 
-      await axios.post(`${baseURL}/api/staff/registration`, values);
+      const formData = new FormData();
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          formData.append(key, value);
+        }
+      });
+
+      await axios.post(`${baseURL}/api/staff/registration`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       setFeedback({
         type: "success",
         text: "Staff registered successfully.",
       });
       resetForm();
+      setFileInputKey((key) => key + 1);
     } catch (error) {
       const text =
         error?.response?.data?.message ||
@@ -605,8 +637,8 @@ const StaffRegistrationComponent = () => {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ resetForm, isSubmitting }) => (
-                <Form noValidate>
+              {({ resetForm, isSubmitting, setFieldValue }) => (
+                <Form noValidate encType='multipart/form-data'>
                   {/* Personal Info */}
                   <div className='reg-section-label'>
                     <Icon icon='solar:user-id-bold-duotone' width='16' />
@@ -771,18 +803,21 @@ const StaffRegistrationComponent = () => {
                       <label className='form-label'>Department</label>
                       <Field
                         as='select'
-                        name='department'
+                        name='departmentid'
                         className='form-select'
                       >
                         <option value=''>Select department</option>
-                        {departments.map((d) => (
-                          <option key={d} value={d}>
-                            {d}
+                        {departmentOptions.map((department, index) => (
+                          <option
+                            key={`${getOptionId(department)}-${index}`}
+                            value={getOptionId(department)}
+                          >
+                            {getDepartmentLabel(department)}
                           </option>
                         ))}
                       </Field>
                       <ErrorMessage
-                        name='department'
+                        name='departmentid'
                         component='div'
                         className='field-error'
                       />
@@ -791,18 +826,63 @@ const StaffRegistrationComponent = () => {
                       <label className='form-label'>Designation</label>
                       <Field
                         as='select'
-                        name='designation'
+                        name='designationid'
                         className='form-select'
                       >
                         <option value=''>Select designation</option>
-                        {designations.map((d) => (
-                          <option key={d} value={d}>
-                            {d}
+                        {designationOptions.map((designation, index) => (
+                          <option
+                            key={`${getOptionId(designation)}-${index}`}
+                            value={getOptionId(designation)}
+                          >
+                            {getDesignationLabel(designation)}
                           </option>
                         ))}
                       </Field>
                       <ErrorMessage
-                        name='designation'
+                        name='designationid'
+                        component='div'
+                        className='field-error'
+                      />
+                    </div>
+                    <div className='col-md-6'>
+                      <label className='form-label'>Staff Photo</label>
+                      <input
+                        key={`staff-photo-${fileInputKey}`}
+                        type='file'
+                        name='staff_photo'
+                        className='form-control'
+                        accept='image/*'
+                        onChange={(event) =>
+                          setFieldValue(
+                            "staff_photo",
+                            event.currentTarget.files?.[0] || null
+                          )
+                        }
+                      />
+                      <ErrorMessage
+                        name='staff_photo'
+                        component='div'
+                        className='field-error'
+                      />
+                    </div>
+                    <div className='col-md-6'>
+                      <label className='form-label'>Staff Signature Photo</label>
+                      <input
+                        key={`staff-signature-${fileInputKey}`}
+                        type='file'
+                        name='staff_sig_photo'
+                        className='form-control'
+                        accept='image/*'
+                        onChange={(event) =>
+                          setFieldValue(
+                            "staff_sig_photo",
+                            event.currentTarget.files?.[0] || null
+                          )
+                        }
+                      />
+                      <ErrorMessage
+                        name='staff_sig_photo'
                         component='div'
                         className='field-error'
                       />
@@ -864,6 +944,7 @@ const StaffRegistrationComponent = () => {
                       onClick={() => {
                         resetForm();
                         setFeedback(null);
+                        setFileInputKey((key) => key + 1);
                       }}
                       disabled={loading}
                     >

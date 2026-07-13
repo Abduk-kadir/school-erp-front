@@ -22,6 +22,11 @@ const HolidayMasterPage = lazy(() =>
 const EventMasterPage = lazy(() =>
   import("./pages/AdminPages/academic/EventMasterPage")
 );
+
+const DepartmentPage=lazy(() => import("./pages/AdminPages/master/DepartmentPage"))
+const DesignationPage=lazy(() => import("./pages/AdminPages/master/DesignationPage"))
+
+
 const StagePage = lazy(() => import("./pages/stagePage"));
 const FiledTypePage = lazy(() => import("./pages/FieldTypePae"));
 const AllFiledPage = lazy(() => import("./pages/AllFieldPage"));
@@ -340,6 +345,8 @@ function App() {
               <Route path="phisally-disable" element={<PhisallyDisablePage />} />
               <Route path="holiday-master" element={<HolidayMasterPage />} />
               <Route path="event-master" element={<EventMasterPage />} />
+              <Route path='department-master' element={<DepartmentPage />} />
+              <Route path='designation-master' element={<DesignationPage />} />
               <Route path="add-about-school" element={<AddAboutSchoolPage />} />
               <Route
                 path="admission-form-master/stages"
