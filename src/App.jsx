@@ -16,6 +16,7 @@ const RolePage = lazy(() => import("./pages/RolePage"));
 const PhisallyDisablePage = lazy(() => import("./pages/PyisallyDisablePage"));
 const BatchPage=lazy(() => import("./pages/AdminPages/master/BatchPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
+import StaffLoginPage from "./pages/StaffLoginPage"
 const HolidayMasterPage = lazy(() =>
   import("./pages/AdminPages/academic/HolidayMasterPage")
 );
@@ -306,6 +307,7 @@ function App() {
             />
             <Route path="/registration" element={<Registration />} />
             <Route path="/staff-registration" element={<StaffRegistrationPage />} />
+            <Route path="/login" element={<StaffLoginPage />} />
             <Route
               path="/personal-information"
               element={<PersonalInformationForm />}
@@ -402,7 +404,7 @@ function App() {
                 <Route path="form-conform" element={<AddmissionConformPage />} />
                 <Route path="seat-allotment" element={<SeatAllotmentPage />} />
                 <Route path="view-accept" element={<AllStageShown />} />
-                <Route path="student-data" element={<DownloadStudentDataPage />} />
+                
                 <Route path="split-admission-fee" element={<SplitAdmissionFeePage />} />
                 <Route
                   path="online-admission-payment"
@@ -422,7 +424,7 @@ function App() {
              
 
               <Route path="academic">
-                <Route path="student" element={<StudentPage />} />
+                <Route path="download-student-data" element={<DownloadStudentDataPage />} />
                 <Route path="student-detail-bulk-update" element={<StudentBulkUpdatePage />} />
                 <Route path="in-out-attendance" element={<TakeInAndOutAttendancePage />} />
                 <Route path="lecture-wise-attendance" element={<TakeSubjectwiseAttendancePage />} />

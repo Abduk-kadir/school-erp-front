@@ -5,11 +5,13 @@ import axios from "axios";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import Loader from "../../../helper/Loader";
+import {useSelector} from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const SCHOOL_IMAGE_URL =
   "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80";
 
-const initialValues = {
+let initialValues = {
   surname: "",
   firstname: "",
   lastname: "",
@@ -83,6 +85,7 @@ const getDesignationLabel = (item) =>
   item?.designation_name ?? item?.name ?? item?.label ?? "";
 
 const StaffRegistrationComponent = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loaderMessage, setLoaderMessage] = useState("");
   const [feedback, setFeedback] = useState(null); // { type: 'success' | 'error', text: string }
@@ -90,6 +93,15 @@ const StaffRegistrationComponent = () => {
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [designationOptions, setDesignationOptions] = useState([]);
   const [fileInputKey, setFileInputKey] = useState(0);
+  const {genericEditData,for_page} = useSelector((state) => state.genericEdit);
+
+ useEffect(()=>{
+ 
+  let editdata=genericEditData?.data
+  if(for_page=='staff-edit'){
+    initialValues=editdata
+  }
+ })
 
   useEffect(() => {
     const fetchWorkOptions = async () => {
@@ -125,17 +137,24 @@ const StaffRegistrationComponent = () => {
           formData.append(key, value);
         }
       });
-
-      await axios.post(`${baseURL}/api/staff/registration`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      setFeedback({
-        type: "success",
-        text: "Staff registered successfully.",
-      });
-      resetForm();
-      setFileInputKey((key) => key + 1);
+      if(for_page=='staff-edit' || initialValues?.id){
+        await axios.put(`${baseURL}/api/staff/${initialValues.id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setLoading(false);
+        navigate("/dashboard/staff-master", { replace: true });
+        return;
+      }else{
+        await axios.post(`${baseURL}/api/staff/registration`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setFeedback({
+          type: "success",
+          text: "Staff registered successfully.",
+        });
+        resetForm();
+        setFileInputKey((key) => key + 1);
+      }
     } catch (error) {
       const text =
         error?.response?.data?.message ||
@@ -635,6 +654,7 @@ const StaffRegistrationComponent = () => {
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
+              enableReinitialize={true}
               onSubmit={handleSubmit}
             >
               {({ resetForm, isSubmitting, setFieldValue }) => (
@@ -860,6 +880,13 @@ const StaffRegistrationComponent = () => {
                           )
                         }
                       />
+                      {for_page === "staff-edit" &&
+                        typeof initialValues?.staff_photo === "string" &&
+                        initialValues.staff_photo && (
+                          <label className='form-label mt-1 mb-0 text-muted'>
+                            Uploaded photo: {initialValues.staff_photo}
+                          </label>
+                        )}
                       <ErrorMessage
                         name='staff_photo'
                         component='div'
@@ -867,6 +894,7 @@ const StaffRegistrationComponent = () => {
                       />
                     </div>
                     <div className='col-md-6'>
+                      
                       <label className='form-label'>Staff Signature Photo</label>
                       <input
                         key={`staff-signature-${fileInputKey}`}
@@ -881,6 +909,13 @@ const StaffRegistrationComponent = () => {
                           )
                         }
                       />
+                      {for_page === "staff-edit" &&
+                        typeof initialValues?.staff_sig_photo === "string" &&
+                        initialValues.staff_sig_photo && (
+                          <label className='form-label mt-1 mb-0 text-muted'>
+                            Uploaded signature: {initialValues.staff_sig_photo}
+                          </label>
+                        )}
                       <ErrorMessage
                         name='staff_sig_photo'
                         component='div'

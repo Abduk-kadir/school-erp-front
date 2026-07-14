@@ -1,0 +1,285 @@
+/* =====================================================================
+ * downloadStudentData.css
+ * Styles for Download Student Data page.
+ * Visual language aligned with mastercom.css.
+ *
+ * Usage:
+ *   import "src/assets/css/mastercom.css";
+ *   import "src/assets/css/downloadStudentData.css";
+ *   <div className="chfi-wrapper dsd-page">...</div>
+ * ===================================================================== */
+
+.dsd-page {
+  --dsd-control-h: 38px;
+  width: 100%;
+}
+
+.dsd-page .dsd-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+  align-items: end;
+  max-width: 720px;
+}
+
+.dsd-page .dsd-filter-field {
+  --chfi-control-h: var(--dsd-control-h);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dsd-page .dsd-filter-field .form-label {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
+}
+
+.dsd-page .dsd-filter-field .form-label .label-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #2563eb;
+  display: inline-block;
+}
+
+.dsd-page .dsd-filter-field .icon-field {
+  position: relative;
+}
+
+.dsd-page .dsd-filter-field .icon-field .icon {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1d4ed8;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.15);
+  pointer-events: none;
+}
+
+.dsd-page .dsd-filter-field .icon-field .form-select {
+  padding-left: 44px;
+  border-radius: 10px;
+  height: var(--dsd-control-h);
+  font-size: 0.88rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background-color: #ffffff;
+  width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dsd-page .dsd-filter-field .icon-field .form-select:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+}
+
+.dsd-page .dsd-filter-field .icon-field .form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+
+.dsd-page .dsd-filter-field .icon-field:focus-within .icon {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: #ffffff;
+  box-shadow: 0 6px 14px -6px rgba(37, 99, 235, 0.65);
+}
+
+/* ---------- Section card header with Select All ---------- */
+.dsd-page .dsd-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.dsd-page .dsd-select-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.dsd-page .dsd-select-all:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.dsd-page .dsd-select-all .form-check-input {
+  margin: 0;
+  float: none;
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  border-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dsd-page .dsd-select-all .form-check-input:checked {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%231e3a8a' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+.dsd-page .dsd-select-all .form-check-input:indeterminate {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%231e3a8a' stroke-linecap='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
+}
+
+.dsd-page .dsd-select-all-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.dsd-page .dsd-count-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* ---------- Field checkbox grid ---------- */
+.dsd-page .dsd-field-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.dsd-page .dsd-field-check {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: #ffffff;
+  cursor: pointer;
+  min-width: 0;
+  transition: border-color 0.15s ease, background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.dsd-page .dsd-field-check:hover {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: #f8fbff;
+}
+
+.dsd-page .dsd-field-check:has(.form-check-input:checked) {
+  border-color: rgba(37, 99, 235, 0.45);
+  background: linear-gradient(180deg, #eff6ff 0%, #f8fbff 100%);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+}
+
+.dsd-page .dsd-field-check .form-check-input {
+  margin: 2px 0 0;
+  float: none;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.dsd-page .dsd-field-check-label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.35;
+  word-break: break-word;
+  cursor: pointer;
+}
+
+/* ---------- Actions ---------- */
+.dsd-page .dsd-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.dsd-page .dsd-actions .btn-submit {
+  height: var(--dsd-control-h);
+  border-radius: 10px;
+  padding: 6px 22px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #4ade80 100%);
+  border: 0;
+  box-shadow: 0 8px 18px -10px rgba(22, 163, 74, 0.65);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+.dsd-page .dsd-actions .btn-submit:hover:not(:disabled) {
+  filter: brightness(1.02);
+  transform: translateY(-1px);
+}
+
+.dsd-page .dsd-actions .btn-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.dsd-page .dsd-empty {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+@media (max-width: 991.98px) {
+  .dsd-page .dsd-field-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767.98px) {
+  .dsd-page .dsd-filter-grid {
+    grid-template-columns: 1fr;
+    max-width: none;
+  }
+
+  .dsd-page .dsd-field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dsd-page .dsd-section-header {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .dsd-page .dsd-field-grid {
+    grid-template-columns: 1fr;
+  }
+}

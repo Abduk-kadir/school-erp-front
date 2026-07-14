@@ -243,7 +243,7 @@ const MasterLayout = () => {
       icon: "icon-park-outline:id-card",
       children: [
         { title: "Student", path: "/dashboard/academic/student" },
-        { title: "Download Student", path: "/dashboard/academic/student" },
+        { title: "Download Student", path: "/dashboard/academic/download-student-data" },
         {title:"Student Detail Bulk Update",path:"/dashboard/academic/student-detail-bulk-update"},
         {
           title: "Attendance",
@@ -444,7 +444,7 @@ const MasterLayout = () => {
         { title: "Addmission Fee", path: "/dashboard/admission/fee" },
         { title: "Addmission Conform", path: "/dashboard/admission/form-conform" },
         { title: "Addmission Form Coupon", path: "/dashboard/admission/coupon" },
-        { title: "Download Student Data", path: "/dashboard/admission/student-data" },
+       
       ]
     },
     {

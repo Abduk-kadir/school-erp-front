@@ -1,18 +1,35 @@
 /* =====================================================================
  * studentBulkUpdate.css
  * Styles for Student Bulk Update page only.
+ * Visual language aligned with academicOfflineFeeReport.css / mastercom.
  *
  * Usage:
+ *   import "src/assets/css/mastercom.css";
  *   import "src/assets/css/studentBulkUpdate.css";
  *   <div className="chfi-wrapper sbu-page">...</div>
+ *
+ * Class hooks:
+ *   .sbu-page              -> page scope
+ *   .sbu-filter-grid       -> 3-col filter grid
+ *   .sbu-filter-field      -> single filter field
+ *   .sbu-filter-action     -> search button area
+ *   .sbu-column-filter     -> column checkbox filter block
+ *   .sbu-table-card        -> table card variant
+ *   .sbu-table-header      -> title left / save right
+ *   .sbu-stat-pill         -> translucent header pills
+ *   .sbu-save-btn          -> green save button
+ *   .sbu-table-wrap        -> scroll wrapper
+ *   .sbu-table             -> data table
+ *   .sbu-cell-input        -> editable cell input
  * ===================================================================== */
 
 .sbu-page {
-  --sbu-control-h: 40px;
+  --sbu-control-h: 38px;
   --sbu-cell-input-min-w: 150px;
+  width: 100%;
 }
 
-/* ---------- Filter grid ---------- */
+/* ---------- Filter grid (report-filter-grid look) ---------- */
 .sbu-page .sbu-filter-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -24,7 +41,78 @@
   --chfi-control-h: var(--sbu-control-h);
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sbu-page .sbu-filter-field .form-label {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.sbu-page .sbu-filter-field .form-label .label-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #2563eb;
+  display: inline-block;
+}
+
+.sbu-page .sbu-filter-field .icon-field {
+  position: relative;
+}
+
+.sbu-page .sbu-filter-field .icon-field .icon {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1d4ed8;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.15);
+  pointer-events: none;
+}
+
+.sbu-page .sbu-filter-field .icon-field .form-control,
+.sbu-page .sbu-filter-field .icon-field .form-select {
+  padding-left: 44px;
+  border-radius: 10px;
+  height: var(--sbu-control-h);
+  font-size: 0.88rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background-color: #ffffff;
+  width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sbu-page .sbu-filter-field .icon-field .form-control:hover,
+.sbu-page .sbu-filter-field .icon-field .form-select:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+}
+
+.sbu-page .sbu-filter-field .icon-field .form-control:focus,
+.sbu-page .sbu-filter-field .icon-field .form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+
+.sbu-page .sbu-filter-field .icon-field:focus-within .icon {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: #ffffff;
+  box-shadow: 0 6px 14px -6px rgba(37, 99, 235, 0.65);
 }
 
 .sbu-page .sbu-filter-action {
@@ -35,10 +123,137 @@
 
 .sbu-page .sbu-filter-action .btn-submit {
   width: 100%;
-  min-height: var(--sbu-control-h);
+  height: var(--sbu-control-h);
+  border-radius: 10px;
+  padding: 6px 18px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #4ade80 100%);
+  border: 0;
+  box-shadow: 0 8px 18px -10px rgba(22, 163, 74, 0.65);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* ---------- Table card header ---------- */
+.sbu-page .sbu-filter-action .btn-submit:hover:not(:disabled) {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+.sbu-page .sbu-filter-action .btn-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---------- Column filter checkboxes ---------- */
+.sbu-page .sbu-column-filter {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.sbu-page .sbu-column-filter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.sbu-page .sbu-column-filter-head .form-label {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
+}
+
+.sbu-page .sbu-column-filter-head .form-label .label-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #2563eb;
+  display: inline-block;
+}
+
+.sbu-page .sbu-column-clear {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e40af;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.35);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.08s ease, border-color 0.15s ease;
+}
+
+.sbu-page .sbu-column-clear:hover:not(:disabled) {
+  background: rgba(37, 99, 235, 0.14);
+  border-color: rgba(37, 99, 235, 0.55);
+  transform: translateY(-1px);
+}
+
+.sbu-page .sbu-column-clear:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sbu-page .sbu-column-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px 12px;
+}
+
+.sbu-page .sbu-column-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 8px;
+  background: #f8fbff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1e293b;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.sbu-page .sbu-column-check:has(input:checked) {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.sbu-page .sbu-column-check .form-check-input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sbu-page .sbu-column-hint {
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* ---------- Table card header (report-table-card / export-btn look) ---------- */
 .sbu-page .sbu-table-card .card-header {
   padding: 10px 16px;
 }
@@ -60,12 +275,13 @@
 }
 
 .sbu-page .sbu-stat-pill {
-  height: 28px;
+  height: 32px;
   padding: 0 12px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  font-size: 0.78rem;
+  gap: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #ffffff;
   background: rgba(255, 255, 255, 0.14);
@@ -74,25 +290,25 @@
 }
 
 .sbu-page .sbu-save-btn {
-  min-height: 38px;
-  border-radius: 10px;
-  padding: 8px 18px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: #ffffff;
-  background: linear-gradient(135deg, #15803d 0%, #16a34a 50%, #4ade80 100%);
-  border: 0;
-  box-shadow: 0 8px 18px -10px rgba(22, 163, 74, 0.65);
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(2px);
   cursor: pointer;
-  transition: transform 0.08s ease, filter 0.15s ease;
+  transition: background 0.15s ease, transform 0.08s ease, border-color 0.15s ease;
 }
 
 .sbu-page .sbu-save-btn:hover:not(:disabled) {
-  filter: brightness(1.04);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
   transform: translateY(-1px);
 }
 
@@ -101,7 +317,7 @@
   cursor: not-allowed;
 }
 
-/* ---------- Table wrapper + table ---------- */
+/* ---------- Table wrapper + table (report-table look) ---------- */
 .sbu-page .sbu-table-wrap {
   overflow-x: auto;
   overflow-y: hidden;
@@ -114,7 +330,7 @@
 .sbu-page .sbu-table {
   width: 100%;
   margin-bottom: 0;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   color: #1e293b;
   border-collapse: separate;
   border-spacing: 0;
@@ -124,13 +340,17 @@
   background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
   color: #1e3a8a;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  font-size: 0.82rem;
+  letter-spacing: 0.4px;
+  font-size: 0.78rem;
   text-transform: uppercase;
+  border: 0;
+  border-bottom: 2px solid rgba(37, 99, 235, 0.25);
   padding: 12px 14px;
-  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
   white-space: nowrap;
   vertical-align: middle;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .sbu-page .sbu-table thead th:first-child {
@@ -142,13 +362,16 @@
 }
 
 .sbu-page .sbu-table tbody td {
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
   vertical-align: middle;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #0f172a;
 }
 
 .sbu-page .sbu-table tbody tr:nth-child(odd) td {
-  background: #f8fafc;
+  background: #f8fbff;
 }
 
 .sbu-page .sbu-table tbody tr:hover td {
@@ -175,19 +398,19 @@
   cursor: pointer;
 }
 
-/* ---------- Editable cell inputs (larger than form-control-sm) ---------- */
+/* ---------- Editable cell inputs ---------- */
 .sbu-page .sbu-cell-input {
   display: block;
   width: 100%;
   min-width: var(--sbu-cell-input-min-w);
   height: var(--sbu-control-h);
   padding: 8px 12px;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.4;
   color: #1e293b;
   background-color: #ffffff;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 10px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -202,7 +425,7 @@
 
 .sbu-page .sbu-cell-input:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
   outline: none;
 }
 
