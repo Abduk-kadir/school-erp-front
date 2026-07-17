@@ -30,7 +30,7 @@ const ClassPage = () => {
 
       <AddClass />
       <GenericTableDataLayer
-        url={'http://localhost:5000/api/classes'}
+        url={`${baseURL}/api/classes`}
         columns={[
           { data: "id", name: "id", title: "ID" },
           { data: "class_name", name: "class_name", title: "Class Name" },

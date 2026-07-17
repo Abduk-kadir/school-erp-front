@@ -11,7 +11,7 @@ const AddmissionFormStatusReport = () => {
         <div>
       
         <GenericTableDataLayer
-         url={`http://localhost:5000/api/seat-allotments`}
+         url={`${baseURL}/api/seat-allotments`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"class.class_name",title:"Class"},

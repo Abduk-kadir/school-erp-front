@@ -43,7 +43,7 @@ const FeeGroupPage = () => {
           },
         },
      
-      ]} url="http://localhost:5000/api/fee-groups"
+      ]} url={`${baseURL}/api/fee-groups`}
        onEdit={handleEdit}
         onDelete={handleDelete}
         />

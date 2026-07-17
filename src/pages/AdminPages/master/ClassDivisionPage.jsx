@@ -31,7 +31,7 @@ const ClassDivisionPage = () => {
 
       <AddClassDivision />
       <GenericTableDataLayer
-        url={'http://localhost:5000/api/class-div-map-masters'}
+        url={`${baseURL}/api/class-div-map-masters`}
         columns={[
           { data: "id", name: "id", title: "ID" },
           { data: "classInfo.class_name", title: "Class Name" },

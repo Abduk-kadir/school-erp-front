@@ -12,7 +12,7 @@ const AddmissionFormAcceptReport = () => {
             <button className='btn btn-success'>Download Exel</button>
         </div>
         <GenericTableDataLayer
-         url={`http://localhost:5000/api/form-status/accept/report`}
+         url={`${baseURL}/api/form-status/accept/report`}
                  columns={[
                   {data:"name",title:"Name"},
                   {data:"totalAccepted",title:"Total Accept"},

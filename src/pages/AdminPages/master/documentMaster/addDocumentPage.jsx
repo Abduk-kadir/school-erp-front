@@ -32,7 +32,7 @@ const AddDocumentPage = () => {
       <GenericTableDataLayer
 
 
-        url={'http://localhost:5000/api/document-types'}
+        url={`${baseURL}/api/document-types`}
         columns={[
           { data: "id", name: "id", title: "ID" },
           { data: "name", title: "Document Name" },

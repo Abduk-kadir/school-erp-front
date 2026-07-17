@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo,useState } from "react";
 import GenericTableDataLayer from "../../../components/GenericTable";
 import baseURL from "../../../utils/baseUrl";
 
@@ -7,12 +7,15 @@ import axios from "axios";
 import {useDispatch} from "react-redux";
 import {getGenericEdit} from "../../../redux/slices/genericEdit";
 import { useNavigate } from "react-router-dom";
+import GenericformModal from "../../../components/child/GenericformModal";
 
 
 const AllStaffPage = () => {
   const staffUrl = `${baseURL}/api/staff`;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [showModal, setShowModal] = useState(false);
   const staffColumns = useMemo(
     () => [
       { data: "id", name: "id", title: "ID" },
@@ -33,7 +36,7 @@ const AllStaffPage = () => {
           return `
                     <div class="table-action-group">
                       <button type="button" class="table-action-btn table-action-edit" data-id="${row.id}" title="Edit institute">Edit</button>
-                      <button type="button" class="table-action-btn table-action-delete" data-id="${row.id}" title="Delete institute">Delete</button>
+                      <button type="button" class="table-action-btn table-action-assign-class" data-id="${row.id}" title="Assign Class and Div">Assign Class and Div</button>
                     </div>
                   `;
         },
@@ -52,18 +55,19 @@ const AllStaffPage = () => {
 
   };
 
-  const handleDelete = (id) => {
-    console.log("Delete staff:", id);
-
+  const handleAssignClass = (id) => {
+    console.log("handleAssignClass:", id);
+    setShowModal(true)
     // open modal or set delete state
   };
   return (
     <div className='container py-3'>
+      {showModal && <GenericformModal show={showModal} title="Assign Class and Div" onClose={() => setShowModal(false)} />}
       <h4 className='mb-3 fw-semibold'>All Staff</h4>
       <GenericTableDataLayer url={staffUrl} columns={staffColumns} 
-      
+      onAssignClass={handleAssignClass}
       onEdit={handleEdit}
-      onDelete={handleDelete}
+      
       />
     </div>
   );

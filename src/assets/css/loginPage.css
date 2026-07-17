@@ -107,7 +107,7 @@
 .login-container .left-side {
   position: relative;
   overflow: hidden;
-  background: #0f172a;
+  background: #ffffff;
   height: auto !important;
   min-height: clamp(420px, 60vh, 600px) !important;
 }
@@ -177,29 +177,17 @@
 }
 
 .login-container .carousel-item::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-      165deg,
-      rgba(15, 23, 42, 0.18) 0%,
-      transparent 38%,
-      rgba(15, 23, 42, 0.6) 100%
-    ),
-    linear-gradient(45deg, rgba(79, 70, 229, 0.25), rgba(217, 70, 239, 0.18));
-  mix-blend-mode: normal;
+  content: none;
+  display: none;
 }
 
 .login-container .carousel-image {
   height: 100%;
   width: 100%;
-  /* Use contain so image is not cropped */ 
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #0f172a;
+  background-color: transparent;
   transform: scale(1.04);
   transition: transform 8s ease-out;
 }

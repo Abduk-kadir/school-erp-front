@@ -7,10 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/css/loginpage.css';
 import axios from 'axios';
 import baseUrl from '../utils/baseUrl';
-import banner1 from '../assets/images/banners/image1.jpg';
-import banner2 from '../assets/images/banners/image2.jpg';
-import banner3 from '../assets/images/banners/image3.jpg';
 import { getFCMToken } from '../services/fcmService';
+
+const buildCarsoulImageUrl = (path) => {
+  if (!path) return '';
+  return path.startsWith('http') ? path : `${baseUrl}${path}`;
+};
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -26,25 +28,24 @@ const loginSchema = Yup.object().shape({
 const StaffLoginPage = () => {
   const navigate = useNavigate();
   const [fcmToken, setFcmToken] = useState(null);
+  const [carouselImages, setCarouselImages] = useState([]);
 
   useEffect(() => {
     getFCMToken().then(setFcmToken);
   }, []);
 
-  const carouselImages = [
-    {
-      src: banner1,
-      alt: 'School banner 1',
-    },
-    {
-      src: banner2,
-      alt: 'School banner 2',
-    },
-    {
-      src: banner3,
-      alt: 'School banner 3',
-    },
-  ];
+  useEffect(() => {
+    const fetchCarsoul = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/carsoul`);
+        setCarouselImages(response?.data?.data || []);
+      } catch (error) {
+        console.error('Failed to load carousel images:', error);
+        setCarouselImages([]);
+      }
+    };
+    fetchCarsoul();
+  }, []);
 
   return (
     <div className="container-fluid login-container border">
@@ -54,19 +55,34 @@ const StaffLoginPage = () => {
           <Carousel
             fade
             controls={false}
-            indicators={true}
+            indicators={carouselImages.length > 1}
             interval={4500}
             pause={false}
             ride="carousel"
           >
-            {carouselImages.map((image, index) => (
-              <Carousel.Item key={index} interval={5000}>
-                <div
-                  className="carousel-image"
-                  style={{ backgroundImage: `url(${image.src})` }}
-                />
-              </Carousel.Item>
-            ))}
+            {carouselImages.map((image) => {
+              const src = buildCarsoulImageUrl(image.image_url);
+              const hasTitle = Boolean(image.title);
+              const hasHeading = Boolean(image.heading);
+              const hasSubheading = Boolean(image.subheading);
+              const showCaption = hasTitle || hasHeading || hasSubheading;
+
+              return (
+                <Carousel.Item key={image.id} interval={5000}>
+                  <div
+                    className="carousel-image"
+                    style={{ backgroundImage: `url(${src})` }}
+                  />
+                  {showCaption && (
+                    <Carousel.Caption>
+                      {hasTitle && <h3>{image.title}</h3>}
+                      {hasHeading && <h5>{image.heading}</h5>}
+                      {hasSubheading && <p>{image.subheading}</p>}
+                    </Carousel.Caption>
+                  )}
+                </Carousel.Item>
+              );
+            })}
           </Carousel>
         </div>
 

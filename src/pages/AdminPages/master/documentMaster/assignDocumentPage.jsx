@@ -31,7 +31,7 @@ const AssignDocumentPage = () => {
               <GenericTableDataLayer
                
              
-                url={'http://localhost:5000/api/requirement-documents'}
+                url={`${baseURL}/api/requirement-documents`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"class_name",title:"Class"},

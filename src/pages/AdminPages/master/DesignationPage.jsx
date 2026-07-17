@@ -84,7 +84,7 @@ const DesignationPage = () => {
             <GenericTableDataLayer
 
 
-                url={'http://localhost:5000/api/designations'}
+                url={`${baseURL}/api/designations`}
                 columns={[
                     { data: "id", name: "id", title: "ID" },
                     { data: "designation_name", title: "Designation Name" },

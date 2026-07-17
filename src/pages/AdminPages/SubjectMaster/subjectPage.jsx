@@ -3,6 +3,7 @@
 import GenericTableDataLayer from "../../../components/GenericTable";
 import AddSubject from "../../../components/child/subjectMaster/AddSubject";
 import { useState } from "react";
+import baseURL from "../../../utils/baseUrl";
 
 const SubjectPage = () => {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -14,7 +15,7 @@ const SubjectPage = () => {
               <GenericTableDataLayer
                 key={refreshKey}
              
-                url={'http://localhost:5000/api/subjects'}
+                url={`${baseURL}/api/subjects`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"value",name:"value",title:"Subject Name"},

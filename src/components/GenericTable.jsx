@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import "../assets/css/academicOfflineFeeReport.css";
 import "../assets/css/editdelete.css";
 
-const GenericTableDataLayer = ({ url, columns, title = "Default Data Tables", onEdit, onDelete }) => {
+const GenericTableDataLayer = ({ url, columns, title = "Default Data Tables", onEdit, onDelete,onAssignClass }) => {
   useEffect(() => {
     const table = $("#dataTable").DataTable({
       pageLength: 5,
@@ -26,6 +26,11 @@ const GenericTableDataLayer = ({ url, columns, title = "Default Data Tables", on
     $("#dataTable").on("click", ".table-action-delete", function () {
       const id = $(this).data("id");
       if (onDelete) onDelete(id, table);
+    });
+
+    $("#dataTable").on("click", ".table-action-assign-class", function () {
+      const id = $(this).data("id");
+      if (onAssignClass) onAssignClass(id, table);
     });
     return () => {
       table.destroy(true);

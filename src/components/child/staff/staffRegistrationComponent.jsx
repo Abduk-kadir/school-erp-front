@@ -3,13 +3,16 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { Carousel } from "react-bootstrap";
 import baseURL from "../../../utils/baseUrl";
 import Loader from "../../../helper/Loader";
 import {useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const SCHOOL_IMAGE_URL =
-  "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80";
+const buildCarsoulImageUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${baseURL}${path}`;
+};
 
 let initialValues = {
   surname: "",
@@ -84,7 +87,7 @@ const getDepartmentLabel = (item) =>
 const getDesignationLabel = (item) =>
   item?.designation_name ?? item?.name ?? item?.label ?? "";
 
-const StaffRegistrationComponent = () => {
+const StaffRegistrationComponent = ({ carouselImages = [] }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loaderMessage, setLoaderMessage] = useState("");
@@ -184,68 +187,33 @@ const StaffRegistrationComponent = () => {
           .staff-reg-root .reg-image-col {
             position: relative;
             min-height: 180px;
-            background: #0f172a;
+            background: #ffffff;
             overflow: hidden;
+          }
+          .staff-reg-root .reg-image-col .reg-carousel {
+            position: absolute;
+            inset: 0;
+            height: 100%;
+          }
+          .staff-reg-root .reg-image-col .carousel,
+          .staff-reg-root .reg-image-col .carousel-inner,
+          .staff-reg-root .reg-image-col .carousel-item {
+            height: 100%;
           }
           .staff-reg-root .reg-image-col .reg-image {
             position: absolute;
             inset: 0;
             background-size: cover;
             background-position: center;
-            transform: scale(1.04);
-            transition: transform 8s ease-out;
+            background-repeat: no-repeat;
+            background-color: transparent;
           }
-          .staff-reg-root .reg-card:hover .reg-image-col .reg-image {
-            transform: scale(1);
+          .staff-reg-root .reg-image-col .carousel-caption {
+            z-index: 3;
           }
-          .staff-reg-root .reg-image-col::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-              linear-gradient(165deg, rgba(15,23,42,0.18) 0%, transparent 38%, rgba(15,23,42,0.65) 100%),
-              linear-gradient(45deg, rgba(79,70,229,0.30), rgba(217,70,239,0.18));
-          }
-          .staff-reg-root .reg-image-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 1.5rem;
-            color: #fff;
-          }
-          .staff-reg-root .reg-brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.4rem 0.9rem;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.16);
-            border: 1px solid rgba(255,255,255,0.28);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            width: fit-content;
-            box-shadow: 0 6px 18px rgba(15,23,42,0.25);
-          }
-          .staff-reg-root .reg-tagline h3 {
-            color: #fff;
-            font-weight: 700;
-            line-height: 1.2;
-            text-shadow: 0 2px 16px rgba(15,23,42,0.55);
-            margin-bottom: 0.5rem;
-            font-size: clamp(1.3rem, 2vw, 1.7rem);
-          }
-          .staff-reg-root .reg-tagline p {
-            color: rgba(255,255,255,0.9);
-            margin: 0;
-            font-size: 0.95rem;
-            text-shadow: 0 2px 12px rgba(15,23,42,0.45);
+          .staff-reg-root .reg-image-col .carousel-indicators {
+            z-index: 3;
+            margin-bottom: 0.75rem;
           }
           .staff-reg-root .reg-form-col {
             padding: 1.1rem clamp(1rem, 2.2vw, 1.5rem);
@@ -264,6 +232,7 @@ const StaffRegistrationComponent = () => {
             color: #64748b;
             font-size: 0.9rem;
             margin-top: 0.25rem;
+            margin-bottom: 0;
           }
           .staff-reg-root .reg-section-label {
             display: flex;
@@ -585,26 +554,50 @@ const StaffRegistrationComponent = () => {
 
       <div className='reg-card'>
         <div className='row g-0'>
-          {/* Left: school image with overlay */}
+          {/* Left: carousel from API */}
           <div className='col-lg-5 reg-image-col'>
-            <div
-              className='reg-image'
-              style={{ backgroundImage: `url(${SCHOOL_IMAGE_URL})` }}
-            />
-            <div className='reg-image-overlay'>
-              <span className='reg-brand'>
-                <Icon icon='solar:bag-smile-bold-duotone' width='18' /> EduPortal
-              </span>
-              <div className='reg-tagline'>
-                <h3>Join our teaching family.</h3>
-                <p>Register staff details to set up access and assignments.</p>
+            {carouselImages.length > 0 ? (
+              <div className="reg-carousel">
+                <Carousel
+                  fade
+                  controls={false}
+                  indicators={carouselImages.length > 1}
+                  interval={4500}
+                  pause={false}
+                  ride="carousel"
+                >
+                  {carouselImages.map((image) => {
+                    const src = buildCarsoulImageUrl(image.image_url);
+                    const hasTitle = Boolean(image.title);
+                    const hasHeading = Boolean(image.heading);
+                    const hasSubheading = Boolean(image.subheading);
+                    const showCaption =
+                      hasTitle || hasHeading || hasSubheading;
+
+                    return (
+                      <Carousel.Item key={image.id} interval={5000}>
+                        <div
+                          className="reg-image"
+                          style={{ backgroundImage: `url(${src})` }}
+                        />
+                        {showCaption && (
+                          <Carousel.Caption>
+                            {hasTitle && <h3>{image.title}</h3>}
+                            {hasHeading && <h5>{image.heading}</h5>}
+                            {hasSubheading && <p>{image.subheading}</p>}
+                          </Carousel.Caption>
+                        )}
+                      </Carousel.Item>
+                    );
+                  })}
+                </Carousel>
               </div>
-            </div>
+            ) : null}
           </div>
 
           {/* Right: registration form */}
           <div className='col-lg-7 reg-form-col'>
-            <div className='d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3'>
+            <div className='d-flex align-items-start justify-content-between flex-wrap gap-2 mb-1'>
               <div>
                 <h4 className='reg-title'>Staff Registration</h4>
                 <p className='reg-subtitle'>
@@ -659,12 +652,6 @@ const StaffRegistrationComponent = () => {
             >
               {({ resetForm, isSubmitting, setFieldValue }) => (
                 <Form noValidate encType='multipart/form-data'>
-                  {/* Personal Info */}
-                  <div className='reg-section-label'>
-                    <Icon icon='solar:user-id-bold-duotone' width='16' />
-                    Personal Information
-                  </div>
-
                   <div className='row g-2'>
                     <div className='col-md-4'>
                       <label className='form-label'>Surname</label>
@@ -749,10 +736,6 @@ const StaffRegistrationComponent = () => {
                   </div>
 
                   {/* Contact */}
-                  <div className='reg-section-label'>
-                    <Icon icon='solar:phone-bold-duotone' width='16' />
-                    Contact &amp; Address
-                  </div>
                   <div className='row g-2'>
                     <div className='col-md-4'>
                       <label className='form-label'>Mobile Number</label>
@@ -814,12 +797,8 @@ const StaffRegistrationComponent = () => {
                   </div>
 
                   {/* Work */}
-                  <div className='reg-section-label'>
-                    <Icon icon='solar:case-round-minimalistic-bold-duotone' width='16' />
-                    Work Details
-                  </div>
                   <div className='row g-2'>
-                    <div className='col-md-6'>
+                    <div className='col-md-4'>
                       <label className='form-label'>Department</label>
                       <Field
                         as='select'
@@ -842,7 +821,7 @@ const StaffRegistrationComponent = () => {
                         className='field-error'
                       />
                     </div>
-                    <div className='col-md-6'>
+                    <div className='col-md-4'>
                       <label className='form-label'>Designation</label>
                       <Field
                         as='select'
@@ -865,7 +844,7 @@ const StaffRegistrationComponent = () => {
                         className='field-error'
                       />
                     </div>
-                    <div className='col-md-6'>
+                    <div className='col-md-4'>
                       <label className='form-label'>Staff Photo</label>
                       <input
                         key={`staff-photo-${fileInputKey}`}
@@ -893,7 +872,7 @@ const StaffRegistrationComponent = () => {
                         className='field-error'
                       />
                     </div>
-                    <div className='col-md-6'>
+                    <div className='col-md-4'>
                       
                       <label className='form-label'>Staff Signature Photo</label>
                       <input
@@ -922,15 +901,7 @@ const StaffRegistrationComponent = () => {
                         className='field-error'
                       />
                     </div>
-                  </div>
-
-                  {/* Account */}
-                  <div className='reg-section-label'>
-                    <Icon icon='solar:lock-keyhole-bold-duotone' width='16' />
-                    Account
-                  </div>
-                  <div className='row g-2'>
-                    <div className='col-md-6'>
+                    <div className='col-md-4'>
                       <label className='form-label'>Password</label>
                       <div className='input-group'>
                         <Field
@@ -961,7 +932,7 @@ const StaffRegistrationComponent = () => {
                         className='field-error'
                       />
                     </div>
-                    <div className='col-md-6'>
+                    <div className='col-md-4'>
                       <label className='form-label'>User Type</label>
                       <Field
                         type='text'

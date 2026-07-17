@@ -14,7 +14,7 @@ const ClasswiseSchoolPage = () => {
         <div>
             <AddClasswiseSchool />
             <GenericTableDataLayer
-                url={'http://localhost:5000/api/classwise-institute'}
+                url={`${baseURL}/api/classwise-institute`}
                 columns={[
                     { data: "id", name: "id", title: "ID" },
                     { data: "class.class_name", title: "Class" },

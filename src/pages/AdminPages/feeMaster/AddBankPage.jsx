@@ -31,7 +31,7 @@ const AddBankPage = () => {
       <GenericTableDataLayer
 
 
-        url={'http://localhost:5000/api/banks'}
+        url={`${baseURL}/api/banks`}
         columns={[
           { data: "id", name: "id", title: "ID" },
           { data: "bank_name", title: "Bank Name" },

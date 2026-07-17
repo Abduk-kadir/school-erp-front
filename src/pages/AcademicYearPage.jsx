@@ -1,6 +1,7 @@
 
 
 import GenericTableDataLayer from "../components/GenericTable";
+import baseURL from "../utils/baseUrl";
 
 const AcademicYearPage = () => {
   return (
@@ -8,7 +9,7 @@ const AcademicYearPage = () => {
 
      
  <GenericTableDataLayer
-                url={'http://localhost:5000/api/academic-years'}
+                url={`${baseURL}/api/academic-years`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"academic_year",name:"academic_year",title:"Academic Year"},

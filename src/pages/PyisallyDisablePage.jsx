@@ -30,7 +30,7 @@ const PhisallyDisablePage = () => {
      <AddPhisallyDisable/>
 
        <GenericTableDataLayer
-                       url={'http://localhost:5000/api/physically-disable'}
+                       url={`${baseURL}/api/physically-disable`}
                         columns={[
                          {data:"id",name:"id",title : "ID"},
                          {data:"value",title : "Disabiltiy"},

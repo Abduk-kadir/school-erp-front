@@ -25,7 +25,7 @@ const AddAboutSchoolPage = () => {
     <div>
       <AddAboutSchool />
       <GenericTableDataLayer
-        url='http://localhost:5000/api/about-institute'
+        url={`${baseURL}/api/about-institute`}
         columns={[
           { data: 'id', name: 'id', title: 'ID' },
           { data: 'text', name: 'text', title: 'Text' },

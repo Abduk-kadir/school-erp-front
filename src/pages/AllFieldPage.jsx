@@ -1,5 +1,6 @@
 import GenericTableDataLayer from "../components/GenericTable";
 import AddFiled from "../components/child/addField";
+import baseURL from "../utils/baseUrl";
 const AllFiledPage = () => {
 
   
@@ -7,7 +8,7 @@ const AllFiledPage = () => {
     <>
        <AddFiled/>
         <GenericTableDataLayer
-                url={`http://localhost:5000/api/allfield`}
+                url={`${baseURL}/api/allfield`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"stageName",name:"stageName",title:"Stage"},

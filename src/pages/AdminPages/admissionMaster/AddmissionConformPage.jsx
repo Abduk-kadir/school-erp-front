@@ -26,7 +26,7 @@ const AddmissionConformPage = () => {
       )}
 
     <GenericTableAssignSubject
-      url={'http://localhost:5000/api/admission-conform'}
+      url={`${baseURL}/api/admission-conform`}
            
       loadingFun={loadingFun}
       columns={[

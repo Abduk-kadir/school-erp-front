@@ -1,11 +1,12 @@
 
 import GenericTableDataLayer from "../components/GenericTable";
+import baseURL from "../utils/baseUrl";
 const EmployeePage = () => {
   return (
     <>
 
        <GenericTableDataLayer
-                url={'http://localhost:5000/api/employees'}
+                url={`${baseURL}/api/employees`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"father_name",name:"father_name",title:"Father Name"},

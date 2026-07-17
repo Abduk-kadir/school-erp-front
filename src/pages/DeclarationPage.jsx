@@ -27,7 +27,7 @@ const DeclarationPage = () => {
 
        <DeclarationStatement/>
        <GenericTableDataLayer
-                url={'http://localhost:5000/api/declarations'}
+                url={`${baseURL}/api/declarations`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"class.class_name",name:"class_name",title:"Class Name"},

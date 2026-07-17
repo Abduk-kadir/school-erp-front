@@ -27,7 +27,7 @@ const FeeTypePage = () => {
       <GenericTableDataLayer
 
 
-        url={'http://localhost:5000/api/fees-types'}
+        url={`${baseURL}/api/fees-types`}
         columns={[
           { data: "id", name: "id", title: "ID" },
           { data: "name", title: "Fees Type" },

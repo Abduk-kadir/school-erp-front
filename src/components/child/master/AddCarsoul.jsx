@@ -8,9 +8,9 @@ import "../../../assets/css/mastercom.css";
 import "../../../assets/css/declaration.css";
 
 const validationSchema = Yup.object({
-  title: Yup.string().trim().required("Title is required"),
-  heading: Yup.string().trim().required("Heading is required"),
-  subheading: Yup.string().trim().required("Subheading is required"),
+  title: Yup.string().trim(),
+  heading: Yup.string().trim(),
+  subheading: Yup.string().trim(),
   images: Yup.array()
     .min(1, "At least one image is required")
     .required("Images are required"),

@@ -25,7 +25,7 @@ const PaymentSettingPage = () => {
     <div>
       <PaymentSetting />
       <GenericTableDataLayer
-        url={'http://localhost:5000/api/payment-settings'}
+        url={`${baseURL}/api/payment-settings`}
         columns={[
           { data: "id", name: "id", title: "ID" },
           { data: "paymentGateway", title: "Payment Gateway" },

@@ -2,6 +2,7 @@
 import GenericTableDataLayer from "../../../components/GenericTable";
 import AddProgram from "../../../components/child/subjectMaster/AddProgram";
 import { useState } from "react";
+import baseURL from "../../../utils/baseUrl";
 
 const ProgramPage = () => {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -11,7 +12,7 @@ const ProgramPage = () => {
 
               <AddProgram/>
               <GenericTableDataLayer
-                url={'http://localhost:5000/api/programs'}
+                url={`${baseURL}/api/programs`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
                   {data:"program_name",title:"Program Name"},

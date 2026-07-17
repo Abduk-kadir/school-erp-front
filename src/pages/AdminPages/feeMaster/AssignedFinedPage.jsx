@@ -26,7 +26,7 @@ const AssignedFinedPage=()=>{
             <AssignedFined/>
             <GenericTableDataLayer
             
-            url={'http://localhost:5000/api/fine-assigned'}
+            url={`${baseURL}/api/fine-assigned`}
             columns={[
                 {data:"id",name:"id",title:"ID"},
                 {data:"class.class_name",name:"class_name",title:"Class Name"},

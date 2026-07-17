@@ -29,7 +29,7 @@ const EventMasterPage = () => {
         nameLabel="Event"
         saveUrl="/api/event-masters"
       />
-      <GenericTableDataLayer url='http://localhost:5000/api/event-masters' columns={[
+      <GenericTableDataLayer url={`${baseURL}/api/event-masters`} columns={[
         {data:"id",name:"id",title:"ID"},
         {data:"event",name:"event",title:"Event Name"},
         {data:"date",name:"date",title:"Date"},
