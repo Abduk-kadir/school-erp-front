@@ -4,7 +4,7 @@ import { Carousel, Card, Form, Button, Row, Col } from 'react-bootstrap';
 import { Formik, Field, ErrorMessage, Form as FormikForm } from 'formik';
 import * as Yup from 'yup';
 import { Router, useNavigate } from 'react-router-dom';
-import '../assets/css/loginpage.css';
+import '../assets/css/loginPage.css';
 import { useEffect } from 'react';
 import axios from 'axios';
 import baseUrl from '../utils/baseUrl'
