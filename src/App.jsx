@@ -181,7 +181,7 @@ const FeeGroupPage = lazy(() =>
   import("./pages/AdminPages/feeMaster/FeeGroupPage")
 );
 const FeeHeadPage = lazy(() =>
-  import("./pages/AdminPages/feeMaster/feeHeadPage")
+  import("./pages/AdminPages/feeMaster/FeeHeadPage")
 );
 const FinePage = lazy(() =>
   import("./pages/AdminPages/feeMaster/FinePage")
