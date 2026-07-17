@@ -1,3 +1,3 @@
-const baseURL = "http://new-test-api.dds-erp.com";
+const baseURL = "https://new-test-api.dds-erp.com";
 
 export default baseURL;
