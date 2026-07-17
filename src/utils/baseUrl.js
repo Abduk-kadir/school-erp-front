@@ -1,3 +1,3 @@
-const baseURL = "http://localhost:5000";
+const baseURL = "http://new-test-api.dds-erp.com";
 
 export default baseURL;
