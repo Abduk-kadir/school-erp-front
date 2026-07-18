@@ -131,7 +131,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
         console.error("Failed to fetch department/designation/title options", error);
         setFeedback({
           type: "error",
-          text: "Failed to load departments, designations, and titles.",
+          text: error.message||error.response.data.message||"Failed to load departments, designations, and titles.",
         });
       }
     };
