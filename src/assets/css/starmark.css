@@ -1,0 +1,8 @@
+/* Red asterisk for compulsory / required field labels.
+ * Usage: add class "starmark" to a label, e.g. className="form-label starmark"
+ */
+.starmark::after {
+  content: " *";
+  color: #dc2626;
+  font-weight: 600;
+}

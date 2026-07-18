@@ -8,6 +8,7 @@ import baseURL from "../../../utils/baseUrl";
 import Loader from "../../../helper/Loader";
 import {useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
+import "../../../assets/css/starmark.css";
 
 const buildCarsoulImageUrl = (path) => {
   if (!path) return "";
@@ -17,7 +18,9 @@ const buildCarsoulImageUrl = (path) => {
 let initialValues = {
   surname: "",
   firstname: "",
-  lastname: "",
+  father_name: "",
+  mother_name: "",
+  title: "",
   dob: "",
   gender: "",
   email: "",
@@ -36,7 +39,9 @@ let initialValues = {
 const validationSchema = Yup.object({
   surname: Yup.string().trim().required("Surname is required").min(2, "Too short"),
   firstname: Yup.string().trim().required("First name is required").min(2, "Too short"),
-  lastname: Yup.string().trim().required("Last name is required").min(2, "Too short"),
+  father_name: Yup.string().trim().required("Father name is required").min(2, "Too short"),
+  mother_name: Yup.string().trim().required("Mother name is required").min(2, "Too short"),
+  title: Yup.string().required("Title is required"),
   dob: Yup.date()
     .typeError("Enter a valid date")
     .max(new Date(), "Date of birth cannot be in the future")
@@ -79,13 +84,16 @@ const normalizeListResponse = (res) => {
 };
 
 const getOptionId = (item) =>
-  item?.id ?? item?._id ?? item?.departmentid ?? item?.designationid ?? item?.value ?? "";
+  item?.id ?? item?._id ?? item?.departmentid ?? item?.designationid ?? item?.titleid ?? item?.value ?? "";
 
 const getDepartmentLabel = (item) =>
   item?.department_name ?? item?.name ?? item?.label ?? "";
 
 const getDesignationLabel = (item) =>
   item?.designation_name ?? item?.name ?? item?.label ?? "";
+
+const getTitleLabel = (item) =>
+  item?.title_name ?? item?.title ?? item?.name ?? item?.label ?? "";
 
 const StaffRegistrationComponent = ({ carouselImages = [] }) => {
   const navigate = useNavigate();
@@ -95,6 +103,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [designationOptions, setDesignationOptions] = useState([]);
+  const [titleOptions, setTitleOptions] = useState([]);
   const [fileInputKey, setFileInputKey] = useState(0);
   const {genericEditData,for_page} = useSelector((state) => state.genericEdit);
 
@@ -109,18 +118,20 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
   useEffect(() => {
     const fetchWorkOptions = async () => {
       try {
-        const [departmentRes, designationRes] = await Promise.all([
+        const [departmentRes, designationRes, titleRes] = await Promise.all([
           axios.get(`${baseURL}/api/departments`),
           axios.get(`${baseURL}/api/designations`),
+          axios.get(`${baseURL}/api/titles`),
         ]);
 
         setDepartmentOptions(normalizeListResponse(departmentRes));
         setDesignationOptions(normalizeListResponse(designationRes));
+        setTitleOptions(normalizeListResponse(titleRes));
       } catch (error) {
-        console.error("Failed to fetch department/designation options", error);
+        console.error("Failed to fetch department/designation/title options", error);
         setFeedback({
           type: "error",
-          text: "Failed to load departments and designations.",
+          text: "Failed to load departments, designations, and titles.",
         });
       }
     };
@@ -263,8 +274,21 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
             border: 1px solid #e2e8f0;
             padding: 0.38rem 0.75rem;
             font-size: 0.875rem;
+            line-height: 1.5;
+            min-height: 2.15rem;
+            color: #334155;
             background-color: #f8fafc;
             transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+          }
+          .staff-reg-root .form-select {
+            padding-right: 2.25rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
           }
           .staff-reg-root .form-control:hover,
           .staff-reg-root .form-select:hover {
@@ -276,6 +300,12 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
             border-color: #6366f1;
             box-shadow: 0 0 0 3px rgba(99,102,241,0.18);
             background-color: #fff;
+          }
+          .staff-reg-root .form-select:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
           }
           .staff-reg-root .input-group .form-control {
             border-right: none;
@@ -647,21 +677,26 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                 <Form noValidate encType='multipart/form-data'>
                   <div className='row g-2'>
                     <div className='col-md-4'>
-                      <label className='form-label'>Surname</label>
-                      <Field
-                        type='text'
-                        name='surname'
-                        className='form-control'
-                        placeholder='e.g. Doe'
-                      />
+                      <label className='form-label starmark'>Title</label>
+                      <Field as='select' name='title' className='form-select'>
+                        <option value=''>Select Title</option>
+                        {titleOptions.map((titleItem, index) => (
+                          <option
+                            key={`${getOptionId(titleItem)}-${index}`}
+                            value={getOptionId(titleItem)}
+                          >
+                            {getTitleLabel(titleItem)}
+                          </option>
+                        ))}
+                      </Field>
                       <ErrorMessage
-                        name='surname'
+                        name='title'
                         component='div'
                         className='field-error'
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>First Name</label>
+                      <label className='form-label starmark'>First Name</label>
                       <Field
                         type='text'
                         name='firstname'
@@ -675,22 +710,50 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Last Name</label>
+                      <label className='form-label starmark'>Surname</label>
                       <Field
                         type='text'
-                        name='lastname'
+                        name='surname'
                         className='form-control'
-                        placeholder='e.g. Smith'
+                        placeholder='e.g. Doe'
                       />
                       <ErrorMessage
-                        name='lastname'
+                        name='surname'
+                        component='div'
+                        className='field-error'
+                      />
+                    </div>
+                    <div className='col-md-4'>
+                      <label className='form-label starmark'>Father Name</label>
+                      <Field
+                        type='text'
+                        name='father_name'
+                        className='form-control'
+                        placeholder='e.g. John'
+                      />
+                      <ErrorMessage
+                        name='father_name'
+                        component='div'
+                        className='field-error'
+                      />
+                    </div>
+                    <div className='col-md-4'>
+                      <label className='form-label starmark'>Mother Name</label>
+                      <Field
+                        type='text'
+                        name='mother_name'
+                        className='form-control'
+                        placeholder='e.g. Mary'
+                      />
+                      <ErrorMessage
+                        name='mother_name'
                         component='div'
                         className='field-error'
                       />
                     </div>
 
                     <div className='col-md-4'>
-                      <label className='form-label'>Date of Birth</label>
+                      <label className='form-label starmark'>Date of Birth</label>
                       <Field type='date' name='dob' className='form-control' />
                       <ErrorMessage
                         name='dob'
@@ -699,9 +762,9 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Gender</label>
+                      <label className='form-label starmark'>Gender</label>
                       <Field as='select' name='gender' className='form-select'>
-                        <option value=''>Select gender</option>
+                        <option value=''>Select Gender</option>
                         <option value='male'>Male</option>
                         <option value='female'>Female</option>
                         <option value='other'>Other</option>
@@ -713,7 +776,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Email</label>
+                      <label className='form-label starmark'>Email</label>
                       <Field
                         type='email'
                         name='email'
@@ -731,7 +794,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                   {/* Contact */}
                   <div className='row g-2'>
                     <div className='col-md-4'>
-                      <label className='form-label'>Mobile Number</label>
+                      <label className='form-label starmark'>Mobile Number</label>
                       <Field
                         type='tel'
                         name='mobile_number'
@@ -746,7 +809,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Emergency Contact</label>
+                      <label className='form-label starmark'>Emergency Contact</label>
                       <Field
                         type='tel'
                         name='emergency_contact_number'
@@ -761,7 +824,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Date of Joining</label>
+                      <label className='form-label starmark'>Date of Joining</label>
                       <Field
                         type='date'
                         name='date_of_join'
@@ -774,7 +837,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-12'>
-                      <label className='form-label'>Address</label>
+                      <label className='form-label starmark'>Address</label>
                       <Field
                         as='textarea'
                         name='address'
@@ -792,13 +855,13 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                   {/* Work */}
                   <div className='row g-2'>
                     <div className='col-md-4'>
-                      <label className='form-label'>Department</label>
+                      <label className='form-label starmark'>Department</label>
                       <Field
                         as='select'
                         name='departmentid'
                         className='form-select'
                       >
-                        <option value=''>Select department</option>
+                        <option value=''>Select Department</option>
                         {departmentOptions.map((department, index) => (
                           <option
                             key={`${getOptionId(department)}-${index}`}
@@ -815,13 +878,13 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Designation</label>
+                      <label className='form-label starmark'>Designation</label>
                       <Field
                         as='select'
                         name='designationid'
                         className='form-select'
                       >
-                        <option value=''>Select designation</option>
+                        <option value=''>Select Designation</option>
                         {designationOptions.map((designation, index) => (
                           <option
                             key={`${getOptionId(designation)}-${index}`}
@@ -838,7 +901,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Staff Photo</label>
+                      <label className='form-label starmark'>Staff Photo</label>
                       <input
                         key={`staff-photo-${fileInputKey}`}
                         type='file'
@@ -867,7 +930,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                     </div>
                     <div className='col-md-4'>
                       
-                      <label className='form-label'>Staff Signature Photo</label>
+                      <label className='form-label starmark'>Staff Signature Photo</label>
                       <input
                         key={`staff-signature-${fileInputKey}`}
                         type='file'
@@ -895,7 +958,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>Password</label>
+                      <label className='form-label starmark'>Password</label>
                       <div className='input-group'>
                         <Field
                           type={showPassword ? "text" : "password"}
@@ -926,7 +989,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label'>User Type</label>
+                      <label className='form-label starmark'>User Type</label>
                       <Field
                         type='text'
                         name='userType'
