@@ -901,7 +901,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label starmark'>Staff Photo</label>
+                      <label className='form-label starmark'>Staff Photo (≤ 1 MB)</label>
                       <input
                         key={`staff-photo-${fileInputKey}`}
                         type='file'
@@ -930,7 +930,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                     </div>
                     <div className='col-md-4'>
                       
-                      <label className='form-label starmark'>Staff Signature Photo</label>
+                      <label className='form-label starmark'>Staff Signature Photo (≤ 1 MB)</label>
                       <input
                         key={`staff-signature-${fileInputKey}`}
                         type='file'
@@ -1029,6 +1029,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
       </div>
 
       {/* ===== Page footer ===== */}
+      {/*
       <div className='reg-footer'>
         <div className='reg-footer-grid'>
           <div className='reg-footer-item'>
@@ -1077,7 +1078,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
             <a href='#'>Privacy Policy</a>.
           </span>
         </div>
-      </div>
+      </div>*/}
     </div>
   );
 };
