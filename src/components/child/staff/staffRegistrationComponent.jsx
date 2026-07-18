@@ -529,14 +529,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
               <Icon icon='solar:user-plus-bold-duotone' width='24' />
             </span>
             <div>
-              <div className='reg-breadcrumb'>
-                <Icon icon='solar:home-2-bold' width='12' />
-                <a href='/'>Dashboard</a>
-                <Icon icon='solar:alt-arrow-right-linear' width='12' />
-                <a href='/staff'>Staff</a>
-                <Icon icon='solar:alt-arrow-right-linear' width='12' />
-                <span>Registration</span>
-              </div>
+             
               <h2>Add New Staff Member</h2>
             </div>
           </div>
