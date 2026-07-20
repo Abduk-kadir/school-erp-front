@@ -34,6 +34,7 @@ let initialValues = {
   date_of_join: "",
   emergency_contact_number: "",
   password: "",
+  confirmPassword: "",
 };
 
 const validationSchema = Yup.object({
@@ -73,6 +74,9 @@ const validationSchema = Yup.object({
     .matches(/[a-z]/, "Must include a lowercase letter")
     .matches(/[0-9]/, "Must include a number")
     .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords must match")
+    .required("Please re-enter password"),
 });
 
 const normalizeListResponse = (res) => {
@@ -101,6 +105,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
   const [loaderMessage, setLoaderMessage] = useState("");
   const [feedback, setFeedback] = useState(null); // { type: 'success' | 'error', text: string }
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [designationOptions, setDesignationOptions] = useState([]);
   const [titleOptions, setTitleOptions] = useState([]);
@@ -147,6 +152,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
 
       const formData = new FormData();
       Object.entries(values).forEach(([key, value]) => {
+        if (key === "confirmPassword") return;
         if (value !== null && value !== undefined) {
           formData.append(key, value);
         }
@@ -984,6 +990,37 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       </div>
                       <ErrorMessage
                         name='password'
+                        component='div'
+                        className='field-error'
+                      />
+                    </div>
+                    <div className='col-md-4'>
+                      <label className='form-label starmark'>Re-enter Password</label>
+                      <div className='input-group'>
+                        <Field
+                          type={showConfirmPassword ? "text" : "password"}
+                          name='confirmPassword'
+                          className='form-control'
+                          placeholder='Re-enter the same password'
+                        />
+                        <span
+                          className='input-group-text'
+                          onClick={() => setShowConfirmPassword((v) => !v)}
+                          role='button'
+                          aria-label='Toggle confirm password visibility'
+                        >
+                          <Icon
+                            icon={
+                              showConfirmPassword
+                                ? "solar:eye-closed-bold"
+                                : "solar:eye-bold"
+                            }
+                            width='18'
+                          />
+                        </span>
+                      </div>
+                      <ErrorMessage
+                        name='confirmPassword'
                         component='div'
                         className='field-error'
                       />
