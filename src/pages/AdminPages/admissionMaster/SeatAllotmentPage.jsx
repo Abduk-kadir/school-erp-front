@@ -14,6 +14,7 @@ const SeatAllotmentPage = () => {
         <div>
         <AddSeatAllotment />
         <GenericTableDataLayer
+         pageName="Seat Allotment"
          url={`${baseURL}/api/seat-allotments`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

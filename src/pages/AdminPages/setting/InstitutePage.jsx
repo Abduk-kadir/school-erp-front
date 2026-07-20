@@ -31,6 +31,7 @@ const InstitutePage = () => {
 
       <AddInstitute />
       <GenericTableDataLayer
+        pageName="Institutes"
         url={`${baseURL}/api/institute`}
         columns={[
           { data: "id", name: "id", title: "ID" },

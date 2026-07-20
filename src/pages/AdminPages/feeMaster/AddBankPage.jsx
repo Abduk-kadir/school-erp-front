@@ -29,6 +29,7 @@ const AddBankPage = () => {
 
       <AddBank />
       <GenericTableDataLayer
+        pageName="Banks"
 
 
         url={`${baseURL}/api/banks`}

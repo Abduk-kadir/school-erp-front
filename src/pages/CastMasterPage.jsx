@@ -32,6 +32,7 @@ const CastPage = () => {
 
         {/* TableDataLayer */}
         <GenericTableDataLayer
+        pageName="Castes"
         url={`${baseURL}/api/castes`}
          columns={[
           {data:"id",name:"id",title : "ID"},

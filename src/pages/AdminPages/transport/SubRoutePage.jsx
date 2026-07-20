@@ -11,6 +11,7 @@ const SubRoutePage = () => {
            
              <AddSubRoute/>
               <GenericTableDataLayer
+                pageName="Sub Routes"
                 url={`${baseURL}/api/subroutes`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

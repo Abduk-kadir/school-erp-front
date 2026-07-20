@@ -84,6 +84,7 @@ const DepartmentPage = () => {
             />
 
             <GenericTableDataLayer
+                pageName="Department"
 
 
                 url={`${baseURL}/api/departments`}

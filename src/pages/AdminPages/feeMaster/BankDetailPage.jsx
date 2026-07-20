@@ -25,6 +25,7 @@ const BankDetailPage = () => {
     <div className='container'>
       <AddBankDetail/>
       <GenericTableDataLayer
+        pageName="Bank Details"
 
 
         url={`${baseURL}/api/bank-details`}

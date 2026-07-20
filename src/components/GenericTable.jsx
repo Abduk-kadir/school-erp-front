@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import "../assets/css/academicOfflineFeeReport.css";
 import "../assets/css/editdelete.css";
 
-const GenericTableDataLayer = ({ url, columns, title = "Default Data Tables", onEdit, onDelete,onAssignClass }) => {
+const GenericTableDataLayer = ({ url, columns, title = "Default Data Tables",pageName, onEdit, onDelete,onAssignClass }) => {
   useEffect(() => {
     const table = $("#dataTable").DataTable({
       pageLength: 5,
@@ -46,7 +46,7 @@ const GenericTableDataLayer = ({ url, columns, title = "Default Data Tables", on
               <Icon icon="solar:document-text-bold-duotone" width="22" />
             </span>
             <div>
-              <h5 className="card-title">{title}</h5>
+              <h5 className="card-title">{pageName}</h5>
             </div>
           </div>
         </div>

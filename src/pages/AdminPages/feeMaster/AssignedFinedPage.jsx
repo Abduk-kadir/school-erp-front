@@ -25,7 +25,8 @@ const AssignedFinedPage=()=>{
         <div className='container'>
             <AssignedFined/>
             <GenericTableDataLayer
-            
+            pageName="Assigned Fines"
+
             url={`${baseURL}/api/fine-assigned`}
             columns={[
                 {data:"id",name:"id",title:"ID"},

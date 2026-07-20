@@ -62,6 +62,7 @@ const ClassPage = () => {
             },
           },
         ]}
+        pageName="Classes"
         onEdit={handleEdit}
         onDelete={handleDelete}
       />

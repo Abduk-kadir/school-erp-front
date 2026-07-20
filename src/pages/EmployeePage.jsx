@@ -6,6 +6,7 @@ const EmployeePage = () => {
     <>
 
        <GenericTableDataLayer
+                pageName="Employees"
                 url={`${baseURL}/api/employees`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

@@ -6,6 +6,7 @@ const ClassFiledPage= () => {
     <>
        <AddClassField/>
         <GenericTableDataLayer
+                pageName="Class Fields"
                 url={`${baseURL}/api/stage/allfiled/${1}`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

@@ -8,6 +8,7 @@ const StagePage = () => {
     <>
 
         <GenericTableDataLayer
+                pageName="Stages"
                 url={`${baseURL}/api/stage`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

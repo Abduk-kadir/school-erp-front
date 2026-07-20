@@ -25,6 +25,7 @@ const FinePage = () => {
     <div className='container'>
       <AddFine/>
       <GenericTableDataLayer
+        pageName="Fines"
         url={`${baseURL}/api/fines`}
         columns={[
           { data: "id", name: "id", title: "ID" },

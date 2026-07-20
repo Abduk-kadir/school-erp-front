@@ -8,6 +8,7 @@ const FiledTypePage = () => {
     <>
 
         <GenericTableDataLayer
+                pageName="Field Types"
                 url={`${baseURL}/api/fieldType`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

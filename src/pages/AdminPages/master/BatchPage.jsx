@@ -26,7 +26,7 @@ const BatchPage = () => {
   return (
     <div>
       <AddBatch />
-      <GenericTableDataLayer url={`${baseURL}/api/batches`} columns={[
+      <GenericTableDataLayer pageName="Batches" url={`${baseURL}/api/batches`} columns={[
         {data:"id",name:"id",title:"ID"},
         {data:"batch_name",name:"batch_name",title:"Batch Name"},
         {data:"class_names",name:"class_names",title:"Classes"},

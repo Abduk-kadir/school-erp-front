@@ -26,7 +26,7 @@ const CarsoulPage = () => {
   return (
     <div>
       <AddCarsoul />
-      <GenericTableDataLayer url={`${baseURL}/api/carsoul`} columns={[
+      <GenericTableDataLayer pageName="Carousel" url={`${baseURL}/api/carsoul`} columns={[
         {data:"id",name:"id",title:"ID"},
         {
           data: "image_url",

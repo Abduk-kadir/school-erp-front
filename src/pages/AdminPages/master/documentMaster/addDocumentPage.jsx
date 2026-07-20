@@ -30,6 +30,7 @@ const AddDocumentPage = () => {
 
       <AddDocument />
       <GenericTableDataLayer
+        pageName="Documents"
 
 
         url={`${baseURL}/api/document-types`}

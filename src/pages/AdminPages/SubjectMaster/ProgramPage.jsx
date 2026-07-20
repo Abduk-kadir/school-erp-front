@@ -12,6 +12,7 @@ const ProgramPage = () => {
 
               <AddProgram/>
               <GenericTableDataLayer
+                pageName="Programs"
                 url={`${baseURL}/api/programs`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

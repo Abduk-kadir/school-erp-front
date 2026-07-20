@@ -29,6 +29,7 @@ const DivisionPage = () => {
      <AddDivision/>
 
          <GenericTableDataLayer
+                pageName="Divisions"
                 url={`${baseURL}/api/divisions`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

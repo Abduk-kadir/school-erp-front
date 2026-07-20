@@ -26,6 +26,7 @@ const FeeHeadPage = () => {
       
        <AddFeeHead/>
         <GenericTableDataLayer
+        pageName="Fee Heads"
 
 
         url={`${baseURL}/api/fee-heads`}

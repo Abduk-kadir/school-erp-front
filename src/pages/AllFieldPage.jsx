@@ -8,6 +8,7 @@ const AllFiledPage = () => {
     <>
        <AddFiled/>
         <GenericTableDataLayer
+                pageName="All Fields"
                 url={`${baseURL}/api/allfield`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

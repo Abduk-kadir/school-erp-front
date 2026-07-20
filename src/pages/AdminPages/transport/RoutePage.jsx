@@ -12,8 +12,9 @@ const RoutePage = () => {
             <AddRoute/>
              
               <GenericTableDataLayer
-               
-             
+                pageName="Routes"
+
+
                 url={`${baseURL}/api/routes`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

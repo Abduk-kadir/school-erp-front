@@ -29,7 +29,7 @@ const HolidayMasterPage = () => {
         nameLabel="Holiday"
         saveUrl="/api/holiday-masters"
       />
-      <GenericTableDataLayer url={`${baseURL}/api/holiday-masters`} columns={[
+      <GenericTableDataLayer pageName="Holiday Master" url={`${baseURL}/api/holiday-masters`} columns={[
         {data:"id",name:"id",title:"ID"},
         {data:"holiday",name:"holiday",title:"Holiday Name"},
         {data:"date",name:"date",title:"Date"},

@@ -25,7 +25,7 @@ const FeeGroupPage = () => {
   return (
     <div className="container">
       <AddGroup className="mb-10" />
-      <GenericTableDataLayer columns={[
+      <GenericTableDataLayer pageName="Fee Groups" columns={[
         {data:"id",title:"ID"},
         {data:"groupname",title:"Group Name"},
         {

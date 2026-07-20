@@ -14,7 +14,8 @@ const SubjectPage = () => {
               <AddSubject/>
               <GenericTableDataLayer
                 key={refreshKey}
-             
+                pageName="Subjects"
+
                 url={`${baseURL}/api/subjects`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

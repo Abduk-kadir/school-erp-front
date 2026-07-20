@@ -63,8 +63,9 @@ const AllStaffPage = () => {
   return (
     <div className='container py-3'>
       {showModal && <GenericformModal show={showModal} title="Assign Class and Div" onClose={() => setShowModal(false)} />}
-      <h4 className='mb-3 fw-semibold'>All Staff</h4>
+      
       <GenericTableDataLayer url={staffUrl} columns={staffColumns} 
+      pageName="All Staff"
       onAssignClass={handleAssignClass}
       onEdit={handleEdit}
       

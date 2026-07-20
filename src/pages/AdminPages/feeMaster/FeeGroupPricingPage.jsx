@@ -25,6 +25,7 @@ const FeeGroupPricingPage = () => {
     <div className='container'>
         <FeeGroupPricing />
         <GenericTableDataLayer
+        pageName="Fee Group Pricing"
         url={`${baseURL}/api/fee-groups/group-details`}
         columns={[
           { data: "id", name: "id", title: "ID" },

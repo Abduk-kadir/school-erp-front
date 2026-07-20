@@ -14,6 +14,7 @@ const ClasswiseSchoolPage = () => {
         <div>
             <AddClasswiseSchool />
             <GenericTableDataLayer
+                pageName="Classwise School"
                 url={`${baseURL}/api/classwise-institute`}
                 columns={[
                     { data: "id", name: "id", title: "ID" },

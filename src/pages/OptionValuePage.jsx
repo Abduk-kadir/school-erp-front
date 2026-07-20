@@ -8,6 +8,7 @@ const OptionValuePage = () => {
     <>
 
         <GenericTableDataLayer
+                pageName="Option Values"
                 url={`${baseURL}/api/fieldAllOption`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

@@ -82,6 +82,7 @@ const DesignationPage = () => {
                 cardIcon="solar:medal-ribbons-star-bold-duotone"
             />
             <GenericTableDataLayer
+                pageName="Designation"
 
 
                 url={`${baseURL}/api/designations`}

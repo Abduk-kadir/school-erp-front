@@ -9,6 +9,7 @@ const RolePage = () => {
     <>
 
         <GenericTableDataLayer
+                pageName="Roles"
                 url={`${baseURL}/api/roles`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},

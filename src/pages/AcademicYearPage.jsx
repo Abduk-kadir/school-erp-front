@@ -9,6 +9,7 @@ const AcademicYearPage = () => {
 
      
  <GenericTableDataLayer
+                pageName="Academic Years"
                 url={`${baseURL}/api/academic-years`}
                  columns={[
                   {data:"id",name:"id",title : "ID"},
