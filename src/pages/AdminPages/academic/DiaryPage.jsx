@@ -3,7 +3,7 @@ import NotificationDiaryCommon from "../../../components/child/academic/Notifica
 const DiaryPage = () => {
   return (
     <div>
-      <NotificationDiaryCommon isSubject={true} />
+      <NotificationDiaryCommon isSubject={true} pageName="Send Diary" />
     </div>
   )
 }

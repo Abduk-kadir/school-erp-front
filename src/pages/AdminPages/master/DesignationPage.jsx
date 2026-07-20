@@ -8,6 +8,7 @@ const DesignationPage = () => {
     const [initialValues, setInitialValues] = useState({ designation_name: '' });
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
+    const [tableRefreshKey, setTableRefreshKey] = useState(0);
     const initialFields = [
         {
             name: 'designation_name',
@@ -30,7 +31,7 @@ const DesignationPage = () => {
             await axios.post(`${baseURL}/api/designations`, data);
             setSuccessMsg('Department added successfully!');
             setInitialValues({ designation_name: "" })
-
+            setTableRefreshKey((prev) => prev + 1);
         }
         catch (error) {
             setErrorMsg(error.response?.data?.message || 'Something went wrong');
@@ -41,6 +42,7 @@ const DesignationPage = () => {
     const handleReset = (initialValues) => {
         console.log('Form has been reset to:', initialValues);
         setInitialValues({ designation_name: '' });
+        setTableRefreshKey((prev) => prev + 1);
 
         // You can add extra logic here (e.g., clear localStorage, show toast, etc.)
     };
@@ -68,9 +70,8 @@ const DesignationPage = () => {
         <div>
             <DepartmentAndDesignation
                 initialFields={initialFields}
-                initialValues={{ designation_name: '' }} // optional
+                initialValues={initialValues} // optional
                 onSubmit={handleSubmit}
-
                 submitButtonText="Save"
                 resetButtonText="Reset"
                 handleReset={handleReset}
@@ -82,6 +83,7 @@ const DesignationPage = () => {
                 cardIcon="solar:medal-ribbons-star-bold-duotone"
             />
             <GenericTableDataLayer
+                key={tableRefreshKey}
                 pageName="Designation"
 
 

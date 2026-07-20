@@ -9,6 +9,7 @@ const DepartmentPage = () => {
     const [initialValues, setInitialValues] = useState({ department_name: '' });
     const [successMsg, setSuccessMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
+    const [tableRefreshKey, setTableRefreshKey] = useState(0);
     const initialFields = [
         {
             name: 'department_name',
@@ -31,6 +32,7 @@ const DepartmentPage = () => {
             await axios.post(`${baseURL}/api/departments`, data);
             setSuccessMsg('Department added successfully!');
             setInitialValues({ department_name: "" })
+            setTableRefreshKey((prev) => prev + 1);
 
         }
         catch (error) {
@@ -42,6 +44,7 @@ const DepartmentPage = () => {
     const handleReset = (initialValues) => {
         console.log('Form has been reset to:', initialValues);
         setInitialValues({ department_name: '' });
+        setTableRefreshKey((prev) => prev + 1);
 
         // You can add extra logic here (e.g., clear localStorage, show toast, etc.)
     };
@@ -69,9 +72,8 @@ const DepartmentPage = () => {
         <div>
             <DepartmentAndDesignation
                 initialFields={initialFields}
-                initialValues={{ department_name: '' }} // optional
+                initialValues={initialValues}// optional
                 onSubmit={handleSubmit}
-
                 submitButtonText="Save"
                 resetButtonText="Reset"
                 handleReset={handleReset}
@@ -84,6 +86,7 @@ const DepartmentPage = () => {
             />
 
             <GenericTableDataLayer
+                key={tableRefreshKey}
                 pageName="Department"
 
 
