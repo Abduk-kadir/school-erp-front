@@ -3,14 +3,14 @@ import AllTypeNotficationDataTable from '../../../components/AllTypeNotficationD
 import baseURL from '../../../utils/baseUrl'
 
 const DiaryReportPage = () => {
- const notesColumns = [
-    {data:"id",title:"ID"},
-    {data:"batch_name",title:"Batch"},
-    {data:"class_name",title:"Class"},
-    {data:"division_name",title:"Division"},
-    {data:"subject_name",title:"Subject", defaultContent:""},
-    {data:"message",title:"Message"},
-    {data:"staff_name",title:"Teacher", defaultContent:""},
+  const notesColumns = [
+    { data: "id", title: "ID" },
+    { data: "batch_name", title: "Batch" },
+    { data: "class_name", title: "Class" },
+    { data: "division_name", title: "Division" },
+    { data: "subject_name", title: "Subject", defaultContent: "" },
+    { data: "message", title: "Message" },
+    { data: "staff_name", title: "Teacher", defaultContent: "" },
     {
       data: null,
       title: "Actions",
@@ -25,7 +25,7 @@ const DiaryReportPage = () => {
         `;
       },
     },
-    ]
+  ]
   return (
     <div>
       <AllTypeNotficationDataTable url={`${baseURL}/api/diaries`} columns={notesColumns} />
