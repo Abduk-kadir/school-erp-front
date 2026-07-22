@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import GenericformModal from "../../../components/child/GenericformModal";
 
 
+
 const AllStaffPage = () => {
   const staffUrl = `${baseURL}/api/staff`;
   const dispatch = useDispatch();
@@ -26,7 +27,30 @@ const AllStaffPage = () => {
       { data: "departmentInfo.department_name", name: "department", title: "Department" },
       { data: "designationInfo.designation_name", name: "designation", title: "Designation" },
       { data: "userType", name: "userType", title: "User type" },
-      
+      {
+        data: null,
+        title: "Photo",
+        orderable: false,
+        searchable: false,
+        render: (data, type, row) => {
+          return `
+          <div class="table-action-group">
+            <button type="button" class="table-action-btn table-action-view-document" data-id="${row.staff_photo || ""}" title="View photo">View</button>
+          </div>`;
+        },
+      },
+      {
+        data: null,
+        title: "Signature",
+        orderable: false,
+        searchable: false,
+        render: (data, type, row) => {
+          return `
+          <div class="table-action-group">
+            <button type="button" class="table-action-btn table-action-view-document" data-id="${row.staff_sig_photo || ""}" title="View signature">View</button>
+          </div>`;
+        },
+      },
       {
         data: null,
         title: "Actions",
@@ -35,7 +59,7 @@ const AllStaffPage = () => {
         render: (data, type, row) => {
           return `
                     <div class="table-action-group">
-                      <button type="button" class="table-action-btn table-action-edit" data-id="${row.id}" title="Edit institute">Edit</button>
+                      <button type="button" class="table-action-btn table-action-edit" data-id="${row.id}" title="Edit staff">Edit</button>
                       <button type="button" class="table-action-btn table-action-assign-class" data-id="${row.id}" title="Assign Class and Div">Assign Class and Div</button>
                     </div>
                   `;
@@ -64,10 +88,12 @@ const AllStaffPage = () => {
     <div className='container py-3'>
       {showModal && <GenericformModal show={showModal} title="Assign Class and Div" onClose={() => setShowModal(false)} />}
       
-      <GenericTableDataLayer url={staffUrl} columns={staffColumns} 
-      pageName="All Staff"
-      onAssignClass={handleAssignClass}
-      onEdit={handleEdit}
+      <GenericTableDataLayer
+       url={staffUrl} 
+       columns={staffColumns} 
+       pageName="All Staff"
+       onAssignClass={handleAssignClass}
+       onEdit={handleEdit}
       
       />
     </div>
