@@ -188,12 +188,6 @@
   background-position: center;
   background-repeat: no-repeat;
   background-color: transparent;
-  transform: scale(1.04);
-  transition: transform 8s ease-out;
-}
-
-.login-container .carousel-item.active .carousel-image {
-  transform: scale(1);
 }
 
 /* Indicators */
