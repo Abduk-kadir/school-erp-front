@@ -22,14 +22,20 @@ const GenericTableDataLayer = ({
   onAssignClass,
 }) => {
   const [viewUrl, setViewUrl] = useState(null);
-  const setViewUrlRef = useRef(setViewUrl);
+  const tableRef = useRef(null);
+  const datatableRef = useRef(null);
+  const callbacksRef = useRef({ onEdit, onDelete, onAssignClass });
 
   useEffect(() => {
-    setViewUrlRef.current = setViewUrl;
-  }, []);
+    callbacksRef.current = { onEdit, onDelete, onAssignClass };
+  }, [onEdit, onDelete, onAssignClass]);
 
   useEffect(() => {
-    const table = $("#dataTable").DataTable({
+    if (!tableRef.current) return;
+
+    const $table = $(tableRef.current);
+
+    datatableRef.current = $table.DataTable({
       pageLength: 5,
       processing: true,
       serverSide: true,
@@ -41,35 +47,39 @@ const GenericTableDataLayer = ({
       columns,
     });
 
-    $("#dataTable").on("click", ".table-action-view-document", function () {
+    $table.on("click", ".table-action-view-document", function () {
       const documentUrl = $(this).attr("data-id");
       if (!documentUrl) return;
-      setViewUrlRef.current(buildFileUrl(documentUrl));
+      setViewUrl(buildFileUrl(documentUrl));
     });
 
-    $("#dataTable").on("click", ".table-action-edit", function () {
+    $table.on("click", ".table-action-edit", function () {
       const id = $(this).data("id");
-      if (onEdit) onEdit(id);
+      callbacksRef.current.onEdit?.(id);
     });
 
-    $("#dataTable").on("click", ".table-action-delete", function () {
+    $table.on("click", ".table-action-delete", function () {
       const id = $(this).data("id");
-      if (onDelete) onDelete(id, table);
+      callbacksRef.current.onDelete?.(id, datatableRef.current);
     });
 
-    $("#dataTable").on("click", ".table-action-assign-class", function () {
+    $table.on("click", ".table-action-assign-class", function () {
       const id = $(this).data("id");
-      if (onAssignClass) onAssignClass(id, table);
+      callbacksRef.current.onAssignClass?.(id, datatableRef.current);
     });
 
     return () => {
-      $("#dataTable").off("click", ".table-action-view-document");
-      $("#dataTable").off("click", ".table-action-edit");
-      $("#dataTable").off("click", ".table-action-delete");
-      $("#dataTable").off("click", ".table-action-assign-class");
-      table.destroy(true);
+      $table.off("click", ".table-action-view-document");
+      $table.off("click", ".table-action-edit");
+      $table.off("click", ".table-action-delete");
+      $table.off("click", ".table-action-assign-class");
+      if (datatableRef.current) {
+        // Keep the <table> node so React can remount cleanly next time
+        datatableRef.current.destroy();
+        datatableRef.current = null;
+      }
     };
-  }, [url, columns, onEdit, onDelete, onAssignClass]);
+  }, [url, columns]);
 
   return (
     <div className="chfi-wrapper">
@@ -80,13 +90,17 @@ const GenericTableDataLayer = ({
               <Icon icon="solar:document-text-bold-duotone" width="22" />
             </span>
             <div>
-              <h5 className="card-title">{pageName}</h5>
+              <h5 className="card-title">{pageName || title}</h5>
             </div>
           </div>
         </div>
         <div className="card-body">
           <div className="report-table-wrap">
-            <table className="table report-table mb-0" id="dataTable" />
+            <table
+              className="table report-table mb-0"
+              ref={tableRef}
+              style={{ width: "100%" }}
+            />
           </div>
         </div>
       </section>

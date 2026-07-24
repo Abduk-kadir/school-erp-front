@@ -9,6 +9,7 @@ import Loader from "../../../helper/Loader";
 import {useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../../../assets/css/starmark.css";
+import "../../../assets/css/loader.css";
 
 const buildCarsoulImageUrl = (path) => {
   if (!path) return "";
@@ -115,8 +116,14 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
  useEffect(()=>{
  
   let editdata=genericEditData?.data
-  if(for_page=='staff-edit'){
-    initialValues=editdata
+  if(for_page=='staff-edit' && editdata){
+    // Populate both password fields so re-enter match validation works in edit mode
+    const passwordValue = editdata.password ?? "";
+    initialValues={
+      ...editdata,
+      password: passwordValue,
+      confirmPassword: passwordValue,
+    }
   }
  })
 
@@ -145,9 +152,10 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
   }, []);
 
   const handleSubmit = async (values, { resetForm }) => {
+    const isEdit = for_page == "staff-edit" || initialValues?.id;
     try {
       setLoading(true);
-      setLoaderMessage("Registering staff...");
+      setLoaderMessage(isEdit ? "Updating staff..." : "Registering staff...");
       setFeedback(null);
 
       const formData = new FormData();
@@ -157,11 +165,10 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
           formData.append(key, value);
         }
       });
-      if(for_page=='staff-edit' || initialValues?.id){
+      if(isEdit){
         await axios.put(`${baseURL}/api/staff/${initialValues.id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        setLoading(false);
         navigate("/dashboard/staff-master", { replace: true });
         return;
       }else{
@@ -204,7 +211,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
           .staff-reg-root .reg-image-col {
             position: relative;
             min-height: 180px;
-            background: #ffffff;
+            background: linear-gradient(160deg, #eef2ff 0%, #faf5ff 50%, #ecfeff 100%);
             overflow: hidden;
           }
           .staff-reg-root .reg-image-col .reg-carousel {
@@ -217,10 +224,18 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
           .staff-reg-root .reg-image-col .carousel-item {
             height: 100%;
           }
+          .staff-reg-root .reg-image-col .carousel-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
           .staff-reg-root .reg-image-col .reg-image {
-            position: absolute;
-            inset: 0;
-            background-size: cover;
+            /* Fixed frame — same as login (560×600); leftover area stays colored */
+            width: 560px;
+            height: 600px;
+            max-width: 100%;
+            flex: 0 0 auto;
+            background-size: 560px 600px;
             background-position: center;
             background-repeat: no-repeat;
             background-color: transparent;
@@ -652,8 +667,6 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                 Role: Staff
               </span>
             </div>
-
-            {loading && <Loader message={loaderMessage} />}
 
             {feedback && !loading && (
               <div
@@ -1116,6 +1129,11 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
           </span>
         </div>
       </div>*/}
+      {loading && (
+        <div className="loader-overlay">
+          <Loader message={loaderMessage} />
+        </div>
+      )}
     </div>
   );
 };
