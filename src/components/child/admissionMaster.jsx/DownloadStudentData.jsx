@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import "../../../assets/css/mastercom.css";
 import "../../../assets/css/downloadStudentData.css";
+import ExcelJS from "exceljs/dist/exceljs.min.js";
 
 const formatSectionTitle = (section) =>
   String(section)
@@ -54,6 +55,7 @@ const DownloadStudentData = () => {
   const [divisions, setDivisions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const workbook = new ExcelJS.Workbook();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,6 +143,68 @@ const DownloadStudentData = () => {
   };
 
   const sectionEntries = Object.entries(allFields);
+  const handleDownloadTemplate = async () => {
+    console.log("download template is calling");
+    console.log(allFields);
+
+    const workbook = new ExcelJS.Workbook();
+
+    // Instructions Sheet (First sheet)
+    const instructions = workbook.addWorksheet("Instructions");
+    instructions.addRow(["🎓 Student Data Import Template"]);
+    instructions.addRow([""]);
+    instructions.addRow(["How to use:"]);
+    instructions.addRow(["1. Fill your data in the respective sheets"]);
+    instructions.addRow(["2. Do NOT change sheet names or column headers"]);
+    instructions.addRow(["3. Save and upload the file back to the system"]);
+    instructions.addRow([""]);
+    instructions.addRow(["Tables:"]);
+    Object.keys(allFields).forEach((table) => {
+      instructions.addRow([`• ${table}`]);
+    });
+    instructions.getColumn(1).width = 60;
+
+    // Create sheets
+    Object.entries(allFields).forEach(([sheetName, columns]) => {
+      const sheetColumns = columns.filter(
+        (col) => col !== "reg_no" && col !== "student_reg_no"
+      );
+      if (sheetColumns.length === 0) return;
+
+      const worksheet = workbook.addWorksheet(sheetName);
+
+      // Header Row
+      worksheet.addRow(sheetColumns);
+      const headerRow = worksheet.getRow(1);
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FF366092" },
+        };
+      });
+
+      // Auto-adjust column width
+      sheetColumns.forEach((_, index) => {
+        worksheet.getColumn(index + 1).width = 22;
+      });
+    });
+
+    // Generate & Download
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Student_Import_Template.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  };
 
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
@@ -148,12 +212,23 @@ const DownloadStudentData = () => {
         <Form className="chfi-wrapper dsd-page d-flex flex-column gap-3 pb-2">
           <section className="chfi-card" aria-label="Filter students">
             <div className="card-header">
-              <div className="header-row">
-                <span className="header-icon">
-                  <Icon icon="solar:filter-bold-duotone" width="22" />
-                </span>
-                <div>
-                  <h5 className="card-title">Download Student Data</h5>
+              <div className="dsd-section-header">
+                <div className="header-row">
+                  <span className="header-icon">
+                    <Icon icon="solar:filter-bold-duotone" width="22" />
+                  </span>
+                  <div>
+                    <h5 className="card-title">Download Student Data</h5>
+                  </div>
+                </div>
+
+                <div className="dsd-header-actions">
+                  <button type="button" className="dsd-header-action-btn" onClick={handleDownloadTemplate}>
+                    Download Template
+                  </button>
+                  <button type="button" className="dsd-header-action-btn">
+                    Import Students
+                  </button>
                 </div>
               </div>
             </div>
