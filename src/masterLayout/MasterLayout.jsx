@@ -223,6 +223,7 @@ const MasterLayout = () => {
         {title:"Event Master",path:"/dashboard/event-master"},
         {title:"About School",path:"/dashboard/add-about-school"},
         {title:"Carsoul Master",path:"/dashboard/carsoul-master"},
+        {title:"Other Carsouls",path:"/dashboard/other-carsoul-master"},
         {
           title: 'Admision Form master',
           children: [

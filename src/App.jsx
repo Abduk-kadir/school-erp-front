@@ -9,6 +9,7 @@ const ClassPage = lazy(() => import("./pages/ClassPage"));
 const AcademicYearPage = lazy(() => import("./pages/AcademicYearPage"));
 const DivisionPage = lazy(() => import("./pages/DivisionPage"));
 const CarsoulPage = lazy(() => import("./pages/AdminPages/master/CarsoulPage"));
+const OtherCarsoulPage = lazy(() => import("./pages/AdminPages/master/OtherCarsoulPage"));
 const ClassDivisionPage = lazy(() => import("./pages/AdminPages/master/ClassDivisionPage"));
 const CastPage = lazy(() => import("./pages/CastMasterPage"));
 const AddAboutSchoolPage=lazy(() => import("./pages/AdminPages/academic/AddAboutSchoolPage"))
@@ -351,6 +352,7 @@ function App() {
               <Route path='department-master' element={<DepartmentPage />} />
               <Route path='designation-master' element={<DesignationPage />} />
               <Route path='carsoul-master' element={<CarsoulPage />} />
+              <Route path='other-carsoul-master' element={<OtherCarsoulPage />} />
               <Route path="add-about-school" element={<AddAboutSchoolPage />} />
               <Route
                 path="admission-form-master/stages"

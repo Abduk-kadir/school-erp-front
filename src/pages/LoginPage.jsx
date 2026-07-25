@@ -15,7 +15,24 @@ import { getFCMToken } from '../services/fcmService';
 
 const buildCarsoulImageUrl = (path) => {
   if (!path) return '';
-  return path.startsWith('http') ? path : `${baseUrl}${path}`;
+  const trimmed = String(path).trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+
+  const base = String(baseUrl).replace(/\/$/, '');
+  const rel = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  // Encode each segment so spaces/special chars in filenames still load
+  const encoded = rel
+    .split('/')
+    .map((segment, index) => {
+      if (index === 0 || segment === '') return segment;
+      try {
+        return encodeURIComponent(decodeURIComponent(segment));
+      } catch {
+        return encodeURIComponent(segment);
+      }
+    })
+    .join('/');
+  return `${base}${encoded}`;
 };
 
 const loginSchema = Yup.object().shape({
@@ -79,7 +96,9 @@ const LoginPage = () => {
             pause={false}
             ride="carousel"
           >
-            {carouselImages.map((image) => {
+            {carouselImages
+              .filter((image) => Boolean(image?.image_url))
+              .map((image, index) => {
               const src = buildCarsoulImageUrl(image.image_url);
               const hasTitle = Boolean(image.title);
               const hasHeading = Boolean(image.heading);
@@ -87,10 +106,10 @@ const LoginPage = () => {
               const showCaption = hasTitle || hasHeading || hasSubheading;
 
               return (
-                <Carousel.Item key={image.id} interval={5000}>
+                <Carousel.Item key={image.id ?? `${src}-${index}`} interval={5000}>
                   <div
                     className="carousel-image"
-                    style={{ backgroundImage: `url(${src})` }}
+                    style={{ backgroundImage: src ? `url("${src}")` : 'none' }}
                   />
                   {showCaption && (
                     <Carousel.Caption>

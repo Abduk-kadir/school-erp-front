@@ -50,7 +50,7 @@ const ImagePreviewGrid = ({ images, onRemove }) => {
   );
 };
 
-const AddCarsoul = () => {
+const AddCarsoul = ({pageName}) => {
   return (
     <div className="chfi-wrapper declaration-wrapper mb-3">
       <div className="chfi-card">
@@ -84,10 +84,16 @@ const AddCarsoul = () => {
                   values.images.forEach((file) => {
                     formData.append("images", file);
                   });
-
-                  await axios.post(`${baseURL}/api/carsoul`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                  });
+                  if(pageName==='other carsoul'){
+                    await axios.post(`${baseURL}/api/othercrousal`, formData, {
+                      headers: { "Content-Type": "multipart/form-data" },
+                    });
+                  }
+                  else{
+                    await axios.post(`${baseURL}/api/carsoul`, formData, {
+                      headers: { "Content-Type": "multipart/form-data" },
+                    });
+                  }
 
                   alert("Carousel saved successfully");
                   resetForm();

@@ -9,7 +9,7 @@ const staffRegistrationPage = () => {
   useEffect(() => {
     const fetchCarsoul = async () => {
       try {
-        const response = await axios.get(`${baseURL}/api/carsoul`);
+        const response = await axios.get(`${baseURL}/api/othercrousal`);
         setCarouselImages(response?.data?.data || []);
       } catch (error) {
         console.error("Failed to load carousel images:", error);
