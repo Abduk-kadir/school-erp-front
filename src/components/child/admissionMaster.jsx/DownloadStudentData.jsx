@@ -55,7 +55,18 @@ const DownloadStudentData = () => {
   const [divisions, setDivisions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importMessage, setImportMessage] = useState(null); // { type: 'success' | 'error', text: string }
+  const [incorrectImport, setIncorrectImport] = useState(null);
+  const studentFileRef = useRef(null);
   const workbook = new ExcelJS.Workbook();
+
+  const hasIncorrectRows = (incorrect) => {
+    if (!incorrect || typeof incorrect !== "object") return false;
+    return Object.values(incorrect).some(
+      (rows) => Array.isArray(rows) && rows.length > 0
+    );
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -206,10 +217,190 @@ const DownloadStudentData = () => {
     URL.revokeObjectURL(link.href);
   };
 
+  const handleImport = async () => {
+    const file = studentFileRef.current?.files?.[0];
+    if (!file) {
+      setImportMessage({ type: "error", text: "Please select an Excel file" });
+      return;
+    }
+
+    try {
+      setImporting(true);
+      setImportMessage(null);
+      setIncorrectImport(null);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const { data } = await axios.post(
+        `${baseURL}/api/studentData-download/import`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setImportMessage({
+        type: "success",
+        text: data?.message || "Students imported successfully",
+      });
+
+      const incorrect = data?.incorrect || null;
+      setIncorrectImport(hasIncorrectRows(incorrect) ? incorrect : null);
+
+      if (studentFileRef.current) studentFileRef.current.value = "";
+    } catch (err) {
+      setIncorrectImport(null);
+      setImportMessage({
+        type: "error",
+        text: err?.response?.data?.message || err?.message || "Import failed",
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const handleDownloadIncorrect = async () => {
+    if (!hasIncorrectRows(incorrectImport)) return;
+
+    const workbook = new ExcelJS.Workbook();
+
+    const instructions = workbook.addWorksheet("Instructions");
+    instructions.addRow(["Incorrect / Failed Import Rows"]);
+    instructions.addRow([""]);
+    instructions.addRow(["Fix these rows and import again."]);
+    instructions.addRow(["Do NOT change sheet names or column headers."]);
+    instructions.getColumn(1).width = 60;
+
+    Object.entries(incorrectImport).forEach(([sheetName, rows]) => {
+      if (!Array.isArray(rows) || rows.length === 0) return;
+
+      const columns = [
+        ...new Set(rows.flatMap((row) => Object.keys(row || {}))),
+      ].filter((col) => col !== "reg_no" && col !== "student_reg_no");
+
+      if (columns.length === 0) return;
+
+      const worksheet = workbook.addWorksheet(sheetName);
+      worksheet.addRow(columns);
+
+      const headerRow = worksheet.getRow(1);
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFB45309" },
+        };
+      });
+
+      rows.forEach((row) => {
+        worksheet.addRow(
+          columns.map((col) => {
+            const value = row?.[col];
+            if (value == null) return "";
+            return value;
+          })
+        );
+      });
+
+      columns.forEach((_, index) => {
+        worksheet.getColumn(index + 1).width = 22;
+      });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Student_Import_Incorrect.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  };
+
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
       {({ values, setFieldValue }) => (
         <Form className="chfi-wrapper dsd-page d-flex flex-column gap-3 pb-2">
+          <section className="chfi-card" aria-label="Import students">
+            <div className="card-header">
+              <div className="header-row">
+                <span className="header-icon">
+                  <Icon icon="solar:upload-bold-duotone" width="22" />
+                </span>
+                <div>
+                  <h5 className="card-title">Import Students</h5>
+                </div>
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="dsd-import-panel">
+                <div className="dsd-top-actions">
+                  <button
+                    type="button"
+                    className="dsd-top-action-btn"
+                    onClick={handleDownloadTemplate}
+                  >
+                    Download Template
+                  </button>
+                </div>
+
+                <div className="dsd-import-row">
+                  <input
+                    ref={studentFileRef}
+                    type="file"
+                    id="dsd-import-student-file"
+                    className="form-control dsd-import-file"
+                    accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                  />
+                  <button
+                    type="button"
+                    className="dsd-top-action-btn"
+                    onClick={handleImport}
+                    disabled={importing}
+                  >
+                    {importing ? "Importing..." : "Import Student"}
+                  </button>
+                  {hasIncorrectRows(incorrectImport) && (
+                    <button
+                      type="button"
+                      className="dsd-top-action-btn dsd-incorrect-btn"
+                      onClick={handleDownloadIncorrect}
+                    >
+                      Download Incorrect
+                    </button>
+                  )}
+                  {importMessage && (
+                    <span
+                      className={`dsd-import-message ${
+                        importMessage.type === "success"
+                          ? "dsd-import-message-success"
+                          : "dsd-import-message-error"
+                      }`}
+                    >
+                      {importMessage.text}
+                    </span>
+                  )}
+                </div>
+
+                <div className="dsd-import-row">
+                  <input
+                    type="file"
+                    id="dsd-import-photo-file"
+                    className="form-control dsd-import-file"
+                    accept="image/*,.zip"
+                    multiple
+                  />
+                  <button type="button" className="dsd-top-action-btn">
+                    Import Photo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section className="chfi-card" aria-label="Filter students">
             <div className="card-header">
               <div className="dsd-section-header">
@@ -223,11 +414,22 @@ const DownloadStudentData = () => {
                 </div>
 
                 <div className="dsd-header-actions">
-                  <button type="button" className="dsd-header-action-btn" onClick={handleDownloadTemplate}>
-                    Download Template
-                  </button>
-                  <button type="button" className="dsd-header-action-btn">
-                    Import Students
+                  <button
+                    className="dsd-header-action-btn"
+                    type="submit"
+                    disabled={downloading}
+                  >
+                    {downloading ? (
+                      <>
+                        <Icon icon="line-md:loading-loop" width="16" />
+                        Downloading...
+                      </>
+                    ) : (
+                      <>
+                        <Icon icon="solar:download-bold-duotone" width="18" />
+                        Download
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -364,26 +566,6 @@ const DownloadStudentData = () => {
               );
             })
           )}
-
-          <div className="dsd-actions mb-2">
-            <button
-              className="btn-submit"
-              type="submit"
-              disabled={downloading}
-            >
-              {downloading ? (
-                <>
-                  <Icon icon="line-md:loading-loop" width="16" />
-                  Downloading...
-                </>
-              ) : (
-                <>
-                  <Icon icon="solar:download-bold-duotone" width="18" />
-                  Download
-                </>
-              )}
-            </button>
-          </div>
         </Form>
       )}
     </Formik>
