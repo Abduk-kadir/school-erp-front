@@ -134,42 +134,9 @@ const MasterLayout = () => {
   const menuItems = [
     {
       title: "Dashboard",
+      path:"/dashboard",
       icon: "solar:home-smile-angle-outline",
-      children: [
-        { title: "Overview", path: "/" },
-        {
-          title: "Analytics",
-          icon: "solar:card-send-outline",
-          children: [
-            { title: "Traffic Sources", path: "/analytics/traffic" },
-            {
-              title: "User Behavior",
-              icon: "solar:card-send-outline",                       // ← new level
-              children: [
-                { title: "Session Duration", path: "/analytics/behavior/sessions" },
-                { title: "Page Views", path: "/analytics/behavior/pages" },
-                { title: "Bounce Rate", path: "/analytics/behavior/bounce" }
-              ]
-            },
-            { title: "Conversion Rate", path: "/analytics/conversion" }
-          ]
-        },
-        {
-          title: "My Page",
-          children: [
-            { title: "Profile Overview", path: "/dashboard/my-page" },
-            {
-              title: "Settings",                             // ← new level
-              children: [
-                { title: "Personal Info", path: "/dashboard/my-page/personal" },
-                { title: "Security", path: "/dashboard/my-page/security" },
-                { title: "Notifications", path: "/dashboard/my-page/notifications" }
-              ]
-            },
-            { title: "Activity Log", path: "/dashboard/my-page/activity" }
-          ]
-        }
-      ]
+     
     },
 
     {
