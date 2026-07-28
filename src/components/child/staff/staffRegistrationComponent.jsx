@@ -367,7 +367,7 @@ const StaffRegistrationComponent = ({ carouselImages = [] }) => {
                       />
                     </div>
                     <div className='col-md-4'>
-                      <label className='form-label starmark'>Father Name</label>
+                      <label className='form-label starmark'>Father/Husband Name</label>
                       <Field
                         type='text'
                         name='father_name'
