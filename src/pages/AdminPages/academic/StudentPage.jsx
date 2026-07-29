@@ -9,7 +9,7 @@ const StudentPage = () => {
   return (
 
     <StudentTable
-      url={`${baseURL}/api/personal-information/all`}
+      url={`${baseURL}/api/parmanent-personal-information`}
       columns={[
         { data: "id", name: "id", title: "ID" },
         { data: "reg_no", title: "Reg No" },

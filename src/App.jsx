@@ -6,6 +6,8 @@ const MasterLayout = lazy(() => import("./masterLayout/MasterLayout"));
 
 //importing admission module
 const ClassPage = lazy(() => import("./pages/ClassPage"));
+import SemesterPage from "./pages/AdminPages/master/SemesterPage";
+import StudentTypePage from "./pages/AdminPages/master/StudentTypePage";
 const AcademicYearPage = lazy(() => import("./pages/AcademicYearPage"));
 const DivisionPage = lazy(() => import("./pages/DivisionPage"));
 const CarsoulPage = lazy(() => import("./pages/AdminPages/master/CarsoulPage"));
@@ -340,11 +342,14 @@ function App() {
               <Route path="employee-master" element={<EmployeePage />} />
               <Route path="class-master" element={<ClassPage />} />
               <Route path="batch-master" element={<BatchPage />} />
+              <Route path="semester-master" element={<SemesterPage />} />
+              <Route path="student-type-master" element={<StudentTypePage />} />
               <Route path="academic-year-master" element={<AcademicYearPage />} />
               <Route path="division-master" element={<DivisionPage />} />
               <Route path="class-division-master" element={<ClassDivisionPage />} />
               <Route path="cast-master" element={<CastPage />} />
               <Route path="role-master" element={<RolePage />} />
+
               <Route path="add-declaration" element={<DeclarationPage />} />
               <Route path="phisally-disable" element={<PhisallyDisablePage />} />
               <Route path="holiday-master" element={<HolidayMasterPage />} />
@@ -428,6 +433,7 @@ function App() {
              
 
               <Route path="academic">
+                <Route path='student' element={<StudentPage/>} />
                 <Route path="download-student-data" element={<DownloadStudentDataPage />} />
                 <Route path="student-detail-bulk-update" element={<StudentBulkUpdatePage />} />
                 <Route path="in-out-attendance" element={<TakeInAndOutAttendancePage />} />

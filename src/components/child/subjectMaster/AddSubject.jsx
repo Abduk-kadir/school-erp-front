@@ -13,7 +13,7 @@ const AddSubject = () => {
 
 
     const initialValues = {
-        value: "", subject_code: "", abbreviation_name: "", subject_pattern: "", status: ""
+        value: "", subject_code: "", abbreviation_name: "", status: ""
     };
 
 
@@ -22,7 +22,6 @@ const AddSubject = () => {
             value: Yup.string().required("First name is required"),
             subject_code: Yup.string().required("subject code is required"),
             abbreviation_name: Yup.string().required("abbreviation_name is required"),
-            subject_pattern: Yup.string().required("suject category is required"),
             status: Yup.string().required("status is required"),
 
         }
@@ -107,28 +106,6 @@ const AddSubject = () => {
                                         </div>
                                         <ErrorMessage
                                             name="abbreviation_name"
-                                            component="div"
-                                            className="text-danger field-error"
-                                        />
-                                    </div>
-
-                                    <div className="field-row">
-                                        <label className="form-label">
-                                            <span className="label-dot" />
-                                            Subject Pattern
-                                        </label>
-                                        <div className="icon-field">
-                                            <span className="icon">
-                                                <Icon icon="solar:calendar-bold-duotone" width="18" />
-                                            </span>
-                                            <Field as="select" name='subject_pattern' className="form-select">
-                                                <option value="">Select pattern</option>
-                                                <option value='Annual'>Annual</option>
-                                                <option value='Semester'>Semester</option>
-                                            </Field>
-                                        </div>
-                                        <ErrorMessage
-                                            name="subject_pattern"
                                             component="div"
                                             className="text-danger field-error"
                                         />

@@ -10,9 +10,9 @@ const AssignSubject = () => {
     const [sujects, setSubjects] = useState([])
     const [programs, setPrograms] = useState([])
     const [electiveBasket, setElectiveBasket] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    const [studentTypesArr,setStudentTypesArr]=useState(['added','unadded','both'])
+    const [studentTypesArr,setStudentTypesArr]=useState([])
     const [studenttype,setStudenttype]=useState('')
-    const [semester, setSemester] = useState([1, 2, 3, 4, 5, 6])
+    const [semester, setSemester] = useState([])
 
     const initialValues = {
         batch: "",
@@ -43,9 +43,13 @@ const AssignSubject = () => {
                 const res = await axios.get(`${baseURL}/api/subjects`)
                 const res2 = await axios.get(`${baseURL}/api/programs`)
                 const res3 = await axios.get(`${baseURL}/api/elective-baskets`)
+                const res4 = await axios.get(`${baseURL}/api/semesters`)
+                const res5 = await axios.get(`${baseURL}/api/studenttypes`)
                 setClasses(data?.data || []);
                 setSubjects(res?.data?.data || [])
                 setPrograms(res2?.data?.data || [])
+                setSemester(res4?.data?.data || [])
+                setStudentTypesArr(res5?.data?.data || [])
 
             } catch (err) {
                 console.error("Failed to load classes", err);
@@ -156,8 +160,8 @@ const AssignSubject = () => {
                                 >
                                     <option value="">Semester</option>
                                     {semester.map((sem) => (
-                                        <option key={sem} value={sem}>
-                                            {sem}
+                                        <option key={sem.id} value={sem.id}>
+                                            {sem.semester}
                                         </option>
                                     ))}
                                 </Field>
@@ -241,14 +245,11 @@ const AssignSubject = () => {
                                 <label className="form-label">Select type of student</label>
                                 <Field as="select" name="studenttype" className="form-select">
                                     <option value="">Select</option>
-                                    {
-                                        studentTypesArr.map(elem => (
-                                            <option value={elem}>{elem}</option>
-
-                                        ))
-                                    }
-
-
+                                    {studentTypesArr.map((elem) => (
+                                        <option key={elem.id} value={elem.id}>
+                                            {elem.studenttype}
+                                        </option>
+                                    ))}
                                 </Field>
                                 <ErrorMessage name="subject_pattern" component="div" className="text-danger small mt-1" />
                             </div>}
