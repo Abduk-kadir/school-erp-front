@@ -4,6 +4,9 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import baseURL from "../../utils/baseUrl";
 import Spinner from "./Loader";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import "../../assets/css/mastercom.css";
+import "../../assets/css/addField.css";
 
 const AddField = () => {
   const [stages, setStages] = useState([]);
@@ -19,6 +22,7 @@ const AddField = () => {
     label: Yup.string().required("Label is required"),
     placeholder: Yup.string(),
     fieldTypeId: Yup.string().required("Please select field type"),
+    columnType: Yup.string().required("Please select column type"),
   
     stageId: Yup.string().required("Please select stage"),
     selectedTable: Yup.string().when("fieldTypeId", {
@@ -53,18 +57,18 @@ const AddField = () => {
     fetchData();
   }, []);
 
-  const getTableNameAndColumnType = (stageName) => {
+  const getTableNames = (stageName) => {
     switch (stageName) {
       case "Personal Information":
-        return { tableName: "personalinformations",tableName2:"par_student_personal_informations", columnType: "VARCHAR(255)" };
+        return { tableName: "personalinformations", tableName2: "par_student_personal_informations" };
       case "Parent Particular":
-        return { tableName: "parentparticulars",tableName2:"par_parentparticulars", columnType: "VARCHAR(255)" };
+        return { tableName: "parentparticulars", tableName2: "par_parentparticulars" };
       case "Education Detail":
-        return { tableName: "educationdetails",tableName2:"par_educational_details", columnType: "VARCHAR(255)" };
+        return { tableName: "educationdetails", tableName2: "par_educational_details" };
       case "Other Information":
-        return { tableName: "otherinformations",tableName2:"par_other_informations", columnType: "VARCHAR(255)" };
+        return { tableName: "otherinformations", tableName2: "par_other_informations" };
       default:
-        return { tableName: "",tableName2:"", columnType: "" };
+        return { tableName: "", tableName2: "" };
     }
   };
 
@@ -73,7 +77,7 @@ const AddField = () => {
 
     try {
       const selectedStage = stages.find((s) => s.id == values.stageId);
-      const { tableName, tableName2,columnType } = getTableNameAndColumnType(selectedStage?.name);
+      const { tableName, tableName2 } = getTableNames(selectedStage?.name);
 
       if (!tableName) {
         alert("Invalid stage selected");
@@ -88,7 +92,7 @@ const AddField = () => {
         isRequired: values.isRequired === "true",
         tableName,
         tableName2,
-        columnType,
+        columnType: values.columnType,
         order: Number(values.order),
       };
 
@@ -117,18 +121,28 @@ const AddField = () => {
   };
 
   return (
-    <div className="card">
+    <div className="chfi-wrapper add-field-master mb-3">
+      <div className="chfi-card">
       <div className="card-header">
-        <h6 className="card-title mb-0">Add Field to Stage</h6>
+        <div className="header-row">
+          <span className="header-icon">
+            <Icon icon="solar:widget-add-bold-duotone" width="20" />
+          </span>
+          <div>
+            <h5 className="card-title">Add Field to Stage</h5>
+          </div>
+        </div>
       </div>
 
-      <div className="card-body" style={{width:"50%"}}>
+      <div className="card-body">
+        <div className="form-area">
         <Formik
           initialValues={{
             fieldName: "",
             label: "",
             placeholder: "",
             fieldTypeId: "",
+            columnType: "VARCHAR(255)",
             
             stageId: "",
             selectedTable: "",
@@ -138,19 +152,24 @@ const AddField = () => {
           validationSchema={validationSchema} // remove if you don't want validation
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, values }) => (
-            <Form>
+          {({ isSubmitting, values, resetForm }) => (
+            <Form className="chfi-root add-field-root">
               <div >
 
                   <div className="row mt-3">
                   <div className="col-4"><label className="form-label">Field Name *</label></div>
                   <div className="col-8">
+                    <div className="icon-field">
+                      <span className="icon">
+                        <Icon icon="solar:text-field-focus-bold-duotone" width="18" />
+                      </span>
                     <Field
                     type="text"
                     name="fieldName"
                     className="form-control"
                     placeholder="Enter field name"
                   />
+                    </div>
                   </div>
                   
                   <ErrorMessage name="fieldName" component="div" className="text-danger small" />
@@ -160,12 +179,17 @@ const AddField = () => {
                   <label className="form-label">Label *</label>
                    </div>
                   <div className="col-8">
+                    <div className="icon-field">
+                      <span className="icon">
+                        <Icon icon="solar:tag-bold-duotone" width="18" />
+                      </span>
                     <Field
                     type="text"
                     name="label"
                     className="form-control"
                     placeholder="Enter label"
                   />
+                    </div>
                     </div> 
                   
                   <ErrorMessage name="label" component="div" className="text-danger small" />
@@ -176,12 +200,17 @@ const AddField = () => {
                   <label className="form-label">Placeholder</label>
                 </div>
                 <div className="col-8">
+                  <div className="icon-field">
+                    <span className="icon">
+                      <Icon icon="solar:text-square-bold-duotone" width="18" />
+                    </span>
                   <Field
                     type="text"
                     name="placeholder"
                     className="form-control"
                     placeholder="Enter placeholder"
                   />
+                  </div>
                 </div>
                 </div>
 
@@ -191,6 +220,10 @@ const AddField = () => {
                   <label className="form-label">Type of Field *</label>
                   </div>
                   <div className="col-8">
+                  <div className="icon-field">
+                    <span className="icon">
+                      <Icon icon="solar:widget-5-bold-duotone" width="18" />
+                    </span>
                   <Field
                     as="select"
                     name="fieldTypeId"
@@ -204,16 +237,45 @@ const AddField = () => {
                     ))}
                   </Field>
                   </div>
+                  </div>
                   <ErrorMessage name="fieldTypeId" component="div" className="text-danger small" />
                   </div>
-                
 
-                
+                <div className="row mt-3">
+                  <div className="col-4">
+                    <label className="form-label">Column Type *</label>
+                  </div>
+                  <div className="col-8">
+                    <div className="icon-field">
+                      <span className="icon">
+                        <Icon icon="solar:database-bold-duotone" width="18" />
+                      </span>
+                    <Field
+                      as="select"
+                      name="columnType"
+                      className="form-select"
+                    >
+                      <option value="VARCHAR(255)">VARCHAR(255)</option>
+                      <option value="INT">INT</option>
+                      <option value="BIGINT">BIGINT</option>
+                      <option value="TEXT">TEXT</option>
+                      <option value="DATE">DATE</option>
+                      <option value="TIME">TIME</option>
+                    </Field>
+                    </div>
+                  </div>
+                  <ErrorMessage name="columnType" component="div" className="text-danger small" />
+                </div>
+
                 <div className="row mt-3">
                   <div className="col-4">
                   <label className="form-label">Stage *</label>
                   </div>
                   <div className="col-8">
+                  <div className="icon-field">
+                    <span className="icon">
+                      <Icon icon="solar:layers-minimalistic-bold-duotone" width="18" />
+                    </span>
                   <Field
                     as="select"
                     name="stageId"
@@ -227,6 +289,7 @@ const AddField = () => {
                     ))}
                   </Field>
                   </div>
+                  </div>
                   <ErrorMessage name="stageId" component="div" className="text-danger small" />
                 </div>
 
@@ -235,6 +298,10 @@ const AddField = () => {
                   <label className="form-label">Select Values</label>
                   </div>
                   <div className="col-8">
+                  <div className="icon-field">
+                    <span className="icon">
+                      <Icon icon="solar:list-check-bold-duotone" width="18" />
+                    </span>
                   <Field
                     as="select"
                     name="selectedTable"
@@ -248,6 +315,7 @@ const AddField = () => {
                     ))}
                   </Field>
                   </div>
+                  </div>
                   <ErrorMessage name="selectedTable" component="div" className="text-danger small" />
                 </div>
 
@@ -256,6 +324,10 @@ const AddField = () => {
                   <label className="form-label">Required</label>
                   </div>
                   <div className="col-8">
+                  <div className="icon-field">
+                    <span className="icon">
+                      <Icon icon="solar:shield-check-bold-duotone" width="18" />
+                    </span>
                   <Field
                     as="select"
                     name="isRequired"
@@ -265,6 +337,7 @@ const AddField = () => {
                     <option value="true">Yes</option>
                   </Field>
                   </div>
+                  </div>
                 </div>
 
                 <div className="row mt-3">
@@ -272,6 +345,10 @@ const AddField = () => {
                   <label className="form-label">Order *</label>
                   </div>
                   <div className="col-8">
+                  <div className="icon-field">
+                    <span className="icon">
+                      <Icon icon="solar:sort-vertical-bold-duotone" width="18" />
+                    </span>
                   <Field
                     type="number"
                     name="order"
@@ -280,27 +357,42 @@ const AddField = () => {
                     placeholder="0"
                   />
                   </div>
+                  </div>
                   <ErrorMessage name="order" component="div" className="text-danger small" />
                 </div>
 
               </div>
 
-              <div className="mt-5">
+              <div className="actions">
                 {loading || isSubmitting ? (
                   <Spinner />
                 ) : (
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isSubmitting}
-                  >
-                    Submit
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className="btn btn-reset"
+                      onClick={() => resetForm()}
+                      disabled={isSubmitting}
+                    >
+                      <Icon icon="solar:restart-bold-duotone" width="16" />
+                      Reset
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-submit"
+                      disabled={isSubmitting}
+                    >
+                      <Icon icon="solar:check-circle-bold-duotone" width="18" />
+                      Save Field
+                    </button>
+                  </>
                 )}
               </div>
             </Form>
           )}
         </Formik>
+        </div>
+      </div>
       </div>
     </div>
   );

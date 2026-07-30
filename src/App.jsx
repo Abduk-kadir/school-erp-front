@@ -8,6 +8,8 @@ const MasterLayout = lazy(() => import("./masterLayout/MasterLayout"));
 const ClassPage = lazy(() => import("./pages/ClassPage"));
 import SemesterPage from "./pages/AdminPages/master/SemesterPage";
 import StudentTypePage from "./pages/AdminPages/master/StudentTypePage";
+
+const TitlePage=lazy(() => import("./pages/AdminPages/master/TitlePage"));
 const AcademicYearPage = lazy(() => import("./pages/AcademicYearPage"));
 const DivisionPage = lazy(() => import("./pages/DivisionPage"));
 const CarsoulPage = lazy(() => import("./pages/AdminPages/master/CarsoulPage"));
@@ -349,13 +351,13 @@ function App() {
               <Route path="class-division-master" element={<ClassDivisionPage />} />
               <Route path="cast-master" element={<CastPage />} />
               <Route path="role-master" element={<RolePage />} />
-
               <Route path="add-declaration" element={<DeclarationPage />} />
               <Route path="phisally-disable" element={<PhisallyDisablePage />} />
               <Route path="holiday-master" element={<HolidayMasterPage />} />
               <Route path="event-master" element={<EventMasterPage />} />
               <Route path='department-master' element={<DepartmentPage />} />
               <Route path='designation-master' element={<DesignationPage />} />
+              <Route path='title-master' element={<TitlePage/>}/>
               <Route path='carsoul-master' element={<CarsoulPage />} />
               <Route path='other-carsoul-master' element={<OtherCarsoulPage />} />
               <Route path="add-about-school" element={<AddAboutSchoolPage />} />

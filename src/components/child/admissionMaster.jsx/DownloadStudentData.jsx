@@ -177,9 +177,13 @@ const DownloadStudentData = () => {
 
     // Create sheets
     Object.entries(allFields).forEach(([sheetName, columns]) => {
-      const sheetColumns = columns.filter(
-        (col) => col !== "reg_no" && col !== "student_reg_no"
-      );
+      const sheetColumns = [
+        "id",
+        ...columns.filter(
+          (col) =>
+            col !== "id" && col !== "reg_no" && col !== "student_reg_no"
+        ),
+      ];
       if (sheetColumns.length === 0) return;
 
       const worksheet = workbook.addWorksheet(sheetName);

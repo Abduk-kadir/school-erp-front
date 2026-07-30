@@ -1,0 +1,109 @@
+/* Add Field form: presentation only, aligned with mastercom.css. */
+.add-field-master .form-area {
+  max-width: 640px;
+}
+
+.add-field-master .header-icon {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.add-field-root > div > .row {
+  display: grid;
+  grid-template-columns: minmax(160px, 36%) minmax(0, 1fr);
+  column-gap: 14px;
+  row-gap: 3px;
+  align-items: center;
+  margin: 0 0 11px !important;
+  --bs-gutter-x: 0;
+}
+
+.add-field-root > div > .row > .col-4,
+.add-field-root > div > .row > .col-8 {
+  width: auto;
+  max-width: none;
+  padding: 0;
+}
+
+.add-field-root > div > .row > .col-4 {
+  grid-column: 1;
+}
+
+.add-field-root > div > .row > .col-8 {
+  grid-column: 2;
+}
+
+.add-field-root > div > .row > .text-danger {
+  grid-column: 2;
+  margin-top: 2px;
+  font-size: 0.78rem;
+}
+
+.add-field-root .form-label {
+  position: relative;
+  margin: 0;
+  padding-left: 12px;
+  color: #1e293b;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.add-field-root .form-label::before {
+  content: "";
+  position: absolute;
+  top: 0.48em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2563eb;
+}
+
+.add-field-root .form-control,
+.add-field-root .form-select {
+  width: 100%;
+  height: var(--chfi-control-h);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 10px;
+  background-color: #fff;
+  color: #1e293b;
+  font-size: 0.88rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.add-field-root .form-control:hover,
+.add-field-root .form-select:hover {
+  border-color: rgba(59, 130, 246, 0.55);
+}
+
+.add-field-root .form-control:focus,
+.add-field-root .form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+.add-field-root .actions {
+  margin-left: calc(36% + 14px);
+  margin-top: 14px;
+}
+
+@media (max-width: 575.98px) {
+  .add-field-root > div > .row {
+    grid-template-columns: 1fr;
+  }
+
+  .add-field-root > div > .row > .col-4,
+  .add-field-root > div > .row > .col-8,
+  .add-field-root > div > .row > .text-danger {
+    grid-column: 1;
+  }
+
+  .add-field-root > div > .row > .col-4 {
+    margin-bottom: 4px;
+  }
+
+  .add-field-root .actions {
+    margin-left: 0;
+  }
+}
