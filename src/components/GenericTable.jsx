@@ -36,7 +36,7 @@ const GenericTableDataLayer = ({
     const $table = $(tableRef.current);
 
     datatableRef.current = $table.DataTable({
-      pageLength: 5,
+      pageLength: 10,
       processing: true,
       serverSide: true,
       destroy: true,

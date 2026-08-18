@@ -112,6 +112,7 @@ const AddField = () => {
       resetForm(); // optional: clear form after success
 
     } catch (error) {
+      console.log('error****************:',error)
       console.error("Submit error:", error.response?.data || error.message);
       alert("Error adding field. Check console.");
     } finally {

@@ -34,8 +34,8 @@ const EventMasterPage = () => {
         {data:"event",name:"event",title:"Event Name"},
         {data:"date",name:"date",title:"Date"},
        
-        {data:"class",name:"class",title:"Class"},
-        {data:"division",name:"division",title:"Division"},
+        {data:"classInfo.class_name",name:"class",title:"Class"},
+        {data:"divisionInfo.division_name",name:"division",title:"Division"},
         {
           data: null,
           title: "Actions",
