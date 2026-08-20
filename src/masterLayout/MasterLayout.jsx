@@ -224,6 +224,7 @@ const MasterLayout = () => {
         { title: "Program", path: "/dashboard/program" },
 
         { title: "Assign Subject", path: "/dashboard/assign-subject" },
+        { title: "Assign Subject To Student", path: "/dashboard/assign-subject-student" }
 
 
 

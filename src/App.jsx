@@ -54,6 +54,10 @@ const SubjectPage = lazy(() =>
 const AssignSubjectPage = lazy(() =>
   import("./pages/AdminPages/SubjectMaster/AssignSubjectPage")
 );
+
+const AssignSubjectStudent=lazy(() =>
+  import("./pages/AdminPages/SubjectMaster/AssignSubjectStudent")
+);
 const AddDocumentPage = lazy(() =>
   import("./pages/AdminPages/master/documentMaster/addDocumentPage")
 );
@@ -387,6 +391,9 @@ function App() {
               />
               <Route path="subject" element={<SubjectPage />} />
               <Route path="assign-subject" element={<AssignSubjectPage />} />
+              <Route path="assign-subject-student" element={<AssignSubjectStudent />} />
+
+              
               <Route path="program" element={<ProgramPage />} />
               <Route
                 path="document-master/add-document"
