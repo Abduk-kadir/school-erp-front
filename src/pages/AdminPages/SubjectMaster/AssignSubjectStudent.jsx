@@ -5,6 +5,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import Loader from '../../../helper/Loader';
+import '../../../assets/css/mastercom.css';
+import '../../../assets/css/academicOfflineFeeReport.css';
 
 
 const normalizeListResponse = (res) => {
@@ -86,6 +88,10 @@ function AssignSubjectStudent() {
   const [exactChoices, setExactChoice] = useState(null)
   const [loading, setLoading] = useState(false)
   const [isEdit, setEdit] = useState(false)
+  const [successMsg, setSuccessMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+  
+
 
 
 
@@ -129,6 +135,9 @@ function AssignSubjectStudent() {
   const handleSubmit = async (values) => {
     console.log('handle search', values)
     try {
+      setLoading(true)
+      setSuccessMsg('')
+      setErrorMsg('')
       let { data } = await axios.get(
         `${baseURL}/api/parmanent-personal-information`,
         {
@@ -152,7 +161,11 @@ function AssignSubjectStudent() {
 
     }
     catch (err) {
-      alert(err?.message ? err.data?.messaage : "error in fetching student")
+      setErrorMsg(err?.response?.data?.message || err?.message || "error in fetching student")
+
+    }
+    finally{
+      setLoading(false)
 
     }
 
@@ -222,25 +235,33 @@ function AssignSubjectStudent() {
   const handleSave = async () => {
     try {
       setLoading(true)
+      setSuccessMsg('')
+      setErrorMsg('')
+      let studentSet=new Set(selectedStudents)
+      const filterselectedOptionalSubject = selectedOptionalSubject.filter(
+        elem => studentSet.has(elem.student_reg_no)
+      ); 
+      console.log('filter data is:',filterselectedOptionalSubject)
       if (!isEdit) {
+         
+        let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments: filterselectedOptionalSubject })
+       
+        setSuccessMsg(data?.message || 'Subjects are added successfully')
 
       }
       else {
-        let studentSet=new Set(selectedStudents)
-        const filterselectedOptionalSubject = selectedOptionalSubject.filter(
-          elem => studentSet.has(elem.student_reg_no)
-        );   
-       // let { data } = await axios.post(`${baseURL}/api/studentsubjects/bulk`, { assignments: filterselectedOptionalSubject })
-        console.log('filter data is:',filterselectedOptionalSubject)
-        alert('sujects are added successfully')
+         
+        let { data } = await axios.put(`${baseURL}/api/studentsubjects/bulk`, { assignments: filterselectedOptionalSubject })
+        
+        setSuccessMsg(data?.message || 'Subjects are updated successfully')
       }
     }
     catch (err) {
-      alert(err.response?.data?.message || err.message || 'Error');
+      setErrorMsg(err.response?.data?.message || err.message || 'Error');
       console.log('error when saving student subject')
     }
     finally {
-      setSelectedOptionalSubject([])
+     
       setLoading(false)
     }
   }
@@ -260,6 +281,14 @@ function AssignSubjectStudent() {
     }
 
   }
+  const handleAllStudentCheckboxChange=(isChecked)=>{
+    if(isChecked){
+      setSelectedStudents(students.map(elem=>elem.reg_no))
+    }
+    else{
+      setSelectedStudents([])
+    }
+  }
 
   return (
     <div className="chfi-wrapper mb-3">
@@ -275,7 +304,30 @@ function AssignSubjectStudent() {
           </div>
         </div>
         <div className='card-body'>
+          {successMsg && (
+            <div className="alert alert-success alert-dismissible fade show" role="alert">
+              {successMsg}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setSuccessMsg('')}
+              />
+            </div>
+          )}
+
+          {errorMsg && (
+            <div className="alert alert-danger alert-dismissible fade show" role="alert">
+              {errorMsg}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setErrorMsg('')}
+              />
+            </div>
+          )}
+
           {loading && <Loader message={'saving subject'} />}
+          <div className="form-area">
           <Formik
             initialValues={initialValues}
             //validationSchema={validationSchema}
@@ -286,11 +338,17 @@ function AssignSubjectStudent() {
 
 
               return (
-                <Form>
+                <Form className="chfi-root">
 
-                  <div className='row mb-20'>
-                    <div className='col-4'>
-                      <label htmlFor="class">Class</label>
+                  <div className="field-row">
+                    <label className="form-label">
+                      <span className="label-dot" />
+                      Class
+                    </label>
+                    <div className="icon-field">
+                      <span className="icon">
+                        <Icon icon="solar:square-academic-cap-bold-duotone" width="18" />
+                      </span>
                       <Field as="select"
                         name="classid"
                         onChange={(e) => {
@@ -312,11 +370,19 @@ function AssignSubjectStudent() {
 
 
                       </Field>
-                      <ErrorMessage name="class" component="div" />
                     </div>
+                    <ErrorMessage name="class" component="div" className="text-danger field-error" />
+                  </div>
 
-                    <div className='col-4'>
-                      <label className='form-lebel'>Select Division</label>
+                  <div className="field-row">
+                    <label className="form-label">
+                      <span className="label-dot" />
+                      Select Division
+                    </label>
+                    <div className="icon-field">
+                      <span className="icon">
+                        <Icon icon="solar:users-group-rounded-bold-duotone" width="18" />
+                      </span>
                       <Field as="select" name="divisionid" className='form-select' >
                         <option value="">-- Select Division --</option>
                         {
@@ -331,11 +397,19 @@ function AssignSubjectStudent() {
 
 
                       </Field>
-                      <ErrorMessage name="class" component="div" />
                     </div>
+                    <ErrorMessage name="class" component="div" className="text-danger field-error" />
+                  </div>
 
-                    <div className='col-4'>
-                      <label className='form-lebel'>Select Batch</label>
+                  <div className="field-row">
+                    <label className="form-label">
+                      <span className="label-dot" />
+                      Select Batch
+                    </label>
+                    <div className="icon-field">
+                      <span className="icon">
+                        <Icon icon="solar:calendar-bold-duotone" width="18" />
+                      </span>
                       <Field as="select"
                         name="batch_name"
                         className='form-select'
@@ -381,130 +455,182 @@ function AssignSubjectStudent() {
 
 
                       </Field>
-                      <ErrorMessage name="class" component="div" />
                     </div>
-                    <div className='d-flex justify-content-end mt-3'>
-                      <button className='btn btn-success' type='submit'> Search</button>
+                    <ErrorMessage name="class" component="div" className="text-danger field-error" />
+                  </div>
 
-                    </div>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      className="btn btn-reset"
+                      onClick={() => resetForm()}
+                      disabled={isSubmitting}
+                    >
+                      <Icon icon="solar:restart-bold-duotone" width="16" />
+                      Reset
+                    </button>
+                    <button className="btn btn-submit" type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? (
+                        <>
+                          <Icon icon="line-md:loading-loop" width="16" />
+                          Searching...
+                        </>
+                      ) : (
+                        <>
+                          <Icon icon="solar:magnifer-bold-duotone" width="18" />
+                          Search
+                        </>
+                      )}
+                    </button>
                   </div>
 
                 </Form>
               );
             }}
           </Formik>
-          <h6>Complusary Subjects:
-            <span className='text-secondary'>{complusarySub.map(elem => elem?.subjectName).join(',')}</span>
+          </div>
 
-          </h6>
-          <table class="table border">
-            <thead>
-              <tr>
-                <th>
-                  
-                </th>
-                <th>Reg No</th>
-                <th>Student Name</th>
-                <th>Roll NO </th>
-                <th>
-                  {optionalSub.map((subject) => {
-                    const subjectId = subject.subjectId || subject.id;
-                    const fullySelected = isSubjectFullySelected(subjectId);
+          <div className="chfi-root mt-3 mb-3">
+            <label className="form-label mb-2">
+              <span className="label-dot" />
+              Compulsory Subjects
+            </label>
+            <div className="d-flex flex-wrap gap-2 align-items-center">
+              {complusarySub.length === 0 ? (
+                <span className="text-secondary" style={{ fontSize: '0.85rem' }}>
+                  No compulsory subjects for selected batch
+                </span>
+              ) : (
+                complusarySub.map((elem, idx) => (
+                  <span className="chip-item" key={elem?.subjectId || idx}>
+                    {elem?.subjectName}
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
 
+          <div className="report-table-wrap">
+            <table className="table report-table mb-0">
+              <thead>
+                <tr>
+                  <th style={{ width: 52, textAlign: 'center' }}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={students.length > 0 && selectedStudents.length === students.length}
+                      onChange={(e) =>
+                        handleAllStudentCheckboxChange(e.target.checked)
+                      }
+                    />
+                  </th>
+                  <th>Reg No</th>
+                  <th>Student Name</th>
+                  <th>Roll No</th>
+                  <th>
+                    {exactChoices != null && exactChoices !== '' && (
+                      <span className="me-3 text-nowrap" style={{ fontSize: '0.78rem', fontWeight: 700 }}>
+                        Exact Choices: {exactChoices}
+                      </span>
+                    )}
+                    {optionalSub.map((subject) => {
+                      const subjectId = subject.subjectId || subject.id;
+                      const fullySelected = isSubjectFullySelected(subjectId);
 
-                    return (
-                      <div className="form-check form-check-inline" key={`header-${subjectId}`}>
+                      return (
+                        <div className="form-check form-check-inline" key={`header-${subjectId}`}>
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`header-opt-${subjectId}`}
+                            checked={fullySelected}
+                            onChange={(e) =>
+                              handleHeaderSubjectChange(subjectId, e.target.checked)
+                            }
+                          />
+                          <label
+                            className="form-check-label fw-bold"
+                            htmlFor={`header-opt-${subjectId}`}
+                          >
+                            {subject?.subjectName}
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {students.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center text-secondary py-4">
+                      No students found. Search by class, division and batch.
+                    </td>
+                  </tr>
+                ) : (
+                  students.map(elem => (
+                    <tr key={elem.reg_no}>
+                      <td style={{ textAlign: 'center' }}>
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          id={`header-opt-${subjectId}`}
-                          checked={fullySelected}
-
+                          checked={selectedStudents.includes(elem?.reg_no)}
                           onChange={(e) =>
-                            handleHeaderSubjectChange(subjectId, e.target.checked)
+                            handleStudentCheckboxChange(
+                              elem.reg_no,
+                              e.target.checked
+                            )
                           }
                         />
-                        <label
-                          className="form-check-label fw-bold"
-                          htmlFor={`header-opt-${subjectId}`}
-                        >
-                          {subject?.subjectName}
-                        </label>
-                      </div>
-                    );
-                  })}
-                </th>
+                      </td>
+                      <td>{elem.reg_no}</td>
+                      <td>{elem.first_name + " " + elem.last_name}</td>
+                      <td>{elem?.roll_number}</td>
+                      <td>
+                        {optionalSub.map((subject) => {
+                          const subjectId = subject.subjectId || subject.id;
+                          const regNo = elem.reg_no || elem.id;
 
-              </tr>
-            </thead>
+                          const isChecked = selectedOptionalSubject.some(
+                            (item) => item.student_reg_no === regNo && item.subject_id === subjectId
+                          );
 
-            <tbody>
-              {
-                students.map(elem => (
-                  <tr>
-                    <td>
+                          return (
+                            <div className="form-check form-check-inline" key={subjectId}>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={`opt-${regNo}-${subjectId}`}
+                                checked={isChecked}
+                                onChange={(e) =>
+                                  handleOptionalSubjectChange(regNo, subjectId, e.target.checked)
+                                }
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor={`opt-${regNo}-${subjectId}`}
+                              >
+                                {subject?.subjectName}
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-                    <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={selectedStudents.includes(elem?.reg_no)}
-                    onChange={(e) =>
-                      handleStudentCheckboxChange(
-                        elem.reg_no,
-                        e.target.checked
-                      )
-                    }
-                  />
-
-
-
-                    </td>
-                    <td>{elem.reg_no}</td>
-                    <td>{elem.first_name + " " + elem.last_name}</td>
-                    <td>{elem?.roll_number}</td>
-                    <td>
-
-
-                      {optionalSub.map((subject) => {
-                        const subjectId = subject.subjectId || subject.id; // adjust according to your API
-                        const regNo = elem.reg_no || elem.id;               // prefer reg_no if available
-
-                        const isChecked = selectedOptionalSubject.some(
-                          (item) => item.student_reg_no === regNo && item.subject_id === subjectId
-                        );
-
-                        return (
-                          <div className="form-check form-check-inline" key={subjectId}>
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              id={`opt-${regNo}-${subjectId}`}
-                              checked={isChecked}
-                              onChange={(e) =>
-                                handleOptionalSubjectChange(regNo, subjectId, e.target.checked)
-                              }
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor={`opt-${regNo}-${subjectId}`}
-                            >
-                              {subject?.subjectName}
-                            </label>
-                          </div>
-                        );
-                      })}
-
-                    </td>
-
-                  </tr>
-                ))
-              }
-
-            </tbody>
-          </table>
-          <div className='d-flex justify-content-end mt-3'>
-            <button className='btn btn-success' onClick={handleSave}>Save</button>
-
+          <div className="chfi-root mt-3">
+            <div className="actions" style={{ justifyContent: 'flex-end' }}>
+              <button type="button" className="btn btn-submit" onClick={handleSave}>
+                <Icon icon="solar:diskette-bold-duotone" width="18" />
+                Save
+              </button>
+            </div>
           </div>
         </div>
 
