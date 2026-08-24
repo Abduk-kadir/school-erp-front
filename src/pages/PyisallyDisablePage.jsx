@@ -5,7 +5,9 @@ import GenericTableDataLayer from "../components/GenericTable";
 import AddPhisallyDisable from "../components/child/master/AddPhisallyDisable";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
+import { useState } from "react";
 const PhisallyDisablePage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -24,12 +26,17 @@ const PhisallyDisablePage = () => {
     console.log("Edit physically disable:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <>
 
-     <AddPhisallyDisable/>
+     <AddPhisallyDisable onParentSubmit={handleSubmit}/>
 
        <GenericTableDataLayer
+                       key={tableRefreshKey}
                        pageName="Physically Disable"
                        url={`${baseURL}/api/physically-disable`}
                         columns={[

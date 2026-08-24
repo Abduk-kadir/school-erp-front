@@ -5,6 +5,7 @@ import axios from "axios";
 import baseURL from "../../utils/baseUrl";
 import "../../assets/css/mastercom.css";
 
+
 const validationSchema = Yup.object().shape({
   class_name: Yup.string().trim().required("Class Name is required"),
   class_code: Yup.string().trim().required("Class Code is required"),
@@ -19,7 +20,7 @@ const validationSchema = Yup.object().shape({
     .required("Admission Form Fee is required"),
 });
 
-const AddClass = () => {
+const AddClass = ({onParentSubmit}) => {
   return (
     <div className='chfi-wrapper mb-3'>
       <div className='chfi-card'>
@@ -51,6 +52,8 @@ const AddClass = () => {
                 await axios.post(`${baseURL}/api/classes`, payload);
                 resetForm();
                 alert("Class saved successfully!");
+
+                onParentSubmit()
               } catch (e) {
                 console.error("Failed to save class:", e);
                 alert(e.response.data.message||e.message);

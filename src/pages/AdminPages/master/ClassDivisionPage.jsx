@@ -6,6 +6,7 @@ import axios from "axios"
 import baseURL from "../../../utils/baseUrl";
 import { useState } from "react";
 const ClassDivisionPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
  
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
@@ -26,11 +27,16 @@ const ClassDivisionPage = () => {
     // open modal or set edit state
   };
 
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
+
   return (
     <>
 
-      <AddClassDivision />
+      <AddClassDivision onParentSubmit={handleSubmit} />
       <GenericTableDataLayer
+        key={tableRefreshKey}
         pageName="Class Division"
         url={`${baseURL}/api/class-div-map-masters`}
         columns={[

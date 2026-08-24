@@ -2,7 +2,9 @@ import HolidayEventCommon from "../../../components/child/academic/HolidayEventC
 import GenericTableDataLayer from "../../../components/GenericTable";
 import axios from "axios";
 import baseURL from "../../../utils/baseUrl";
+import { useState } from "react";
 const EventMasterPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -21,6 +23,10 @@ const EventMasterPage = () => {
     console.log("Edit event master:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <div>
       <HolidayEventCommon
@@ -28,8 +34,9 @@ const EventMasterPage = () => {
         icon="solar:calendar-bold-duotone"
         nameLabel="Event"
         saveUrl="/api/event-masters"
+        onParentSubmit={handleSubmit}
       />
-      <GenericTableDataLayer pageName="Event Master" url={`${baseURL}/api/event-masters`} columns={[
+      <GenericTableDataLayer key={tableRefreshKey} pageName="Event Master" url={`${baseURL}/api/event-masters`} columns={[
         {data:"id",name:"id",title:"ID"},
         {data:"event",name:"event",title:"Event Name"},
         {data:"date",name:"date",title:"Date"},

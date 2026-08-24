@@ -50,7 +50,7 @@ const ImagePreviewGrid = ({ images, onRemove }) => {
   );
 };
 
-const AddCarsoul = ({pageName}) => {
+const AddCarsoul = ({pageName, onParentSubmit}) => {
   return (
     <div className="chfi-wrapper declaration-wrapper mb-3">
       <div className="chfi-card">
@@ -97,6 +97,7 @@ const AddCarsoul = ({pageName}) => {
 
                   alert("Carousel saved successfully");
                   resetForm();
+                  onParentSubmit()
                 } catch (err) {
                   console.error("Carousel save failed:", err);
                   alert(err?.response?.data?.message || err?.message);

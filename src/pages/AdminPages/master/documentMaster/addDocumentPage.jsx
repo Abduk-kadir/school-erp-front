@@ -6,6 +6,7 @@ import AddDocument from "../../../../components/child/master/documentMaster/AddD
 import axios from "axios";
 import baseURL from "../../../../utils/baseUrl";
 const AddDocumentPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -25,11 +26,16 @@ const AddDocumentPage = () => {
     // open modal or set edit state
   };
 
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
+
   return (
     <>
 
-      <AddDocument />
+      <AddDocument onParentSubmit={handleSubmit} />
       <GenericTableDataLayer
+        key={tableRefreshKey}
         pageName="Documents"
 
 

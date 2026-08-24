@@ -3,8 +3,10 @@ import GenericTableDataLayer from "../components/GenericTable";
 import AddDivision from "../components/child/master/AddDivision";
 import axios from "axios"
 import baseURL from "../utils/baseUrl";
+import { useState } from "react";
 
 const DivisionPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -23,12 +25,17 @@ const DivisionPage = () => {
     console.log("Edit institute:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <>
 
-     <AddDivision/>
+     <AddDivision onParentSubmit={handleSubmit}/>
 
          <GenericTableDataLayer
+                key={tableRefreshKey}
                 pageName="Divisions"
                 url={`${baseURL}/api/divisions`}
                  columns={[

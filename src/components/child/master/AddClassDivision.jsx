@@ -104,7 +104,7 @@ const MultiChipSelect = ({
   );
 };
 
-const AddClassDivision = () => {
+const AddClassDivision = ({onParentSubmit}) => {
   const [classes, setClasses] = useState([]);
   const [divisions, setDivisions] = useState([]);
 
@@ -158,6 +158,8 @@ const AddClassDivision = () => {
                   await axios.post(`${baseURL}/api/class-div-map-masters`, payload);
                   resetForm();
                   alert("Class division mapping saved successfully!");
+
+                onParentSubmit()
                 } catch (error) {
                   console.error("Failed to save class division mapping:", error);
                   alert(

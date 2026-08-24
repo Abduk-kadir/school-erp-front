@@ -7,7 +7,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import axios from "axios";
 import "../../../assets/css/mastercom.css";
-const AddProgram = () => {
+const AddProgram = ({onParentSubmit}) => {
     const initialValues = {
          program_name: ""
     };
@@ -45,6 +45,7 @@ const AddProgram = () => {
                                 await axios.post(`${baseURL}/api/programs`, values)
                                 alert("Form submitted successfully!");
                                 resetForm();
+                                onParentSubmit()
                             }}
                         >
                             {({ isSubmitting, resetForm }) => (

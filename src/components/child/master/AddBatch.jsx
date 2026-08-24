@@ -150,7 +150,7 @@ const MultiChipSelect = ({
   );
 };
 
-const AddBatch = () => {
+const AddBatch = ({onParentSubmit}) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -230,6 +230,7 @@ const AddBatch = () => {
       const res = await axios.post(`${baseURL}/api/batches`, payload);
       setSuccessMsg(getApiMessage(res?.data) || 'Batch saved successfully');
       resetForm();
+      onParentSubmit()
     } catch (error) {
       console.error('Failed to save batch:', error);
       const msg =

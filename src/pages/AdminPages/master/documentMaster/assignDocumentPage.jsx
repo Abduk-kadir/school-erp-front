@@ -5,6 +5,7 @@ import AssignDocument from "../../../../components/child/master/documentMaster/a
 import axios from "axios";
 import baseURL from "../../../../utils/baseUrl";
 const AssignDocumentPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -23,12 +24,17 @@ const AssignDocumentPage = () => {
     console.log("Edit requirement document:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
  
   return (
     <>
-            <AssignDocument/>
+            <AssignDocument onParentSubmit={handleSubmit}/>
              
               <GenericTableDataLayer
+                key={tableRefreshKey}
                 pageName="Assign Documents"
 
 

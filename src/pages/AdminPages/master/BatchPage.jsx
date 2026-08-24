@@ -3,8 +3,10 @@ import AddBatch from '../../../components/child/master/AddBatch'
 import GenericTableDataLayer from '../../../components/GenericTable'
 import axios from 'axios'
 import baseURL from '../../../utils/baseUrl'
+import { useState } from 'react'
 
 const BatchPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0)
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -23,10 +25,14 @@ const BatchPage = () => {
     console.log("Edit batch:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <div>
-      <AddBatch />
-      <GenericTableDataLayer pageName="Batches" url={`${baseURL}/api/batches`} columns={[
+      <AddBatch onParentSubmit={handleSubmit} />
+      <GenericTableDataLayer key={tableRefreshKey} pageName="Batches" url={`${baseURL}/api/batches`} columns={[
         {data:"id",name:"id",title:"ID"},
         {data:"batch_name",name:"batch_name",title:"Batch Name"},
         {data:"class_names",name:"class_names",title:"Classes"},

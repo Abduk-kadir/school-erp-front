@@ -10,7 +10,7 @@ const validationSchema = Yup.object().shape({
   division_code: Yup.string().trim().required("Division Code is required"),
 });
 
-const AddDivision = () => {
+const AddDivision = ({onParentSubmit}) => {
   return (
     <div className="chfi-wrapper mb-3">
       <div className="chfi-card">
@@ -35,6 +35,8 @@ const AddDivision = () => {
                   await axios.post(`${baseURL}/api/divisions`, values);
                   resetForm();
                   alert("Division saved successfully!");
+
+                onParentSubmit()
                 } catch (e) {
                   console.error("Failed to save division:", e);
                   alert("Failed to save division. Please try again.");

@@ -3,7 +3,9 @@ import GenericTableDataLayer from "../components/GenericTable";
 import DeclarationStatement from "../components/child/master/Declaration/DeclarationStatement";
 import axios from "axios"
 import baseURL from "../utils/baseUrl";
+import { useState } from "react";
 const DeclarationPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -22,11 +24,16 @@ const DeclarationPage = () => {
     console.log("Edit institute:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <>
 
-       <DeclarationStatement/>
+       <DeclarationStatement onParentSubmit={handleSubmit}/>
        <GenericTableDataLayer
+                key={tableRefreshKey}
                 pageName="Declarations"
                 url={`${baseURL}/api/declarations`}
                  columns={[

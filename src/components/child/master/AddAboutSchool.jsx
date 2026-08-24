@@ -6,7 +6,7 @@ import DeclarationEditor from "./Declaration/DeclarationEditor";
 import "../../../assets/css/mastercom.css";
 import "../../../assets/css/declaration.css";
 
-const AddAboutSchool = () => {
+const AddAboutSchool = ({onParentSubmit}) => {
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [editorKey, setEditorKey] = useState(0);
@@ -42,6 +42,7 @@ const AddAboutSchool = () => {
       alert("About school saved successfully");
       setImages([]);
       setEditorKey((k) => k + 1);
+      onParentSubmit()
     } catch (err) {
       console.error("About school save failed:", err);
       alert(err?.response?.data?.message||err?.message);

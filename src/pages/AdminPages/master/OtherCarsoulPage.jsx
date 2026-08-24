@@ -3,8 +3,10 @@ import AddCarsoul from '../../../components/child/master/AddCarsoul'
 import GenericTableDataLayer from '../../../components/GenericTable'
 import axios from 'axios'
 import baseURL from '../../../utils/baseUrl'
+import { useState } from 'react'
 
 const OtherCarsoulPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0)
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -23,10 +25,14 @@ const OtherCarsoulPage = () => {
     console.log("Edit batch:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <div>
-      <AddCarsoul  pageName='other carsoul'/>
-      <GenericTableDataLayer pageName="Carousel" url={`${baseURL}/api/othercrousal`} columns={[
+      <AddCarsoul  pageName='other carsoul' onParentSubmit={handleSubmit}/>
+      <GenericTableDataLayer key={tableRefreshKey} pageName="Carousel" url={`${baseURL}/api/othercrousal`} columns={[
         {data:"id",name:"id",title:"ID"},
         {
           data: "image_url",

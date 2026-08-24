@@ -119,6 +119,7 @@ const HolidayEventCommon = ({
   icon = 'solar:bell-bold-duotone',
   nameLabel = 'Name',
   saveUrl,
+  onParentSubmit,
 }) => {
   const fieldName = nameLabel.toLowerCase();
   const initialValues = getInitialValues(fieldName);
@@ -250,6 +251,7 @@ const HolidayEventCommon = ({
       resetForm();
       setClassOptions([]);
       setDivisionOptions([]);
+      onParentSubmit()
     } catch (error) {
       console.error('Save failed:', error);
       setErrorMsg(

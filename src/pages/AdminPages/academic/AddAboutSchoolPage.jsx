@@ -3,7 +3,9 @@ import AddAboutSchool from '../../../components/child/master/AddAboutSchool'
 import GenericTableDataLayer from '../../../components/GenericTable'
 import axios from 'axios'
 import baseURL from '../../../utils/baseUrl'
+import { useState } from 'react'
 const AddAboutSchoolPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0)
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
@@ -21,10 +23,15 @@ const AddAboutSchoolPage = () => {
     console.log("Edit about school:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <div>
-      <AddAboutSchool />
+      <AddAboutSchool onParentSubmit={handleSubmit} />
       <GenericTableDataLayer
+        key={tableRefreshKey}
         pageName="About School"
         url={`${baseURL}/api/about-institute`}
         columns={[

@@ -9,7 +9,7 @@ const validationSchema = Yup.object().shape({
   value: Yup.string().trim().required("Disability name is required"),
 });
 
-const AddPhisallyDisable = () => {
+const AddPhisallyDisable = ({onParentSubmit}) => {
   return (
     <div className="chfi-wrapper mb-3">
       <div className="chfi-card">
@@ -34,6 +34,8 @@ const AddPhisallyDisable = () => {
                   await axios.post(`${baseURL}/api/physically-disable`, { value: values.value });
                   resetForm();
                   alert("Disability saved successfully!");
+
+                onParentSubmit()
                 } catch (e) {
                   console.error("Failed to save disability:", e);
                   alert("Failed to save disability. Please try again.");

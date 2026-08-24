@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../../utils/baseUrl";
 import "../../../../assets/css/mastercom.css";
 
-const AssignDocument = () => {
+const AssignDocument = ({onParentSubmit}) => {
   const [classes, setClasses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -60,6 +60,7 @@ const AssignDocument = () => {
 
       alert("Document requirement assigned successfully!");
       resetForm();
+      onParentSubmit()
     } catch (error) {
       console.error("Submit error:", error);
       alert(

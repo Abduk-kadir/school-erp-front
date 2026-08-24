@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import "../../../../assets/css/mastercom.css";
 import "../../../../assets/css/declaration.css";
 
-const DeclarationStatement = () => {
+const DeclarationStatement = ({onParentSubmit}) => {
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
 
@@ -34,6 +34,7 @@ const DeclarationStatement = () => {
         content: htmlContent,
       });
       alert("Declaration is saved successfully");
+      onParentSubmit()
     } catch (err) {
       alert("Declaration saving error");
     }

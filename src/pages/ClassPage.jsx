@@ -4,8 +4,10 @@ import GenericTableDataLayer from "../components/GenericTable";
 import AddClass from "../components/child/AddClass";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
+import { useState } from "react";
 
 const ClassPage = () => {
+  const [tableRefreshKey, setTableRefreshKey] = useState(0);
   const handleDelete = async (id, table) => {
     const ok = window.confirm("Are you sure you want to delete this record?");
 
@@ -25,11 +27,16 @@ const ClassPage = () => {
     console.log("Edit class:", id);
     // open modal or set edit state
   };
+
+  const handleSubmit = async (values) => {
+        setTableRefreshKey((prev) => prev + 1);
+};
   return (
     <>
 
-      <AddClass />
+      <AddClass onParentSubmit={handleSubmit} />
       <GenericTableDataLayer
+        key={tableRefreshKey}
         url={`${baseURL}/api/classes`}
         columns={[
           { data: "id", name: "id", title: "ID" },

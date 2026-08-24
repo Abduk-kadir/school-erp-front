@@ -5,7 +5,7 @@ import baseURL from "../../../../utils/baseUrl";
 import axios from "axios";
 import "../../../../assets/css/mastercom.css";
 
-const AddDocument = () => {
+const AddDocument = ({onParentSubmit}) => {
   const initialValues = {
     name: "",
   };
@@ -19,6 +19,7 @@ const AddDocument = () => {
       await axios.post(`${baseURL}/api/document-types`, values);
       alert("Document added successfully");
       resetForm();
+      onParentSubmit()
     } catch (error) {
       console.error(error);
       alert(error?.response?.data?.message || "Something went wrong");
