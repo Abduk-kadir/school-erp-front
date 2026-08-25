@@ -172,6 +172,11 @@ const MasterLayout = () => {
         { title: "Academic Year", path: "/dashboard/academic-year-master" },
         { title: "Class", path: "/dashboard/class-master" },
         {title:"Class&Division",path:"/dashboard/class-division-master"},
+        {
+          title: "Class wise Schools",
+          
+          path: "/dashboard/class-wise-school",
+        },
         { title: "Batch", path: "/dashboard/batch-master" },
         { title: "Division", path: "/dashboard/division-master" },
         {title:"Semester",path:"/dashboard/semester-master"},
@@ -191,6 +196,7 @@ const MasterLayout = () => {
         { title: "Phisally Disable", path: "/dashboard/phisally-disable" },
         {title:"Holiday",path:"/dashboard/holiday-master"},
         {title:"Event ",path:"/dashboard/event-master"},
+       
         {title:"About School",path:"/dashboard/add-about-school"},
         {title:"Carsoul ",path:"/dashboard/carsoul-master"},
         {title:"Other Carsouls",path:"/dashboard/other-carsoul-master"},
@@ -209,12 +215,14 @@ const MasterLayout = () => {
             { title: "class-filed", path: "admission-form-master/class-field" }
           ]
         },
+        
 
 
 
 
       ]
     },
+   
 
     {
       title: "Subject Master",
@@ -231,96 +239,6 @@ const MasterLayout = () => {
       ]
     },
     {
-      title: "Academic",
-      icon: "solar:square-academic-cap-outline",
-      children: [
-        { title: "Student", path: "/dashboard/academic/student" },
-        { title: "Download Student", path: "/dashboard/academic/download-student-data" },
-        {title:"Student Detail Bulk Update",path:"/dashboard/academic/student-detail-bulk-update"},
-        {
-          title: "Attendance",
-          children: [
-            { title: "In/Out",
-              children: [
-                { title: "Take Attendance", path: "/dashboard/academic/in-out-attendance" },
-                { title: "Detail Report", path: "/dashboard/academic/in-out-attendance-detail-report" },
-                { title: "Summary Report", path: "/dashboard/academic/in-out-attendance-summary-report" },
-                { title: "Monthly Report", path: "/dashboard/academic/in-out-attendance-monthly-report" },
-                { title: "Yearly Report", path: "/dashboard/academic/in-out-attendance-yearly-report" }
-              ]
-            },
-            { title: "Lecture Wise Attendance",
-              children: [
-                { title: "Take Attendance", path: "/dashboard/academic/lecture-wise-attendance" },
-                { title: "Detail Report", path: "/dashboard/academic/lecture-wise-attendance-detail-report" },
-                { title: "Staff wise Report", path: "/dashboard/academic/lecture-wise-attendance-summary-report" },
-                
-              ]
-            },
-          ]
-        },
-        {
-          title: "Notification",
-          children: [
-            { title: "Send Notification",path:"/dashboard/academic/send-notification"
-              
-            },
-            { title: "Fiew Notification",path:"/dashboard/academic/view-notification"
-             
-            },
-          ]
-        },
-        
-        {
-          title: "Diary",
-          children: [
-            { title: "Send Diary",path:"/dashboard/academic/send-diary"
-              
-            },
-            { title: "Fiew Diary",path:"/dashboard/academic/view-diary"
-             
-            },
-          ]
-        },
-        {
-          title: "Notes",
-          children: [
-            { title: "Send Notes",path:"/dashboard/academic/send-notes"
-              
-            },
-            { title: "View Notes",path:"/dashboard/academic/view-notes"
-             
-            },
-          ]
-        },
-        {
-          title: "Assignment",
-          children: [
-            { title: "Send Assignment",path:"/dashboard/academic/send-assignment"
-              
-            },
-            { title: "View Assignment",path:"/dashboard/academic/view-assignment"
-             
-            },
-          ]
-        },
-        {
-          title: "Time Table",
-          children: [
-            { title: "Send Time Table",path:"/dashboard/academic/send-time-table"
-              
-            },
-            { title: "View Time Table",path:"/dashboard/academic/view-time-table"
-             
-            },
-          ]
-        },
-        
-
-      ]
-    },
-
-    {
       title: "Staff",
       icon: "solar:users-group-rounded-outline",
       children: [
@@ -331,7 +249,32 @@ const MasterLayout = () => {
 
       ]
     },
-
+    {
+      title: "Admission",
+      icon: "solar:document-add-outline",
+      children: [
+        {
+          title: "Addmission Master",
+          children: [
+            { title: "Seat Allotment", path: "/dashboard/admission/seat-allotment" },
+            { title: "Admission Fee", path: "/dashboard/admission/fee" },
+            { title: "Admission Conform", path: "/dashboard/admission/form-conform" },
+            { title: "Admission Form Coupon", path: "/dashboard/admission/coupon" },
+           
+          ]
+        },
+        {
+          title: "Admission Report",
+          
+          children: [
+            { title: "Form status report", path: "admission-report/form-status-report" },
+            { title: "Form accept report", path: "admission-report/form-accept-report" },
+          ]
+        },
+        
+       
+      ]
+    },
     {
       title: "Accounts",
       icon: "solar:wallet-money-outline",
@@ -430,31 +373,129 @@ const MasterLayout = () => {
       ]
     },
     {
-      title: "Admission",
-      icon: "solar:document-add-outline",
+      title: "Academic",
+      icon: "solar:square-academic-cap-outline",
       children: [
-        { title: "Seat Allotment", path: "/dashboard/admission/seat-allotment" },
-        { title: "Addmission Fee", path: "/dashboard/admission/fee" },
-        { title: "Addmission Conform", path: "/dashboard/admission/form-conform" },
-        { title: "Addmission Form Coupon", path: "/dashboard/admission/coupon" },
-       
-      ]
-    },
-    {
-      title: "Admission Report",
-      icon: "solar:chart-2-outline",
-      children: [
-        { title: "Form status report", path: "admission-report/form-status-report" },
-        { title: "Form accept report", path: "admission-report/form-accept-report" },
+        { title: "Student", path: "/dashboard/academic/student" },
+        { title: "Download Student", path: "/dashboard/academic/download-student-data" },
+        {title:"Student Detail Bulk Update",path:"/dashboard/academic/student-detail-bulk-update"},
+        {
+          title: "Attendance",
+          children: [
+            { title: "In/Out",
+              children: [
+                { title: "Take Attendance", path: "/dashboard/academic/in-out-attendance" },
+                { title: "Detail Report", path: "/dashboard/academic/in-out-attendance-detail-report" },
+                { title: "Summary Report", path: "/dashboard/academic/in-out-attendance-summary-report" },
+                { title: "Monthly Report", path: "/dashboard/academic/in-out-attendance-monthly-report" },
+                { title: "Yearly Report", path: "/dashboard/academic/in-out-attendance-yearly-report" }
+              ]
+            },
+            { title: "Lecture Wise Attendance",
+              children: [
+                { title: "Take Attendance", path: "/dashboard/academic/lecture-wise-attendance" },
+                { title: "Detail Report", path: "/dashboard/academic/lecture-wise-attendance-detail-report" },
+                { title: "Staff wise Report", path: "/dashboard/academic/lecture-wise-attendance-summary-report" },
+                
+              ]
+            },
+          ]
+        },
+        {
+          title: "Notification",
+          children: [
+            { title: "Send Notification",path:"/dashboard/academic/send-notification"
+              
+            },
+            { title: "Fiew Notification",path:"/dashboard/academic/view-notification"
+             
+            },
+          ]
+        },
+        
+        {
+          title: "Diary",
+          children: [
+            { title: "Send Diary",path:"/dashboard/academic/send-diary"
+              
+            },
+            { title: "Fiew Diary",path:"/dashboard/academic/view-diary"
+             
+            },
+          ]
+        },
+        {
+          title: "Notes",
+          children: [
+            { title: "Send Notes",path:"/dashboard/academic/send-notes"
+              
+            },
+            { title: "View Notes",path:"/dashboard/academic/view-notes"
+             
+            },
+          ]
+        },
+        {
+          title: "Assignment",
+          children: [
+            { title: "Send Assignment",path:"/dashboard/academic/send-assignment"
+              
+            },
+            { title: "View Assignment",path:"/dashboard/academic/view-assignment"
+             
+            },
+          ]
+        },
+        {
+          title: "Time Table",
+          children: [
+            { title: "Send Time Table",path:"/dashboard/academic/send-time-table"
+              
+            },
+            { title: "View Time Table",path:"/dashboard/academic/view-time-table"
+             
+            },
+          ]
+        },
+        
+
       ]
     },
 
-    {
-      title: "Class wise Schools",
-      icon: "solar:buildings-2-outline",
-      path: "/dashboard/class-wise-school",
-    },
+   
 
+   
+   
+   
+
+    
+    {
+      title: "Examination",
+      icon: "solar:clipboard-list-outline",
+      children: [
+        { title: "Exam Type", path: "/dashboard/examination/exam-type" },
+        { title: "Exam Schedule", path: "/dashboard/examination/exam-schedule" },
+        { title: "Exam Result", path: "/dashboard/examination/exam-result" },
+        { title: "Exam Report", path: "/dashboard/examination/exam-report" },
+        { title: "Exam Paper", path: "/dashboard/examination/exam-paper" },
+        { title: "Exam Paper Set", path: "/dashboard/examination/exam-paper-set" },
+        { title: "Exam Paper Set Question", path: "/dashboard/examination/exam-paper-set-question" },
+        { title: "Exam Paper Set Question Answer", path: "/dashboard/examination/exam-paper-set-question-answer" },
+        { title: "Exam Paper Set Question Answer Option", path: "/dashboard/examination/exam-paper-set-question-answer-option" },
+
+
+      ]
+    },
+    {
+      title: "Documents Printing",
+      icon: "solar:printer-outline",
+      children: [
+        { title: "Print Documents", path: "/dashboard/documents-printing/print-documents" },
+        { title: "Print Documents Report", path: "/dashboard/documents-printing/print-documents-report" },
+        { title: "Print Documents Report", path: "/dashboard/documents-printing/print-documents-report" },
+      ]
+      
+    },
     {
       title: "Transport",
       icon: "solar:map-point-outline",
@@ -533,111 +574,7 @@ const MasterLayout = () => {
       <main
         className={sidebarActive ? "dashboard-main active" : "dashboard-main"}
       >
-        <div className='navbar-header'>
-          <div className='row align-items-center justify-content-between'>
-            <div className='col-auto'>
-              <div className='d-flex flex-wrap align-items-center gap-4'>
-                <button
-                  type='button'
-                  className='sidebar-toggle'
-                  onClick={sidebarControl}
-                >
-                  {sidebarActive ? (
-                    <Icon
-                      icon='iconoir:arrow-right'
-                      className='icon text-2xl non-active'
-                    />
-                  ) : (
-                    <Icon
-                      icon='heroicons:bars-3-solid'
-                      className='icon text-2xl non-active '
-                    />
-                  )}
-                </button>
-                <button
-                  onClick={mobileMenuControl}
-                  type='button'
-                  className='sidebar-mobile-toggle'
-                >
-                  <Icon icon='heroicons:bars-3-solid' className='icon' />
-                </button>
-                <form className='navbar-search'>
-                  <input type='text' name='search' placeholder='Search' />
-                  <Icon icon='ion:search-outline' className='icon' />
-                </form>
-              </div>
-            </div>
-            <div className='col-auto'>
-              <div className='d-flex flex-wrap align-items-center gap-3'>
-                {/* ThemeToggleButton */}
-                <ThemeToggleButton />
-                
-               
-                
-                <div className='dropdown'>
-                  <button
-                    className='d-flex justify-content-center align-items-center rounded-circle'
-                    type='button'
-                    data-bs-toggle='dropdown'
-                  >
-                    <img
-                      src={
-                        staff?.staff_photo
-                          ? `${baseURL}${staff.staff_photo}`
-                          : "assets/images/user.png"
-                      }
-                      alt='image_user'
-                      className='w-40-px h-40-px object-fit-cover rounded-circle'
-                    />
-                  </button>
-                  <div className='dropdown-menu to-top dropdown-menu-sm'>
-                    <div className='py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2'>
-                      <div>
-                        <h6 className='text-lg text-primary-light fw-semibold mb-2'>
-                          {staff?.firstname}
-                        </h6>
-                        <span className='text-secondary-light fw-medium text-sm'>
-                          {staff?.designationInfo?.designation_name}
-                        </span>
-                      </div>
-                      <button type='button' className='hover-text-danger'>
-                        <Icon
-                          icon='radix-icons:cross-1'
-                          className='icon text-xl'
-                        />
-                      </button>
-                    </div>
-                    <ul className='to-top-list'>
-                      <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                          to='/view-profile'
-                        >
-                          <Icon
-                            icon='solar:user-linear'
-                            className='icon text-xl'
-                          />{" "}
-                          My Profile
-                        </Link>
-                      </li>
-                      
-                      <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
-                          to='#'
-                        >
-                          <Icon icon='lucide:power' className='icon text-xl' />{" "}
-                          Log Out
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                {/* Profile dropdown end */}
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* dashboard-main-body */}
         <div className='dashboard-main-body'>{<Outlet />}</div>
