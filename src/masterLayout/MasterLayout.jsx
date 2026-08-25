@@ -10,12 +10,32 @@ import {useSelector,useDispatch} from "react-redux"
 import {getStaffData} from "../redux/slices/registrationNo";
 import "../assets/css/sidebar.css";
 
+/** Recursively filter menu tree by title (matches nested submenu titles too). */
+function filterMenuItems(items, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return items;
+
+  return items.reduce((acc, item) => {
+    const titleMatch = item.title.toLowerCase().includes(q);
+    const filteredChildren = item.children?.length
+      ? filterMenuItems(item.children, query)
+      : [];
+
+    if (titleMatch) {
+      acc.push(item);
+    } else if (filteredChildren.length > 0) {
+      acc.push({ ...item, children: filteredChildren });
+    }
+    return acc;
+  }, []);
+}
 
 // ── Recursive Sidebar Menu Item Component ────────────────────────────────
-function SidebarMenuItem({ item, level = 0 }) {
+function SidebarMenuItem({ item, level = 0, forceOpen = false }) {
   const [open, setOpen] = useState(false);
   const hasChildren = !!item.children?.length;
   const location = useLocation();
+  const isOpen = forceOpen || open;
   
   // Auto open when child/grandchild route is active
   const requestNotificationPermission = async () => {
@@ -52,13 +72,13 @@ function SidebarMenuItem({ item, level = 0 }) {
   }, [location.pathname]);
 
   return (
-    <li className={`dropdown level-${level} ${open ? "open" : ""}`}>
+    <li className={`dropdown level-${level} ${isOpen ? "open" : ""}`}>
       {hasChildren ? (
         <a
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            setOpen((prev) => !prev);
+            if (!forceOpen) setOpen((prev) => !prev);
           }}
           className="menu-link"
         >
@@ -82,11 +102,16 @@ function SidebarMenuItem({ item, level = 0 }) {
 
       {hasChildren && (
         <ul
-          className={`sidebar-submenu ${open ? "open" : ""}`}
-          style={{ maxHeight: open ? "2000px" : "0px" }}
+          className={`sidebar-submenu ${isOpen ? "open" : ""}`}
+          style={{ maxHeight: isOpen ? "2000px" : "0px" }}
         >
           {item.children.map((child, i) => (
-            <SidebarMenuItem key={i} item={child} level={level + 1} />
+            <SidebarMenuItem
+              key={i}
+              item={child}
+              level={level + 1}
+              forceOpen={forceOpen}
+            />
           ))}
         </ul>
       )}
@@ -98,6 +123,8 @@ const MasterLayout = () => {
   const [sidebarActive, setSidebarActive] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [instituteLogo, setInstituteLogo] = useState(null);
+  const [instituteName, setInstituteName] = useState("");
+  const [menuSearch, setMenuSearch] = useState("");
   const dispatch=useDispatch();
   const staff = useSelector((state) => state.registrationNo.staff?.data);
   const staffid = staff?.id;
@@ -119,7 +146,15 @@ const MasterLayout = () => {
     let fetchData = async () => {
       try {
         const { data } = await axios.get(`${baseURL}/api/institute`);
-        setInstituteLogo(data?.data[0]?.logo);
+        const institute = data?.data?.[0];
+        if (institute?.logo) {
+          setInstituteLogo(
+            institute.logo.startsWith("http")
+              ? institute.logo
+              : `${baseURL}${institute.logo}`
+          );
+        }
+        setInstituteName(institute?.name || "");
       } catch (error) {
 
       }
@@ -525,6 +560,9 @@ const MasterLayout = () => {
     // ... you can do the same for other sections (Master, Subject, etc.)
   ];
 
+  const filteredMenuItems = filterMenuItems(menuItems, menuSearch);
+  const isSearching = menuSearch.trim().length > 0;
+
   return (
     <section className={mobileMenu ? "overlay active" : "overlay"}>
       {/* Sidebar */}
@@ -562,10 +600,40 @@ const MasterLayout = () => {
         </div>
 
         <div className="sidebar-menu-area">
+          <div className={`sidebar-menu-search${isSearching ? " is-active" : ""}`}>
+            <span className="sidebar-menu-search-icon" aria-hidden="true">
+              <Icon icon="solar:magnifer-linear" />
+            </span>
+            <input
+              type="text"
+              value={menuSearch}
+              onChange={(e) => setMenuSearch(e.target.value)}
+              placeholder="Search menus & submenus..."
+              aria-label="Search menu"
+            />
+            {isSearching && (
+              <button
+                type="button"
+                className="sidebar-menu-search-clear"
+                onClick={() => setMenuSearch("")}
+                aria-label="Clear search"
+              >
+                <Icon icon="radix-icons:cross-2" />
+              </button>
+            )}
+          </div>
           <ul className="sidebar-menu" id="sidebar-menu">
-            {menuItems.map((item, index) => (
-              <SidebarMenuItem key={index} item={item} />
-            ))}
+            {filteredMenuItems.length > 0 ? (
+              filteredMenuItems.map((item, index) => (
+                <SidebarMenuItem
+                  key={index}
+                  item={item}
+                  forceOpen={isSearching}
+                />
+              ))
+            ) : (
+              <li className="sidebar-menu-empty">No menu found</li>
+            )}
           </ul>
         </div>
       </aside>
@@ -574,7 +642,110 @@ const MasterLayout = () => {
       <main
         className={sidebarActive ? "dashboard-main active" : "dashboard-main"}
       >
-        
+        <div className='navbar-header'>
+          <div className='row align-items-center justify-content-between'>
+            <div className='col-auto'>
+              <div className='d-flex flex-wrap align-items-center gap-4'>
+                <button
+                  type='button'
+                  className='sidebar-toggle'
+                  onClick={sidebarControl}
+                >
+                  {sidebarActive ? (
+                    <Icon
+                      icon='iconoir:arrow-right'
+                      className='icon text-2xl non-active'
+                    />
+                  ) : (
+                    <Icon
+                      icon='heroicons:bars-3-solid'
+                      className='icon text-2xl non-active '
+                    />
+                  )}
+                </button>
+                <button
+                  onClick={mobileMenuControl}
+                  type='button'
+                  className='sidebar-mobile-toggle'
+                >
+                  <Icon icon='heroicons:bars-3-solid' className='icon' />
+                </button>
+                <div className="navbar-institute-name">
+                  {instituteName || "Institute"}
+                </div>
+              </div>
+            </div>
+            <div className='col-auto'>
+              <div className='d-flex flex-wrap align-items-center gap-3'>
+                {/* ThemeToggleButton */}
+                <ThemeToggleButton />
+                
+               
+                
+                <div className='dropdown'>
+                  <button
+                    className='d-flex justify-content-center align-items-center rounded-circle'
+                    type='button'
+                    data-bs-toggle='dropdown'
+                  >
+                    <img
+                      src={
+                        staff?.staff_photo
+                          ? `${baseURL}${staff.staff_photo}`
+                          : "assets/images/user.png"
+                      }
+                      alt='image_user'
+                      className='w-40-px h-40-px object-fit-cover rounded-circle'
+                    />
+                  </button>
+                  <div className='dropdown-menu to-top dropdown-menu-sm'>
+                    <div className='py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2'>
+                      <div>
+                        <h6 className='text-lg text-primary-light fw-semibold mb-2'>
+                          {staff?.firstname}
+                        </h6>
+                        <span className='text-secondary-light fw-medium text-sm'>
+                          {staff?.designationInfo?.designation_name}
+                        </span>
+                      </div>
+                      <button type='button' className='hover-text-danger'>
+                        <Icon
+                          icon='radix-icons:cross-1'
+                          className='icon text-xl'
+                        />
+                      </button>
+                    </div>
+                    <ul className='to-top-list'>
+                      <li>
+                        <Link
+                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
+                          to='/view-profile'
+                        >
+                          <Icon
+                            icon='solar:user-linear'
+                            className='icon text-xl'
+                          />{" "}
+                          My Profile
+                        </Link>
+                      </li>
+                      
+                      <li>
+                        <Link
+                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
+                          to='#'
+                        >
+                          <Icon icon='lucide:power' className='icon text-xl' />{" "}
+                          Log Out
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                {/* Profile dropdown end */}
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* dashboard-main-body */}
         <div className='dashboard-main-body'>{<Outlet />}</div>
