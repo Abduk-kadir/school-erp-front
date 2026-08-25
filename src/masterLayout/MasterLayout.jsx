@@ -8,6 +8,7 @@ import baseURL from "../utils/baseUrl";
 import {onMessageListener} from "../services/fcmService";
 import {useSelector,useDispatch} from "react-redux"
 import {getStaffData} from "../redux/slices/registrationNo";
+import "../assets/css/sidebar.css";
 
 
 // ── Recursive Sidebar Menu Item Component ────────────────────────────────
@@ -70,7 +71,6 @@ function SidebarMenuItem({ item, level = 0 }) {
           to={item.path || "#"}
           className={({ isActive }) => `menu-link ${isActive ? "active" : ""}`}
           onClick={(e) => e.stopPropagation()}
-
         >
           {item.icon && <Icon icon={item.icon} className="menu-icon" />}
           {level > 0 && (
@@ -141,7 +141,7 @@ const MasterLayout = () => {
 
     {
       title: "ID Card Master",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:card-outline",
       children: [
         { title: "Generate ID Card", path: "/id-card/generate" },
         {
@@ -164,7 +164,7 @@ const MasterLayout = () => {
     },
     {
       title: "Master",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:widget-5-outline",
       children: [
         { title: "Role", path: "/dashboard/role-master" },
 
@@ -218,7 +218,7 @@ const MasterLayout = () => {
 
     {
       title: "Subject Master",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:book-2-outline",
       children: [
         { title: "Subject", path: "/dashboard/subject" },
         { title: "Program", path: "/dashboard/program" },
@@ -232,7 +232,7 @@ const MasterLayout = () => {
     },
     {
       title: "Academic",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:square-academic-cap-outline",
       children: [
         { title: "Student", path: "/dashboard/academic/student" },
         { title: "Download Student", path: "/dashboard/academic/download-student-data" },
@@ -322,7 +322,7 @@ const MasterLayout = () => {
 
     {
       title: "Staff",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:users-group-rounded-outline",
       children: [
         { title: "Staff Master", path: "/dashboard/staff-master" },
        
@@ -334,10 +334,11 @@ const MasterLayout = () => {
 
     {
       title: "Accounts",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:wallet-money-outline",
       children: [
         {
           title: "Fee Master",
+          icon: "solar:card-transfer-outline",
           children: [
             { title: "Payment Setting", path: "/dashboard/accounts/fee-master/payment-setting" },
            
@@ -354,7 +355,7 @@ const MasterLayout = () => {
         },
         {
           title: "Admission Fee",
-          icon: "icon-park-outline:id-card",
+          icon: "solar:bill-list-outline",
           children: [
             {title:"Split Admission Fee",path:"/dashboard/admission/split-admission-fee"},
             { title: "Collect Admission Fee", path: "/dashboard/admission/collect-admission-fee" },
@@ -370,7 +371,7 @@ const MasterLayout = () => {
 
         {
           title: "Academic Fee",
-          icon: "icon-park-outline:id-card",
+          icon: "solar:calculator-outline",
           children: [
             {title:"Split Academic Fee",path:"/dashboard/academic-fee/split-academic-fee"},
             { title: "Collect Academic Fee", path: "/dashboard/academic-fee/collect-academic-fee" },
@@ -389,7 +390,7 @@ const MasterLayout = () => {
         },
          {
           title: "Bus Fee",
-          icon: "icon-park-outline:id-card",
+          icon: "solar:bus-outline",
           children: [
             { title: "Collect Bus Fee", path: "/dashboard/bus-fee/collect-bus-fee" },
             { title: "Report-Online Bus Payment", path: "/dashboard/bus-fee/online-bus-payment" },
@@ -401,7 +402,7 @@ const MasterLayout = () => {
         },
          {
           title: "Canteen Fee",
-          icon: "icon-park-outline:id-card",
+          icon: "solar:cup-outline",
           children: [
             {title:"Split Canteen Fee",path:"/dashboard/canteen-fee/split-canteen-fee"},
             { title: "Collect Canteen Fee", path: "/dashboard/canteen-fee/collect-canteen-fee" },
@@ -415,7 +416,7 @@ const MasterLayout = () => {
 
          {
           title: "Other Fee",
-          icon: "icon-park-outline:id-card",
+          icon: "solar:dollar-outline",
           children: [
             { title: "Collect Other Fee", path: "/dashboard/academic/student" },
             { title: "Report-Other Fee", path: "/dashboard/academic/student" },
@@ -430,7 +431,7 @@ const MasterLayout = () => {
     },
     {
       title: "Admission",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:document-add-outline",
       children: [
         { title: "Seat Allotment", path: "/dashboard/admission/seat-allotment" },
         { title: "Addmission Fee", path: "/dashboard/admission/fee" },
@@ -441,7 +442,7 @@ const MasterLayout = () => {
     },
     {
       title: "Admission Report",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:chart-2-outline",
       children: [
         { title: "Form status report", path: "admission-report/form-status-report" },
         { title: "Form accept report", path: "admission-report/form-accept-report" },
@@ -450,13 +451,13 @@ const MasterLayout = () => {
 
     {
       title: "Class wise Schools",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:buildings-2-outline",
       path: "/dashboard/class-wise-school",
     },
 
     {
       title: "Transport",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:map-point-outline",
       children: [
         { title: "Add Route", path: "/dashboard/transport/add-route" },
         { title: "Assign Sub Route", path: "/dashboard/transport/assign-sub-route" },
@@ -466,7 +467,7 @@ const MasterLayout = () => {
     },
     {
       title: "Error Logs",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:danger-triangle-outline",
       children: [
         { title: "Error Logs", path: "/dashboard/error-logs" },
       ]
@@ -474,7 +475,7 @@ const MasterLayout = () => {
 
     {
       title: "Setting",
-      icon: "icon-park-outline:id-card",
+      icon: "solar:settings-outline",
       children: [
         { title: "Institute", path: "/dashboard/setting/institute" },
       ]
