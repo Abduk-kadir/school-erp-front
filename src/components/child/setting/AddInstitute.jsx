@@ -16,12 +16,14 @@ const AddInstitute = () => {
   const initialValues = {
     name: "",
     code: "",
+    support_statement: "",
     logo: null,
   };
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Institute name is required"),
     code: Yup.string().required("Institute code is required"),
+    support_statement: Yup.string(),
     logo: Yup.mixed().required("Institute logo is required"),
   });
 
@@ -33,6 +35,7 @@ const AddInstitute = () => {
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("code", values.code);
+      formData.append("support_statement", values.support_statement);
       formData.append("logo", values.logo);
 
       await axios.post(`${baseURL}/api/institute`, formData);
@@ -127,6 +130,30 @@ const AddInstitute = () => {
 
                     <ErrorMessage
                       name="code"
+                      component="div"
+                      className="text-danger field-error"
+                    />
+                  </div>
+
+                  {/* Support Statement */}
+                  <div className="field-row">
+                    <label className="form-label">
+                      <span className="label-dot" />
+                      Support Statement
+                    </label>
+
+                    <div>
+                      <Field
+                        as="textarea"
+                        name="support_statement"
+                        rows={4}
+                        className="form-control"
+                        placeholder="Enter support statement"
+                      />
+                    </div>
+
+                    <ErrorMessage
+                      name="support_statement"
                       component="div"
                       className="text-danger field-error"
                     />

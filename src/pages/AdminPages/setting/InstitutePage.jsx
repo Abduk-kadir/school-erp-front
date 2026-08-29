@@ -37,6 +37,7 @@ const InstitutePage = () => {
           { data: "id", name: "id", title: "ID" },
           { data: "name", title: "Name" },
           { data: "code", title: "Code" },
+          {data: "support_statement", title: "Support Statement"},
           {
             data: "logo",
             title: "Logo",
@@ -45,7 +46,8 @@ const InstitutePage = () => {
             render: (data, type) => {
               if (type !== "display") return data;
               if (!data) return '<span class="table-cell-empty">No logo</span>';
-              return `<img src="${data}" class="table-cell-thumb" alt="Institute logo" />`;
+              const src = data.startsWith("http") ? data : `${baseURL}${data}`;
+              return `<img src="${src}" class="table-cell-thumb" alt="Institute logo" />`;
             },
           },
           {
