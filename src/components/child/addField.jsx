@@ -97,7 +97,7 @@ const AddField = () => {
       };
 
       const res = await axios.post(
-        `http://localhost:5000/api/stage/addfield/${values.stageId}`,
+        `${baseURL}/api/stage/addfield/${values.stageId}`,
         payload
       );
 
@@ -105,7 +105,7 @@ const AddField = () => {
 
       if (id && values.selectedTable) {
         const payload2 = { tablename: values.selectedTable };
-        await axios.post(`http://localhost:5000/api/fieldMultiple/${id}`, payload2);
+        await axios.post(`${baseURL}/api/fieldMultiple/${id}`, payload2);
       }
 
       alert("Field added successfully!");
