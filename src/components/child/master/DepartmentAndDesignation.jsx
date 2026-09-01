@@ -18,8 +18,6 @@ const DepartmentAndDesignation = ({
   cardTitle = 'Master',
   cardIcon = 'solar:document-text-bold-duotone',
 }) => {
-  const [fields, setFields] = React.useState(initialFields);
-
   // Generate Yup validation schema dynamically
   const generateValidationSchema = (formFields) => {
     const schemaFields = {};
@@ -33,6 +31,9 @@ const DepartmentAndDesignation = ({
           break;
         case 'number':
           validator = Yup.number().typeError('Must be a number');
+          break;
+        case 'file':
+          validator = Yup.mixed();
           break;
         case 'textarea':
         case 'text':
@@ -53,12 +54,12 @@ const DepartmentAndDesignation = ({
     return Yup.object().shape(schemaFields);
   };
 
-  const validationSchema = generateValidationSchema(fields);
+  const validationSchema = generateValidationSchema(initialFields);
 
   
  
 
-  const renderField = (field) => {
+  const renderField = (field, setFieldValue) => {
     switch (field.type) {
       case 'textarea':
         return (
@@ -68,6 +69,18 @@ const DepartmentAndDesignation = ({
             placeholder={field.placeholder}
             rows={field.rows || 4}
             className="form-control"
+          />
+        );
+
+      case 'file':
+        return (
+          <input
+            type="file"
+            className="form-control"
+            accept={field.accept || '*/*'}
+            onChange={(e) => {
+              setFieldValue(field.name, e.currentTarget.files[0]);
+            }}
           />
         );
 
@@ -155,10 +168,11 @@ const DepartmentAndDesignation = ({
               }}
               enableReinitialize
             >
-              {({ isSubmitting, resetForm, values }) => (
+              {({ isSubmitting, resetForm, values, setFieldValue }) => (
                 <Form className="chfi-root dynamic-form">
-                  {fields.map((field) => {
+                  {initialFields.map((field) => {
                     const icon = field.icon || 'solar:document-text-bold-duotone';
+                    const useIconWrapper = field.type !== 'checkbox' && field.type !== 'textarea';
                     return (
                       <div key={field.name} className="field-row">
                         {field.type !== 'checkbox' && (
@@ -170,13 +184,15 @@ const DepartmentAndDesignation = ({
                         )}
 
                         {field.type === 'checkbox' ? (
-                          renderField(field)
+                          renderField(field, setFieldValue)
+                        ) : field.type === 'textarea' ? (
+                          renderField(field, setFieldValue)
                         ) : (
                           <div className="icon-field">
                             <span className="icon">
                               <Icon icon={icon} width="18" />
                             </span>
-                            {renderField(field)}
+                            {renderField(field, setFieldValue)}
                           </div>
                         )}
 
