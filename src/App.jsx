@@ -8,8 +8,9 @@ const MasterLayout = lazy(() => import("./masterLayout/MasterLayout"));
 const ClassPage = lazy(() => import("./pages/ClassPage"));
 import SemesterPage from "./pages/AdminPages/master/SemesterPage";
 import StudentTypePage from "./pages/AdminPages/master/StudentTypePage";
-
+const GenderPage=lazy(() => import("./pages/AdminPages/master/GenderPage"));
 const TitlePage=lazy(() => import("./pages/AdminPages/master/TitlePage"));
+
 const AcademicYearPage = lazy(() => import("./pages/AcademicYearPage"));
 const DivisionPage = lazy(() => import("./pages/DivisionPage"));
 const CarsoulPage = lazy(() => import("./pages/AdminPages/master/CarsoulPage"));
@@ -355,6 +356,7 @@ function App() {
               <Route path="class-division-master" element={<ClassDivisionPage />} />
               <Route path="cast-master" element={<CastPage />} />
               <Route path="role-master" element={<RolePage />} />
+              <Route path="gender-master" element={<GenderPage />} />
               <Route path="add-declaration" element={<DeclarationPage />} />
               <Route path="phisally-disable" element={<PhisallyDisablePage />} />
               <Route path="holiday-master" element={<HolidayMasterPage />} />

@@ -217,6 +217,7 @@ const MasterLayout = () => {
         {title:"Semester",path:"/dashboard/semester-master"},
         {title:"Student Type",path:"/dashboard/student-type-master"},
         { title: "Cast ", path: "/dashboard/cast-master" },
+        {title:"Gender",path:"/dashboard/gender-master"},
         {title:"Title",path:"/dashboard/title-master"},
         {title:"Department ",path:"/dashboard/department-master"},
         {title:"Designation ",path:"/dashboard/designation-master"},
