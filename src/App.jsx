@@ -293,6 +293,7 @@ const CollectCanteenFeePage = lazy(() =>
 
 const AcademicFinePage = lazy(() => import("./pages/AdminPages/academifee/AcademicFinePage"))
 const ErrorPage = lazy(() => import("./pages/AdminPages/error/ErrorPage"))
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicy"))
 
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
@@ -587,6 +588,7 @@ function App() {
               <Route path=":slug" element={<StudentDiaryPage />} />
               {/* student  route end*/}
             </Route>
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           </Route>
         </Routes>
       </Suspense>
