@@ -2,17 +2,41 @@ import { useEffect, useRef, useState } from "react";
 import $ from "jquery";
 import "datatables.net-dt";
 import axios from "axios";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
-const StudentTable = ({ url, columns }) => {
+import "../../../assets/css/academicOfflineFeeReport.css";
+
+const StudentTable = ({ url, columns, onEdit }) => {
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
+  const callbacksRef = useRef({ onEdit });
 
   const [classes, setClasses] = useState([]);
   const [divisions, setDivisions] = useState([]);
 
-  // Controlled filter values
   const [classFilter, setClassFilter] = useState("");
+  const [divisionFilter, setDivisionFilter] = useState("");
   const [programFilter, setProgramFilter] = useState("");
+
+  const classFilterRef = useRef("");
+  const divisionFilterRef = useRef("");
+  const programFilterRef = useRef("");
+
+  useEffect(() => {
+    callbacksRef.current = { onEdit };
+  }, [onEdit]);
+
+  useEffect(() => {
+    classFilterRef.current = classFilter;
+  }, [classFilter]);
+
+  useEffect(() => {
+    divisionFilterRef.current = divisionFilter;
+  }, [divisionFilter]);
+
+  useEffect(() => {
+    programFilterRef.current = programFilter;
+  }, [programFilter]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,18 +53,19 @@ const StudentTable = ({ url, columns }) => {
     };
     fetchData();
   }, []);
-  console.log('classess', classes)
-  console.log('division', divisions)
+
   const handleFilter = () => {
     if (datatableRef.current) {
-      datatableRef.current.draw(); // ← this triggers new ajax call
+      datatableRef.current.draw();
     }
   };
 
   useEffect(() => {
     if (!tableRef.current) return;
 
-    datatableRef.current = $(tableRef.current).DataTable({
+    const $table = $(tableRef.current);
+
+    datatableRef.current = $table.DataTable({
       pageLength: 5,
       processing: true,
       serverSide: true,
@@ -50,93 +75,156 @@ const StudentTable = ({ url, columns }) => {
         type: "GET",
         data: (d) => {
           d.filter = {
-            className: classFilter.trim(),
-            programName: programFilter.trim(),
+            className: classFilterRef.current.trim(),
+            regNo: programFilterRef.current.trim(),
+            divisionName: divisionFilterRef.current.trim(),
           };
         },
       },
       columns,
       headerCallback: function (thead) {
-    $(thead).find("th").css("white-space", "nowrap");
-  }
+        $(thead).find("th").css("white-space", "nowrap");
+      },
+    });
+
+    $table.on("click", ".table-action-change-detail", function () {
+      const tr = $(this).closest("tr");
+      const rowData = datatableRef.current.row(tr).data(); // full API row object
+      callbacksRef.current.onEdit?.(rowData);
     });
 
     return () => {
+      $table.off("click", ".table-action-change-detail");
       if (datatableRef.current) {
-        datatableRef.current.destroy(true);
+        // Keep the <table> node so React can remount cleanly next time
+        datatableRef.current.destroy();
+        datatableRef.current = null;
       }
     };
-  }, [url, columns]); // Important: do NOT put classFilter/programFilter here
+  }, [url, columns]);
 
   return (
-    <>
-     <div className="mb-20" >
-  <div >
-    <div className="row g-3 align-items-center">   {/* ← key change: align-items-center */}
-      
-      <div className="col-md-3">
-        <label className="form-label fw-bold">Reg No</label>
-        <input
-          className="form-control"
-          type="text"
-          placeholder="enter reg_no"
-          value={programFilter}
-          onChange={(e) => setProgramFilter(e.target.value)}
-        />
-      </div>
-
-      <div className="col-md-3">
-        <label className="form-label fw-bold">Class</label>
-        <select className="form-select " aria-label="Default select example">
-          <option selected>Select Class</option>
-          {classes.map((elem, index) => (
-            <option key={index} value={elem?.id || elem?.class_name}>
-              {elem?.class_name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="col-md-3">
-        <label className="form-label fw-bold">Division</label>
-        <select className="form-select " aria-label="Default select example">
-          <option selected>Select Division</option>
-          {divisions.map((elem, index) => (
-            <option key={index} value={elem?.id || elem?.name}>
-              {elem?.division_name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="col-md-3 col-12 d-flex align-items-end mt-5">  {/* ← or align-items-center */}
-        <button 
-          className="btn btn-success px-5" 
-          onClick={handleFilter}
-        >
-          Submit
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-      <div className="card basic-data-table mt-4">
+    <div className="chfi-wrapper d-flex flex-column gap-3 pb-2">
+      <section className="chfi-card" aria-label="Student filters">
         <div className="card-header">
-          <h5 className="card-title mb-0">Assigned Subjects</h5>
+          <div className="header-row">
+            <span className="header-icon">
+              <Icon icon="solar:filter-bold-duotone" width="22" />
+            </span>
+            <div>
+              <h5 className="card-title">Filter</h5>
+            </div>
+          </div>
+        </div>
+
+        <div className="card-body">
+          <div className="report-filter-grid">
+            <div className="report-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Reg No
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:card-bold-duotone" width="18" />
+                </span>
+                <input
+                  className="form-control"
+                  type="text"
+                  placeholder="Enter reg no"
+                  value={programFilter}
+                  onChange={(e) => setProgramFilter(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="report-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Class
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:square-academic-cap-bold-duotone" width="18" />
+                </span>
+                <select
+                  className="form-select"
+                  value={classFilter}
+                  onChange={(e) => setClassFilter(e.target.value)}
+                  aria-label="Select class"
+                >
+                  <option value="">Select Class</option>
+                  {classes.map((elem, index) => (
+                    <option key={index} value={elem?.id || elem?.class_name}>
+                      {elem?.class_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="report-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Division
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:users-group-rounded-bold-duotone" width="18" />
+                </span>
+                <select
+                  className="form-select"
+                  value={divisionFilter}
+                  onChange={(e) => setDivisionFilter(e.target.value)}
+                  aria-label="Select division"
+                >
+                  <option value="">Select Division</option>
+                  {divisions.map((elem, index) => (
+                    <option key={index} value={elem?.id || elem?.name}>
+                      {elem?.division_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="report-filter-field report-filter-action">
+              <button
+                type="button"
+                className="btn-submit chfi-root"
+                onClick={handleFilter}
+              >
+                <Icon icon="solar:magnifer-bold-duotone" width="18" />
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="chfi-card report-table-card" aria-label="Student list">
+        <div className="card-header">
+          <div className="header-row">
+            <span className="header-icon">
+              <Icon icon="solar:users-group-rounded-bold-duotone" width="22" />
+            </span>
+            <div>
+              <h5 className="card-title">Student List</h5>
+            </div>
+          </div>
         </div>
         <div className="card-body">
-          <div className="table-responsive" style={{ overflowY: "hidden", overflowX: "auto" }}>
+          <div className="report-table-wrap">
             <table
               className="table bordered-table mb-0"
               id="dataTable"
               ref={tableRef}
+              style={{ width: "100%" }}
             />
           </div>
         </div>
-      </div>
-    </>
+      </section>
+    </div>
   );
 };
 

@@ -520,3 +520,84 @@
     align-self: flex-start;
   }
 }
+
+/* =====================================================================
+ * Generic form modal (same look as master cards)
+ * ===================================================================== */
+.chfi-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.chfi-modal-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: none;
+}
+
+.chfi-modal-wrap .chfi-modal {
+  pointer-events: auto;
+  width: min(640px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+}
+
+.chfi-modal-wrap .chfi-card {
+  margin: 0;
+}
+
+.chfi-modal-wrap .chfi-card .card-header .header-row {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.chfi-modal-wrap .chfi-card .card-header {
+  background: linear-gradient(135deg, #4c1d95 0%, #6b21a8 45%, #9333ea 100%) !important;
+  color: #ffffff !important;
+  border-bottom: 0;
+}
+
+.chfi-modal-wrap .chfi-card .card-header .card-title {
+  color: #ffffff !important;
+}
+
+.chfi-modal-wrap .chfi-card .card-header .header-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.chfi-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.chfi-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.chfi-modal .card-body {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.chfi-modal .actions {
+  margin-top: 8px;
+}
