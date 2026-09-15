@@ -601,3 +601,95 @@
 .chfi-modal .actions {
   margin-top: 8px;
 }
+
+/* =====================================================================
+ * Assign Subject form extras
+ * ===================================================================== */
+.assign-subject-form .form-label {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.assign-subject-form .label-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #2563eb;
+  display: inline-block;
+}
+
+.assign-subject-form .as-section {
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  padding: 14px 16px;
+}
+
+.assign-subject-form .as-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1e3a8a;
+  margin-bottom: 12px;
+}
+
+.assign-subject-form .as-optional-group {
+  border-color: rgba(124, 58, 237, 0.22);
+  background: linear-gradient(180deg, #ffffff 0%, #faf5ff 100%);
+}
+
+.assign-subject-form .as-optional-group .as-section-title {
+  color: #5b21b6;
+}
+
+.assign-subject-form .as-field-with-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.assign-subject-form .as-field-with-actions .icon-field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.assign-subject-form .as-row-actions {
+  position: static;
+  top: auto;
+  right: auto;
+  transform: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.assign-subject-form .as-icon-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assign-subject-form .as-icon-add {
+  color: #16a34a;
+}
+
+.assign-subject-form .as-icon-remove {
+  color: #dc2626;
+}
+
+.assign-subject-form .as-icon-btn:hover {
+  transform: scale(1.08);
+}
