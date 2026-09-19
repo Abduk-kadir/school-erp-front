@@ -504,12 +504,23 @@ const MasterLayout = () => {
    
    
 
-    
+    {
+      title: "Preodic Test",
+      icon: "solar:clipboard-list-outline",
+      children: [
+        { title: "Preodic Test Creation", path: "/dashboard/preodic/periodic-test" },
+        { title: "Preodic Test Marks Entry", path: "/dashboard/preodic/marks-entry" },
+        { title: "Preodic Test Report", path: "/dashboard/preodic/report" },
+       
+
+
+      ]
+    },
     {
       title: "Examination",
       icon: "solar:clipboard-list-outline",
       children: [
-        { title: "Exam Type", path: "/dashboard/examination/exam-type" },
+       
         { title: "Exam Schedule", path: "/dashboard/examination/exam-schedule" },
         { title: "Exam Result", path: "/dashboard/examination/exam-result" },
         { title: "Exam Report", path: "/dashboard/examination/exam-report" },

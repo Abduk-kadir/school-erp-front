@@ -295,6 +295,9 @@ const AcademicFinePage = lazy(() => import("./pages/AdminPages/academifee/Academ
 const ErrorPage = lazy(() => import("./pages/AdminPages/error/ErrorPage"))
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicy"))
 
+//preodic test module importing here
+const PreodicTestPage=lazy(() => import("./pages/AdminPages/preodic/PreodicTestPage"))
+
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
     <div className="spinner-border text-primary" role="status">
@@ -559,6 +562,9 @@ function App() {
                   <Route path='assigned-fine' element={<AssignedFinedPage />} />
                   
                 </Route>
+              </Route>
+              <Route path='preodic'>
+                <Route path='periodic-test' element={<PreodicTestPage />} />
               </Route>
 
               <Route path="error-logs" element={<ErrorPage />} />
