@@ -17,6 +17,7 @@ const InAndOutSummaryDataTable = ({
   columns,
   loadingFun,
   exportBaseUrl,
+  pdfUrl,
 }) => {
   const dispatch=useDispatch()
   const navigate=useNavigate()
@@ -42,7 +43,7 @@ const InAndOutSummaryDataTable = ({
     if (exportBaseUrl) return exportBaseUrl;
     if (format === "excel") return `${baseURL}/api/fees/excel`;
     if (format === "csv") return `${baseURL}/api/fees/csv`;
-    if (format === "pdf") return `${baseURL}/api/fees/pdf`;
+    if (format === "pdf") return pdfUrl;
     return `${String(url).replace(/\/$/, "")}/export`;
   };
 

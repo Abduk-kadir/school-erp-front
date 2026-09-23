@@ -56,9 +56,12 @@ const DownloadStudentData = () => {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [importingPhotos, setImportingPhotos] = useState(false);
   const [importMessage, setImportMessage] = useState(null); // { type: 'success' | 'error', text: string }
+  const [photoImportMessage, setPhotoImportMessage] = useState(null);
   const [incorrectImport, setIncorrectImport] = useState(null);
   const studentFileRef = useRef(null);
+  const photoFileRef = useRef(null);
   const workbook = new ExcelJS.Workbook();
 
   const hasIncorrectRows = (incorrect) => {
@@ -261,6 +264,64 @@ const DownloadStudentData = () => {
     }
   };
 
+  const handleImportPhotos = async () => {
+    const files = photoFileRef.current?.files;
+    if (!files || files.length === 0) {
+      setPhotoImportMessage({
+        type: "error",
+        text: "Please select photo(s) to import",
+      });
+      return;
+    }
+
+    try {
+      setImportingPhotos(true);
+      setPhotoImportMessage(null);
+
+      const formData = new FormData();
+      Array.from(files).forEach((file) => {
+        formData.append("photos", file);
+      });
+
+      const { data } = await axios.post(
+        `${baseURL}/api/parmanent-personal-information/photos`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      if (data?.success === false) {
+        const existing = Array.isArray(data?.photos) ? data.photos : [];
+        setPhotoImportMessage({
+          type: "error",
+          text: existing.length
+            ? `${data?.message || "Photo import failed"}: ${existing.join(", ")}`
+            : data?.message || "Photo import failed",
+        });
+        return;
+      }
+
+      setPhotoImportMessage({
+        type: "success",
+        text: data?.message || "Photos imported successfully",
+      });
+
+      if (photoFileRef.current) photoFileRef.current.value = "";
+    } catch (err) {
+      const resData = err?.response?.data;
+      const existing = Array.isArray(resData?.photos) ? resData.photos : [];
+      const message = resData?.message || err?.message || "Photo import failed";
+
+      setPhotoImportMessage({
+        type: "error",
+        text: existing.length
+          ? `${message}: ${existing.join(", ")}`
+          : message,
+      });
+    } finally {
+      setImportingPhotos(false);
+    }
+  };
+
   const handleDownloadIncorrect = async () => {
     if (!hasIncorrectRows(incorrectImport)) return;
 
@@ -391,15 +452,32 @@ const DownloadStudentData = () => {
 
                 <div className="dsd-import-row">
                   <input
+                    ref={photoFileRef}
                     type="file"
                     id="dsd-import-photo-file"
                     className="form-control dsd-import-file"
                     accept="image/*,.zip"
                     multiple
                   />
-                  <button type="button" className="dsd-top-action-btn">
-                    Import Photo
+                  <button
+                    type="button"
+                    className="dsd-top-action-btn"
+                    onClick={handleImportPhotos}
+                    disabled={importingPhotos}
+                  >
+                    {importingPhotos ? "Importing..." : "Import Photo"}
                   </button>
+                  {photoImportMessage && (
+                    <span
+                      className={`dsd-import-message ${
+                        photoImportMessage.type === "success"
+                          ? "dsd-import-message-success"
+                          : "dsd-import-message-error"
+                      }`}
+                    >
+                      {photoImportMessage.text}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

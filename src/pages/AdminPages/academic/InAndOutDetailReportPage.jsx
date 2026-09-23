@@ -30,7 +30,11 @@ const feeReportColumns = [
 const InAndOutDetailReportPage = () => {
   return (
     <div>
-      <InAndOutDataTable url={`${baseURL}/api/in-out-attendance/reports/detail`} columns={feeReportColumns} />
+      <InAndOutDataTable 
+      url={`${baseURL}/api/in-out-attendance/reports/detail`} 
+      columns={feeReportColumns}
+      pdfUrl={`${baseURL}/api/in-out-attendance/reports/detail/pdf`}
+       />
     </div>
   );
 };

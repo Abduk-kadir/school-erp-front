@@ -39,7 +39,11 @@ const InAndOutSummaryReportPage = () => {
   
   return (
     <div>
-      <InAndOutSummaryDataTable url={`${baseURL}/api/in-out-attendance/reports/summary`} columns={feeReportColumns} />
+      <InAndOutSummaryDataTable 
+      url={`${baseURL}/api/in-out-attendance/reports/summary`}
+       columns={feeReportColumns} 
+       pdfUrl={`${baseURL}/api/in-out-attendance/reports/summary/pdf`}
+       />
     </div>
   );
 };

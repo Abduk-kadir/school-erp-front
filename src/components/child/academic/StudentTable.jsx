@@ -66,7 +66,9 @@ const StudentTable = ({ url, columns, onEdit }) => {
     const $table = $(tableRef.current);
 
     datatableRef.current = $table.DataTable({
-      pageLength: 5,
+      pageLength: 25,  
+      lengthMenu: [25, 50, 75, 100,250,300],                  // default selected
+      
       processing: true,
       serverSide: true,
       destroy: true,
