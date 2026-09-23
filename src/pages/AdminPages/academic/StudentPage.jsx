@@ -5,6 +5,7 @@ import '../../../assets/css/editdelete.css'
 import '../../../assets/css/studentlistcss.css'
 import GenericformModal from '../../../components/child/GenericformModal'
 import axios from 'axios'
+import DocumentViewer from '../../../components/child/DocumentViewer'
 
 const StudentPage = () => {
   const [showModal, setShowModal] = useState(false)
@@ -219,7 +220,7 @@ const StudentPage = () => {
     `,
       },
       {
-        data: null,
+        data: 'photo_url',
         title: "Photo",
         orderable: false,
         searchable: false,
@@ -323,6 +324,10 @@ const StudentPage = () => {
     ],
     []
   )
+
+  const [showPhotoViewer,setShowPhotoViewer]=useState(false)
+  const [photoUrl,setPhotoUrl]=useState('')
+
   const handleSubmit = async (values) => {
     setSuccessMsg('')
     setErrorMsg('')
@@ -339,6 +344,13 @@ const StudentPage = () => {
     } catch (error) {
       setErrorMsg(error.response?.data?.message || 'Something went wrong')
     }
+  }
+
+  const handleViewPhoto = (row) => {
+    console.log('row is:',row)
+    let photoUrl=`${baseURL}/uploads/students/photoandsignature/${row.photo_url}`
+    setShowPhotoViewer(true)
+    setPhotoUrl(photoUrl)
   }
 
   return (
@@ -368,7 +380,11 @@ const StudentPage = () => {
         url={`${baseURL}/api/parmanent-personal-information`}
         columns={studentColumns}
         onEdit={changeDetail}
+        onViewPhoto={handleViewPhoto}
       />
+      {showPhotoViewer && (
+        <DocumentViewer url={photoUrl} show={showPhotoViewer} onClose={() => setShowPhotoViewer(false)} />
+      )}
     </div>
   )
 }

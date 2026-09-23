@@ -6,10 +6,10 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../../utils/baseUrl";
 import "../../../assets/css/academicOfflineFeeReport.css";
 
-const StudentTable = ({ url, columns, onEdit }) => {
+const StudentTable = ({ url, columns, onEdit, onViewPhoto }) => {
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
-  const callbacksRef = useRef({ onEdit });
+  const callbacksRef = useRef({ onEdit,onViewPhoto });
 
   const [classes, setClasses] = useState([]);
   const [divisions, setDivisions] = useState([]);
@@ -23,8 +23,8 @@ const StudentTable = ({ url, columns, onEdit }) => {
   const programFilterRef = useRef("");
 
   useEffect(() => {
-    callbacksRef.current = { onEdit };
-  }, [onEdit]);
+    callbacksRef.current = { onEdit, onViewPhoto };
+  }, [onEdit,onViewPhoto]);
 
   useEffect(() => {
     classFilterRef.current = classFilter;
@@ -94,9 +94,16 @@ const StudentTable = ({ url, columns, onEdit }) => {
       const rowData = datatableRef.current.row(tr).data(); // full API row object
       callbacksRef.current.onEdit?.(rowData);
     });
+    $table.on("click", ".table-action-view-document", function () {
+      console.log('view photo clicked')
+      const tr = $(this).closest("tr");
+      const rowData = datatableRef.current.row(tr).data(); // full API row object
+      callbacksRef.current.onViewPhoto?.(rowData);
+    });
 
     return () => {
       $table.off("click", ".table-action-change-detail");
+      $table.off("click", ".table-action-view-document");
       if (datatableRef.current) {
         // Keep the <table> node so React can remount cleanly next time
         datatableRef.current.destroy();
