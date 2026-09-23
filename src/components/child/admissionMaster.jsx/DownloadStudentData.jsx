@@ -289,23 +289,25 @@ const DownloadStudentData = () => {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      if (data?.success === false) {
-        const existing = Array.isArray(data?.photos) ? data.photos : [];
-        setPhotoImportMessage({
-          type: "error",
-          text: existing.length
-            ? `${data?.message || "Photo import failed"}: ${existing.join(", ")}`
-            : data?.message || "Photo import failed",
-        });
-        return;
-      }
+      const existing = Array.isArray(data?.photos) ? data.photos : [];
+      const message =
+        data?.message ||
+        (data?.success === false
+          ? "Photo import failed"
+          : "Photos imported successfully");
+      const text = existing.length
+        ? `${message}: ${existing.join(", ")}`
+        : message;
 
+      // success can still include unsaved/existing photos — surface those names
       setPhotoImportMessage({
-        type: "success",
-        text: data?.message || "Photos imported successfully",
+        type: data?.success === false || existing.length > 0 ? "error" : "success",
+        text,
       });
 
-      if (photoFileRef.current) photoFileRef.current.value = "";
+      if (data?.success !== false && photoFileRef.current) {
+        photoFileRef.current.value = "";
+      }
     } catch (err) {
       const resData = err?.response?.data;
       const existing = Array.isArray(resData?.photos) ? resData.photos : [];
