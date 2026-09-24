@@ -1,99 +1,123 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { Icon } from "@iconify/react";
+import baseURL from "../../utils/baseUrl";
+import axios from "axios";
 
-const buildSampleRows = () => [
-  { class: "Nursery A", classTotal: 32, presentCount: 30, absentCount: 2 },
-  { class: "LKG B", classTotal: 28, presentCount: 27, absentCount: 1 },
-  { class: "UKG A", classTotal: 35, presentCount: 33, absentCount: 2 },
-  { class: "Class 1 A", classTotal: 40, presentCount: 38, absentCount: 2 },
-  { class: "Class 2 B", classTotal: 42, presentCount: 40, absentCount: 2 },
-  { class: "Class 5 A", classTotal: 45, presentCount: 41, absentCount: 4 },
-  { class: "Class 10 Science", classTotal: 48, presentCount: 46, absentCount: 2 },
-];
 
 const ClassWiseAttendance = () => {
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [rows, setRows] = useState(buildSampleRows);
+ 
+  const [students,setStudents]=useState([])
+  useEffect(()=>{
+      let fetchStudets=async()=>{
+        try{
+          let response=await axios.get(`${baseURL}/api/in-out-attendance/reports/summary`)
+          console.log('students data*******************',response.data)
+          setStudents(response.data.data)
+        }catch(error){
+          console.log('error in fetching students data*******************',error)
+        }
+      }
+      fetchStudets()
+  },[])
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Placeholder until API exists: replace with GET using `date`
-    setRows(buildSampleRows());
+    axios.get(`${baseURL}/api/in-out-attendance/reports/summary?filter[date]=${date}`)
+    .then(response=>{
+      
+      setStudents(response.data.data)
+    })
+    .catch(error=>{
+      console.log('error in fetching students data*******************',error)
+    })
+    
   };
 
   return (
-    <div className='cwa-root card h-100 shadow-none border mt-5'>
-      <style>
-        {`
-          .cwa-root .table thead tr th,
-          .cwa-root .table tbody tr td {
-            padding: 2px 12px !important;
-            line-height: 1.25 !important;
-          }
-        `}
-      </style>
-      <div className='card-header border-bottom bg-base py-12 px-20 d-flex flex-wrap align-items-center justify-content-between gap-3'>
-        <h6 className='text-lg fw-semibold mb-0'>Class Wise Attendance</h6>
-        <form
-          onSubmit={handleSubmit}
-          className='d-flex flex-wrap align-items-center gap-2'
-        >
-          <input
-            type='date'
-            className='form-control form-control-sm w-auto'
-            style={{ minWidth: "11rem" }}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            aria-label='Attendance date'
-          />
-          <button type='submit' className='btn btn-primary-600 btn-sm px-20'>
-            Submit
-          </button>
-        </form>
-      </div>
-      <div className='card-body p-16'>
-        <div className='table-responsive scroll-sm'>
-          <table className='table bordered-table xsm-table mb-0'>
-            <thead>
-              <tr>
-                <th scope='col'>Class</th>
-                <th scope='col' className='text-end'>
-                  Class total
-                </th>
-                <th scope='col' className='text-end'>
-                  Present count
-                </th>
-                <th scope='col' className='text-end'>
-                  Absent count
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 ? (
+    <div className='adm-panel'>
+      <div className='chfi-card'>
+        <div className='card-header'>
+          <div className='header-row'>
+            <span className='header-icon'>
+              <Icon icon='solar:clipboard-check-bold-duotone' width='16' />
+            </span>
+            <div>
+              <h5 className='card-title'>Class Wise Attendance</h5>
+            </div>
+            <div className='header-meta'>
+              <form
+                onSubmit={handleSubmit}
+                className='d-flex flex-wrap align-items-center gap-2'
+              >
+                <input
+                  type='date'
+                  className='adm-date-input'
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  aria-label='Attendance date'
+                />
+                <button type='submit' className='adm-btn-header'>
+                  Submit
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div className='card-body'>
+          <div className='table-responsive scroll-sm'>
+            <table className='table bordered-table xsm-table mb-0 adm-table'>
+              <thead>
                 <tr>
-                  <td colSpan={4} className='text-center text-secondary-light py-8'>
-                    No attendance rows for this date.
-                  </td>
+                  <th scope='col'>Class</th>
+                  <th scope='col' className='text-end'>
+                  Division 
+                  </th>
+                  <th scope='col' className='text-end'>
+                    Total Students
+                  </th>
+                  
+                  <th scope='col' className='text-end'>
+                    Present count
+                  </th>
+                  <th scope='col' className='text-end'>
+                    Absent count
+                  </th>
                 </tr>
-              ) : (
-                rows.map((row, index) => (
-                  <tr key={`${row.class}-${index}`}>
-                    <td className='fw-medium'>{row.class}</td>
-                    <td className='text-end'>{row.classTotal}</td>
-                    <td className='text-end'>
-                      <span className='text-success-main fw-medium'>
-                        {row.presentCount}
-                      </span>
-                    </td>
-                    <td className='text-end'>
-                      <span className='text-danger-main fw-medium'>
-                        {row.absentCount}
-                      </span>
+              </thead>
+              <tbody>
+                {students.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className='text-center text-secondary-light py-8'
+                    >
+                      No attendance rows for this date.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  students.map((row, index) => (
+                    <tr key={`${row.class}-${index}`}>
+                      <td className='fw-bold'>{row?.class}</td>
+                      <td className='text-end'>{row?.div}</td>
+                      <td className='text-end'>{row?.total_student}</td>
+                      <td className='text-end'>
+                        <span className='adm-badge adm-badge-success'>
+                          {row.present_count}
+                        </span>
+                      </td>
+                      <td className='text-end'>
+                        <span className='adm-badge adm-badge-danger'>
+                          {row?.absent_count}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

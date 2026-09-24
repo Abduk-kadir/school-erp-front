@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useMemo } from "react";
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import baseURL from "../../utils/baseUrl";
@@ -34,6 +34,65 @@ const formatFee = (v) => {
   if (!Number.isNaN(n)) return inrFormatter.format(n);
   return `₹${v}`;
 };
+
+const KPI_CARDS = [
+  {
+    key: "students",
+    label: "Total Students",
+    icon: "solar:users-group-rounded-bold-duotone",
+    accent: "adm-kpi-accent-blue",
+    format: "count",
+  },
+  {
+    key: "sms",
+    label: "Total SMS",
+    icon: "solar:chat-round-dots-bold-duotone",
+    accent: "adm-kpi-accent-sky",
+    format: "count",
+  },
+  {
+    key: "expense",
+    label: "Total Expenses",
+    icon: "solar:bill-list-bold-duotone",
+    accent: "adm-kpi-accent-amber",
+    format: "fee",
+  },
+  {
+    key: "registrationFee",
+    label: "Total Registration Fee",
+    icon: "fa6-solid:indian-rupee-sign",
+    accent: "adm-kpi-accent-teal",
+    format: "fee",
+  },
+  {
+    key: "admissionFee",
+    label: "Total Admission Fee",
+    icon: "fa6-solid:indian-rupee-sign",
+    accent: "adm-kpi-accent-blue",
+    format: "fee",
+  },
+  {
+    key: "academicFee",
+    label: "Total Academic Fee",
+    icon: "fa6-solid:indian-rupee-sign",
+    accent: "adm-kpi-accent-sky",
+    format: "fee",
+  },
+  {
+    key: "busFee",
+    label: "Total Bus Fee",
+    icon: "fa6-solid:indian-rupee-sign",
+    accent: "adm-kpi-accent-amber",
+    format: "fee",
+  },
+  {
+    key: "canteenFee",
+    label: "Total Canteen Fee",
+    icon: "fa6-solid:indian-rupee-sign",
+    accent: "adm-kpi-accent-teal",
+    format: "fee",
+  },
+];
 
 const UnitCountOne = () => {
   const [totalStudents, setTotalStudents] = useState(null);
@@ -72,117 +131,40 @@ const UnitCountOne = () => {
     };
   }, []);
 
+  const values = useMemo(()=>{
+    return{
+      students: totalStudents,
+      sms: 0,
+      expense: 0,
+      registrationFee:0,
+      admissionFee: 0,
+      academicFee: 0,
+      busFee: 0,
+      canteenFee: 0,
+    };
+  },[totalStudents])
+
   return (
-    <div className='row row-cols-xxxl-5 row-cols-lg-3 row-cols-sm-2 row-cols-1 gy-4 mt-2'>
-      <div className='col'>
-        <div className='card shadow-none border bg-gradient-start-1 h-100'>
-          <div className='card-body p-20'>
-            <div className='d-flex flex-wrap align-items-center justify-content-between gap-3'>
+    <div className='adm-kpi-grid'>
+      {KPI_CARDS.map((card) => {
+        const raw = values[card.key];
+        const display =
+          card.format === "fee" ? formatFee(raw) : formatCount(raw);
+
+        return (
+          <div key={card.key} className={`adm-kpi-card ${card.accent}`}>
+            <div className='adm-kpi-inner'>
               <div>
-                <p className='fw-medium text-primary-light mb-1'>Total Students</p>
-                <h6 className='mb-0'>{formatCount(totalStudents)}</h6>
+                <p className='adm-kpi-label'>{card.label}</p>
+                <h6 className='adm-kpi-value'>{display}</h6>
               </div>
-              <div className='w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center'>
-                <Icon
-                  icon='gridicons:multiple-users'
-                  className='text-white text-2xl mb-0'
-                />
-              </div>
+              <span className='adm-kpi-icon' aria-hidden='true'>
+                <Icon icon={card.icon} width='22' height='22' />
+              </span>
             </div>
-           
           </div>
-        </div>
-        {/* card end */}
-      </div>
-      
-      <div className='col'>
-        <div className='card shadow-none border bg-gradient-start-4 h-100'>
-          <div className='card-body p-20'>
-            <div className='d-flex flex-wrap align-items-center justify-content-between gap-3'>
-              <div>
-                <p className='fw-medium text-primary-light mb-1'>
-                  Total Fee Collected
-                </p>
-                <h6 className='mb-0'>{formatFee(totalFeeCollected)}</h6>
-              </div>
-              <div className='w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center'>
-                <Icon
-                  icon='solar:wallet-bold'
-                  className='text-white text-2xl mb-0'
-                />
-              </div>
-            </div>
-           
-          </div>
-        </div>
-        {/* card end */}
-      </div>
-      <div className='col'>
-        <div className='card shadow-none border bg-gradient-start-5 h-100'>
-          <div className='card-body p-20'>
-            <div className='d-flex flex-wrap align-items-center justify-content-between gap-3'>
-              <div>
-                <p className='fw-medium text-primary-light mb-1'>
-                  Total Expense
-                </p>
-                <h6 className='mb-0'>₹30,000</h6>
-              </div>
-              <div className='w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center'>
-                <Icon
-                  icon='fa6-solid:file-invoice-dollar'
-                  className='text-white text-2xl mb-0'
-                />
-              </div>
-            </div>
-           
-          </div>
-        </div>
-        {/* card end */}
-      </div>
-      <div className='col'>
-        <div className='card shadow-none border bg-gradient-start-2 h-100'>
-          <div className='card-body p-20'>
-            <div className='d-flex flex-wrap align-items-center justify-content-between gap-3'>
-              <div>
-                <p className='fw-medium text-primary-light mb-1'>
-                  Total Sms
-                </p>
-                <h6 className='mb-0'>15,000</h6>
-              </div>
-              <div className='w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center'>
-                <Icon
-                  icon='fa-solid:award'
-                  className='text-white text-2xl mb-0'
-                />
-              </div>
-            </div>
-            
-          </div>
-        </div>
-        {/* card end */}
-      </div>
-      <div className='col'>
-        <div className='card shadow-none border bg-gradient-start-3 h-100'>
-          <div className='card-body p-20'>
-            <div className='d-flex flex-wrap align-items-center justify-content-between gap-3'>
-              <div>
-                <p className='fw-medium text-primary-light mb-1'>
-                  Total Free Users
-                </p>
-                <h6 className='mb-0'>5,000</h6>
-              </div>
-              <div className='w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center'>
-                <Icon
-                  icon='fluent:people-20-filled'
-                  className='text-white text-2xl mb-0'
-                />
-              </div>
-            </div>
-            
-          </div>
-        </div>
-        {/* card end */}
-      </div>
+        );
+      })}
     </div>
   );
 };

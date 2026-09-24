@@ -1,22 +1,47 @@
+import { Icon } from "@iconify/react";
 import useReactApexChart from "../../hook/useReactApexChart";
 import ReactApexChart from "react-apexcharts";
 
-const FeeReportChart = () => {
+const FeeReportChart = ({ title,categories,data,seriesName }) => {
   let { lineDataLabelSeries, lineDataLabelOptions } = useReactApexChart();
+  const series = [
+    {
+      name: seriesName,
+      data: data, // e.g. [1200, 800, 1500, 900, 1100, 700, 1300]
+    },
+  ];
+  const options = {
+    ...lineDataLabelOptions,
+    xaxis: {
+      ...lineDataLabelOptions.xaxis,
+      categories: categories, // e.g. ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+    },
+    yaxis: {
+      ...lineDataLabelOptions.yaxis,
+      labels: {
+        ...lineDataLabelOptions.yaxis?.labels,
+        formatter: (value) => `₹${value}`,
+      },
+    },
+  };
   return (
-    <div className='col-md-12'>
-      <div className='card h-100 p-0 mt-5'>
-        <div className='card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between flex-wrap gap-2'>
-          <h6 className='text-lg fw-semibold mb-0'>Fee Report</h6>
-          <h6 className='text-md fw-medium text-secondary-light mb-0'>
-            Last 7 Days Fee Report
-          </h6>
+    <div className='col-md-6 adm-chart-col'>
+      <div className='chfi-card'>
+        <div className='card-header'>
+          <div className='header-row'>
+            <span className='header-icon'>
+              <Icon icon='fa6-solid:indian-rupee-sign' width='14' />
+            </span>
+            <div>
+              <h5 className='card-title'>{title}</h5>
+            </div>
+          </div>
         </div>
-        <div className='card-body p-24'>
+        <div className='card-body'>
           <ReactApexChart
-            id='lineDataLabel'
-            options={lineDataLabelOptions}
-            series={lineDataLabelSeries}
+           
+            options={options}
+            series={series}
             type='line'
             height={264}
           />

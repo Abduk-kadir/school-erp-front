@@ -1,40 +1,81 @@
-
 import UnitCountOne from "./child/UnitCountOne";
 import ClassWiseAttendance from "./child/classWiseAttendance";
 import FeeReportChart from "./child/feereportChart";
 import DiaryReport from "./child/DiaryReport";
 import GeneralNotificationReport from "./child/GeneralNotificationReport";
-import {useDispatch,useSelector} from "react-redux";
+import { useDispatch } from "react-redux";
 import { getStaffData } from "../redux/slices/registrationNo";
-import { useEffect } from "react";
-const DashBoardLayerOne = () => {
-  const dispatch=useDispatch();
+import { useEffect,useState } from "react";
+import "../assets/css/mastercom.css";
+import "../assets/css/adminDashboard.css";
+import baseURL from "../utils/baseUrl";
+import axios from "axios";
 
-  useEffect(()=>{
-    console.log('calling use effect in dashboard admin')
-    const token=localStorage.getItem('token');
-    console.log('token**********************:',token)
-    if(token){
-      dispatch(getStaffData({token:token}))
+const DashBoardLayerOne = () => {
+  const dispatch = useDispatch();
+  const [diary,setDiary]=useState([])
+  const [notifications,setNotifications]=useState([])
+  useEffect(() => {
+    console.log("calling use effect in dashboard admin");
+    const token = localStorage.getItem("token");
+    console.log("token**********************:", token);
+    if (token) {
+      dispatch(getStaffData({ token: token }));
     }
-    console.log("end")
+    console.log("end");
+  }, []);
+  useEffect(()=>{
+    let fetchData=async()=>{
+      try{
+        Promise.all([
+          axios.get(`${baseURL}/api/diaries`),
+          axios.get(`${baseURL}/api/student-notifications`)
+        ]).then(([diaryResponse,notificationResponse])=>{
+          setDiary(diaryResponse.data.data)
+          setNotifications(notificationResponse.data.data)
+        })
+
+      }
+      catch(errot){
+        console.log('erro in fetcing data for diary and notification')
+      }
+    }
+    fetchData()
   },[])
+
   return (
-    <>
-      {/* UnitCountOne */}
+    <div className="chfi-wrapper adm-dash">
       <UnitCountOne />
       <ClassWiseAttendance />
-      <FeeReportChart />
-      <DiaryReport />
-      <GeneralNotificationReport />
 
+      <div className="row">
+        <FeeReportChart 
+        title="Last 7 Days Registration Fee Report" 
+        categories={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+        data={[]}
+        seriesName="Registration Fee"
+        />
+        <FeeReportChart title="Last 7 Days Admission Fee Report"
+         categories={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+        data={[]}
+        seriesName="Admission Fee"
+        />
+        <FeeReportChart title="Last 7 Days Academic Fee Report"
+         categories={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+        data={[]}
+        seriesName="Academic Fee"
+        />
+        <FeeReportChart title="Last 7 Days Canteen Fee Report"
+         categories={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+        data={[]}
+        seriesName="Canteen Fee"
+        />
+        <FeeReportChart title="Last 7 Days Bus Fee Report" />
+      </div>
 
-      <section className='row gy-4 mt-1'>
-       
-
-       
-      </section>
-    </>
+      <GeneralNotificationReport notifications={notifications}/>
+      <DiaryReport diary={diary}/>
+    </div>
   );
 };
 
