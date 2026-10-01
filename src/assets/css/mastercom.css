@@ -693,3 +693,213 @@
 .assign-subject-form .as-icon-btn:hover {
   transform: scale(1.08);
 }
+
+/* ---------- Inline checkbox group (e.g. allowed actions) ---------- */
+.chfi-root .field-row.chfi-field-full {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.chfi-root .chfi-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.chfi-root .chfi-checkbox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease;
+  user-select: none;
+}
+
+.chfi-root .chfi-checkbox-chip:hover {
+  border-color: rgba(37, 99, 235, 0.45);
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.chfi-root .chfi-checkbox-chip.is-checked {
+  border-color: rgba(37, 99, 235, 0.65);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1e3a8a;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+}
+
+.chfi-root .chfi-checkbox-chip .form-check-input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #2563eb;
+  flex-shrink: 0;
+}
+
+.chfi-root .chfi-checkbox-chip span {
+  line-height: 1.2;
+}
+
+.staff-perm-action-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.7rem;
+  line-height: 1.1;
+}
+
+.staff-perm-role {
+  color: #64748b;
+}
+
+.staff-perm-effective {
+  font-weight: 600;
+}
+
+.chfi-wrapper .report-table .form-check-input,
+.chfi-wrapper .staff-perm-table .form-check-input {
+  border: 1px solid rgba(15, 23, 42, 0.55);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.chfi-wrapper .report-table .form-check-input:checked,
+.chfi-wrapper .staff-perm-table .form-check-input:checked {
+  border-color: rgba(15, 23, 42, 0.45);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.chfi-wrapper .report-table .form-check-input:focus,
+.chfi-wrapper .staff-perm-table .form-check-input:focus {
+  border-color: rgba(15, 23, 42, 0.65);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.14),
+    0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.staff-perm-table .staff-perm-row-override {
+  background: rgba(254, 243, 199, 0.35);
+}
+
+.staff-perm-table .staff-perm-reason-col {
+  width: auto;
+  white-space: nowrap;
+}
+
+.staff-perm-table .staff-perm-reason-input {
+  max-width: 16ch;
+}
+
+/* Personal access permission — filters + profile */
+.chfi-wrapper .chfi-root.staff-perm-filters,
+.chfi-wrapper .chfi-root.role-perm-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 20px;
+  margin-bottom: 1.25rem;
+}
+
+.chfi-wrapper .chfi-root.role-perm-filters {
+  grid-template-columns: minmax(0, 420px);
+}
+
+@media (max-width: 991.98px) {
+  .chfi-wrapper .chfi-root.staff-perm-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chfi-wrapper .chfi-root.staff-perm-filters .staff-perm-filter-item,
+.chfi-wrapper .chfi-root.role-perm-filters .staff-perm-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.chfi-wrapper .role-perm-profile__icon {
+  color: #2563eb;
+}
+
+.chfi-wrapper .staff-perm-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 1.25rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: #f8fafc;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  min-width: 0;
+}
+
+.chfi-wrapper .staff-perm-profile__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #d97706;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.chfi-wrapper .staff-perm-profile__line {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  color: #334155;
+}
+
+.chfi-wrapper .staff-perm-profile__name {
+  font-weight: 700;
+  color: #1e293b;
+  flex-shrink: 0;
+}
+
+.chfi-wrapper .staff-perm-profile__sep {
+  margin: 0 0.45rem;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.chfi-wrapper .staff-perm-profile__role {
+  font-weight: 600;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.chfi-wrapper .staff-perm-profile__email {
+  font-weight: 500;
+  color: #64748b;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -4,6 +4,10 @@ import RouteScrollToTop from "./helper/RouteScrollToTop";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const MasterLayout = lazy(() => import("./masterLayout/MasterLayout"));
 
+const ModuleMaster=lazy(() => import("./pages/AdminPages/AccessPermission/ModuleMaster"))
+const RolePermission=lazy(() => import("./pages/AdminPages/AccessPermission/RolePermission"))
+const PersonalPermission=lazy(() => import("./pages/AdminPages/AccessPermission/PersonalPermission"))
+
 //importing admission module
 const ClassPage = lazy(() => import("./pages/ClassPage"));
 import SemesterPage from "./pages/AdminPages/master/SemesterPage";
@@ -297,6 +301,7 @@ const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicy"))
 
 //preodic test module importing here
 const PreodicTestPage=lazy(() => import("./pages/AdminPages/preodic/PreodicTestPage"))
+const PreodicMarksEntryPage=lazy(() => import("./pages/AdminPages/preodic/PreodicMarksEntry"))
 
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
@@ -565,8 +570,19 @@ function App() {
               </Route>
               <Route path='preodic'>
                 <Route path='periodic-test' element={<PreodicTestPage />} />
+                <Route path='marks-entry' element={<PreodicMarksEntryPage />} />
               </Route>
-
+              <Route path="access-permission">
+                <Route path="module-list" element={<ModuleMaster />} />
+                <Route
+                  path="role-access-permission"
+                  element={<RolePermission />}
+                />
+                <Route
+                  path="personal-access-permission"
+                  element={<PersonalPermission />}
+                />
+              </Route>
               <Route path="error-logs" element={<ErrorPage />} />
 
               {/*admin route end*/}

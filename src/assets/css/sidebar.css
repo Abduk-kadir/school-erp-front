@@ -26,6 +26,39 @@
   width: 17.5rem;
 }
 
+/*
+ * Theme (style.css) keeps .sidebar off-canvas until .sidebar-open below 1200px.
+ * Many laptops/zoom levels sit in 992–1199px — pin sidebar visible there too.
+ */
+@media (min-width: 992px) {
+  .sidebar {
+    inset-inline-start: 0 !important;
+  }
+
+  /* Close (X) is for mobile drawer only — not when sidebar is pinned */
+  .sidebar-close-btn {
+    display: none !important;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .sidebar {
+    width: 16.5rem !important;
+  }
+
+  .dashboard-main {
+    margin-inline-start: 16.5rem !important;
+  }
+
+  .sidebar-mobile-toggle {
+    display: none !important;
+  }
+
+  .sidebar-toggle {
+    display: inline-block !important;
+  }
+}
+
 @media (min-width: 1200px) {
   .sidebar {
     width: 16.5rem !important;
@@ -463,20 +496,11 @@
   box-shadow: none !important;
 }
 
-/* Chevron from base theme (::after) */
-.sidebar-menu li.dropdown>a::after {
-  color: #000000;
-  font-size: 0.95rem !important;
-  inset-inline-end: 0.65rem;
-  background: transparent;
-  transition: transform 0.25s ease, color 0.2s ease;
-}
-
-.sidebar-menu li.dropdown.open>a::after,
-.sidebar-menu li.dropdown.dropdown-open>a::after {
-  color: #2563eb;
-  background: transparent;
-  transform: translateY(-50%) rotate(90deg);
+/* Hide theme chevron — menu already uses a single leading Iconify icon */
+.sidebar-menu li.dropdown > a::after,
+.sidebar-menu li.dropdown > .menu-link::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* ---------- Nested submenu ---------- */
@@ -549,10 +573,42 @@
   padding-inline-start: 0.75rem !important;
 }
 
-/* ---------- Collapsed (icon-only) ---------- */
+/* ---------- Collapsed (icon-only) — .active = collapsed via header toggle ---------- */
 .sidebar.active {
   background: #ffffff !important;
   box-shadow: none;
+}
+
+/* Expanded sidebar: one logo + full labels (not icon-only collapse) */
+.sidebar:not(.active) .sidebar-logo img.light-logo {
+  display: inline-block !important;
+}
+
+[data-theme="dark"] .sidebar:not(.active) .sidebar-logo img.light-logo {
+  display: none !important;
+}
+
+[data-theme="dark"] .sidebar:not(.active) .sidebar-logo img.dark-logo {
+  display: inline-block !important;
+}
+
+.sidebar:not(.active) .sidebar-logo img.dark-logo {
+  display: none !important;
+}
+
+.sidebar:not(.active) .sidebar-logo img.logo-icon {
+  display: none !important;
+}
+
+.sidebar:not(.active) .sidebar-menu li a span,
+.sidebar:not(.active) .sidebar-menu .menu-link span {
+  display: inline !important;
+}
+
+.sidebar:not(.active) .sidebar-menu li.dropdown.open > .sidebar-submenu,
+.sidebar:not(.active) .sidebar-menu li.dropdown.dropdown-open > .sidebar-submenu,
+.sidebar:not(.active) .sidebar-menu .sidebar-submenu.open {
+  display: block !important;
 }
 
 .sidebar.active .sidebar-logo {

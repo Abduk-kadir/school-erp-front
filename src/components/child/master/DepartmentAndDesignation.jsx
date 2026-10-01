@@ -23,6 +23,13 @@ const DepartmentAndDesignation = ({
     const schemaFields = {};
 
     formFields.forEach((field) => {
+      if (field.type === 'checkboxGroup') {
+        field.options?.forEach((option) => {
+          schemaFields[option.name] = Yup.boolean();
+        });
+        return;
+      }
+
       let validator;
 
       switch (field.type) {
@@ -31,6 +38,9 @@ const DepartmentAndDesignation = ({
           break;
         case 'number':
           validator = Yup.number().typeError('Must be a number');
+          break;
+        case 'checkbox':
+          validator = Yup.boolean();
           break;
         case 'file':
           validator = Yup.mixed();
@@ -172,7 +182,38 @@ const DepartmentAndDesignation = ({
                 <Form className="chfi-root dynamic-form">
                   {initialFields.map((field) => {
                     const icon = field.icon || 'solar:document-text-bold-duotone';
-                    const useIconWrapper = field.type !== 'checkbox' && field.type !== 'textarea';
+
+                    if (field.type === 'checkboxGroup') {
+                      return (
+                        <div key={field.name} className="field-row chfi-field-full">
+                          <label className="form-label">
+                            <span className="label-dot" />
+                            {field.label}
+                            {field.required && <span className="text-danger"> *</span>}
+                          </label>
+                          <div className="chfi-checkbox-group">
+                            {field.options?.map((option) => (
+                              <label
+                                key={option.name}
+                                htmlFor={option.name}
+                                className={`chfi-checkbox-chip${
+                                  values[option.name] ? ' is-checked' : ''
+                                }`}
+                              >
+                                <Field
+                                  type="checkbox"
+                                  name={option.name}
+                                  id={option.name}
+                                  className="form-check-input"
+                                />
+                                <span>{option.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }
+
                     return (
                       <div key={field.name} className="field-row">
                         {field.type !== 'checkbox' && (

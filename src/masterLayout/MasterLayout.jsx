@@ -82,9 +82,10 @@ function SidebarMenuItem({ item, level = 0, forceOpen = false }) {
           }}
           className="menu-link"
         >
-          {item.icon && <Icon icon={item.icon} className="menu-icon" />}
+          {level === 0 && item.icon && (
+            <Icon icon={item.icon} className="menu-icon" />
+          )}
           <span>{item.title}</span>
-          {/* ↓ Arrow removed completely */}
         </a>
       ) : (
         <NavLink
@@ -92,10 +93,11 @@ function SidebarMenuItem({ item, level = 0, forceOpen = false }) {
           className={({ isActive }) => `menu-link ${isActive ? "active" : ""}`}
           onClick={(e) => e.stopPropagation()}
         >
-          {item.icon && <Icon icon={item.icon} className="menu-icon" />}
-          {level > 0 && (
+          {level === 0 && item.icon ? (
+            <Icon icon={item.icon} className="menu-icon" />
+          ) : level > 0 ? (
             <i className="ri-circle-fill circle-icon text-primary-600" />
-          )}
+          ) : null}
           <span>{item.title}</span>
         </NavLink>
       )}
@@ -142,6 +144,23 @@ const MasterLayout = () => {
     console.log("end")
   },[])
 
+  const location = useLocation();
+
+  useEffect(() => {
+    const syncSidebarForViewport = () => {
+      if (window.innerWidth >= 992) {
+        setMobileMenu(false);
+      }
+    };
+    syncSidebarForViewport();
+    window.addEventListener("resize", syncSidebarForViewport);
+    return () => window.removeEventListener("resize", syncSidebarForViewport);
+  }, []);
+
+  useEffect(() => {
+    setMobileMenu(false);
+  }, [location.pathname]);
+
   useEffect(() => {
     let fetchData = async () => {
       try {
@@ -162,8 +181,9 @@ const MasterLayout = () => {
     fetchData();
   }, []);
 
-  const sidebarControl = () => setSidebarActive(!sidebarActive);
-  const mobileMenuControl = () => setMobileMenu(!mobileMenu);
+  /** false = full sidebar with labels; true = collapsed icon strip (theme class .sidebar.active) */
+  const sidebarControl = () => setSidebarActive((prev) => !prev);
+  const mobileMenuControl = () => setMobileMenu((prev) => !prev);
 
   // ── Modern nested menu structure ───────────────────────────────────────
   const menuItems = [
@@ -553,6 +573,19 @@ const MasterLayout = () => {
 
       ]
     },
+
+    {
+      title: "Excess Permisssion",
+      icon: "solar:document-add-outline",
+      children: [
+         {title:"Module List",path:"/dashboard/access-permission/module-list"},
+        { title: "Role Access Permission", path: "/dashboard/access-permission/role-access-permission" },
+        { title: "Personal Access Permission", path: "/dashboard/access-permission/personal-access-permission" },
+        
+
+
+      ]
+    },
     {
       title: "Error Logs",
       icon: "solar:danger-triangle-outline",
@@ -591,6 +624,7 @@ const MasterLayout = () => {
           onClick={mobileMenuControl}
           type="button"
           className="sidebar-close-btn"
+          aria-label="Close menu"
         >
           <Icon icon="radix-icons:cross-2" />
         </button>
