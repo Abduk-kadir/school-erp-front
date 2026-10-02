@@ -249,7 +249,7 @@ const MasterLayout = () => {
             { title: "Assign Doucment", path: "/dashboard/document-master/assign-document" }
           ]
         },
-        { title: "Phisally Disable", path: "/dashboard/phisally-disable" },
+        { title: "Physically Disabled", path: "/dashboard/phisally-disable" },
         {title:"Holiday",path:"/dashboard/holiday-master"},
         {title:"Event ",path:"/dashboard/event-master"},
        
@@ -463,7 +463,7 @@ const MasterLayout = () => {
             { title: "Send Notification",path:"/dashboard/academic/send-notification"
               
             },
-            { title: "Fiew Notification",path:"/dashboard/academic/view-notification"
+            { title: "View Notification",path:"/dashboard/academic/view-notification"
              
             },
           ]
@@ -475,7 +475,7 @@ const MasterLayout = () => {
             { title: "Send Diary",path:"/dashboard/academic/send-diary"
               
             },
-            { title: "Fiew Diary",path:"/dashboard/academic/view-diary"
+            { title: "View Diary",path:"/dashboard/academic/view-diary"
              
             },
           ]
@@ -525,12 +525,12 @@ const MasterLayout = () => {
    
 
     {
-      title: "Preodic Test",
+      title: "Perodic Test",
       icon: "solar:clipboard-list-outline",
       children: [
-        { title: "Preodic Test Creation", path: "/dashboard/preodic/periodic-test" },
-        { title: "Preodic Test Marks Entry", path: "/dashboard/preodic/marks-entry" },
-        { title: "Preodic Test Report", path: "/dashboard/preodic/report" },
+        { title: "Perodic Test Creation", path: "/dashboard/preodic/periodic-test" },
+        { title: "Perodic Test Marks Entry", path: "/dashboard/preodic/marks-entry" },
+        { title: "Perodic Test Report", path: "/dashboard/preodic/report" },
        
 
 
