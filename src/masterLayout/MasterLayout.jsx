@@ -575,7 +575,7 @@ const MasterLayout = () => {
     },
 
     {
-      title: "Excess Permisssion",
+      title: "Access Permission",
       icon: "solar:document-add-outline",
       children: [
          {title:"Module List",path:"/dashboard/access-permission/module-list"},
