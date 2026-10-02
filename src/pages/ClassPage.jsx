@@ -5,6 +5,11 @@ import axios from "axios";
 import baseURL from "../utils/baseUrl";
 import { useState } from "react";
 
+const authHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 const ClassPage = () => {
   const [initialValues, setInitialValues] = useState({
     class_name: "",
@@ -64,7 +69,9 @@ const ClassPage = () => {
         status: Number(values.status),
         admission_form_fee: Number(values.admission_form_fee),
       };
-      await axios.post(`${baseURL}/api/classes`, payload);
+      await axios.post(`${baseURL}/api/classes`, payload, {
+        headers: authHeaders(),
+      });
       setSuccessMsg("Class added successfully!");
       setInitialValues({
         class_name: "",
@@ -93,7 +100,9 @@ const ClassPage = () => {
 
     if (!ok) return;
     try {
-      await axios.delete(`${baseURL}/api/classes/${id}`);
+      await axios.delete(`${baseURL}/api/classes/${id}`, {
+        headers: authHeaders(),
+      });
       alert("Class is deleted successfully");
       table.ajax.reload();
     } catch (error) {

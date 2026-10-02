@@ -13,12 +13,18 @@ const ALL_ACTIONS = [
   "view",
   "import",
   "export",
+  "is_assign_permissions"
 ];
 
 const actionLabel = (key) => key.charAt(0).toUpperCase() + key.slice(1);
 
 const REASON_PLACEHOLDER = "Reason";
 const REASON_INPUT_SIZE = 12;
+
+const authHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 const normalizeList = (payload) => {
   if (Array.isArray(payload)) return payload;
@@ -296,7 +302,9 @@ function PersonalPermission() {
     setErrorMsg("");
     setSuccessMsg("");
     try {
-      await axios.put(`${baseURL}/api/staff-permissions/${staffId}`, payload);
+      await axios.put(`${baseURL}/api/staff-permissions/${staffId}`, payload, {
+        headers: authHeaders(),
+      });
       setSuccessMsg("Staff permissions saved successfully.");
       const { data } = await axios.get(
         `${baseURL}/api/staff-permissions/${staffId}`

@@ -5,6 +5,11 @@ import axios from "axios";
 import baseURL from "../utils/baseUrl";
 import { useState } from "react";
 
+const authHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 const CastPage = () => {
   const [initialValues, setInitialValues] = useState({ value: "" });
   const [successMsg, setSuccessMsg] = useState("");
@@ -26,7 +31,11 @@ const CastPage = () => {
     setSuccessMsg("");
     setErrorMsg("");
     try {
-      await axios.post(`${baseURL}/api/castes`, { cast_name: values.value });
+      await axios.post(
+        `${baseURL}/api/castes`,
+        { cast_name: values.value },
+        { headers: authHeaders() }
+      );
       setSuccessMsg("Cast added successfully!");
       setInitialValues({ value: "" });
       setTableRefreshKey((prev) => prev + 1);
@@ -44,7 +53,9 @@ const CastPage = () => {
     const ok = window.confirm("Are you sure you want to delete this record?");
     if (!ok) return;
     try {
-      await axios.delete(`${baseURL}/api/castes/${id}`);
+      await axios.delete(`${baseURL}/api/castes/${id}`, {
+        headers: authHeaders(),
+      });
       alert("Cast is deleted successfully");
       table.ajax.reload();
     } catch (error) {

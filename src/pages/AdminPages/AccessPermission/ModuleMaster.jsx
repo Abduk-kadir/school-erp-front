@@ -12,6 +12,7 @@ const ALLOWED_ACTIONS = [
   "view",
   "import",
   "export",
+  "is_assign_permissions"
 ];
 
 const emptyActionValues = Object.fromEntries(

@@ -13,9 +13,16 @@ const ALL_ACTIONS = [
   "view",
   "import",
   "export",
+  "is_assign_permissions"
+  
 ];
 
 const actionLabel = (key) => key.charAt(0).toUpperCase() + key.slice(1);
+
+const authHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 function RolePermission() {
   const [roles, setRoles] = useState([]);
@@ -101,7 +108,9 @@ function RolePermission() {
     setSuccessMsg("");
     try {
       const payload = buildSavePayload(modules);
-      await axios.put(`${baseURL}/api/role-permissions/${roleid}`, payload);
+      await axios.put(`${baseURL}/api/role-permissions/${roleid}`, payload, {
+        headers: authHeaders(),
+      });
       setSuccessMsg("Role permissions saved successfully.");
     } catch (error) {
       console.error("Failed to save role permissions", error);
