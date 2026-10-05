@@ -1,14 +1,35 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Link, NavLink, useLocation,Outlet } from "react-router-dom";
+import { Link, NavLink, useLocation, Outlet, useNavigate } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
-import {onMessageListener} from "../services/fcmService";
+import { onMessageListener } from "../services/fcmService";
+import axios from "axios";
+import baseURL from "../utils/baseUrl";
 
 const StudentLayout = () => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
   const location = useLocation(); // Hook to get the current route
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      if (token) {
+        await axios.post(
+          `${baseURL}/api/parmanent-personal-information/logout`,
+          { fcmToken: null },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      localStorage.removeItem("token");
+      navigate("/", { replace: true });
+    }
+  };
 
   const requestNotificationPermission = async () => {
     try {
@@ -737,13 +758,14 @@ const StudentLayout = () => {
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
-                          to='#'
+                        <button
+                          type="button"
+                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3 border-0 bg-transparent w-100 text-start'
+                          onClick={handleLogout}
                         >
                           <Icon icon='lucide:power' className='icon text-xl' />{" "}
                           Log Out
-                        </Link>
+                        </button>
                       </li>
                     </ul>
                   </div>

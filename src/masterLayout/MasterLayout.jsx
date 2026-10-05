@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
 import axios from "axios";
 import baseURL from "../utils/baseUrl";
@@ -127,12 +127,30 @@ const MasterLayout = () => {
   const [instituteLogo, setInstituteLogo] = useState(null);
   const [instituteName, setInstituteName] = useState("");
   const [menuSearch, setMenuSearch] = useState("");
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const staff = useSelector((state) => state.registrationNo.staff?.data);
   const staffid = staff?.id;
   console.log('staff******** in master layout',staff)
 
- 
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      if (token) {
+        await axios.post(
+          `${baseURL}/api/staff/logout`,
+          { fcmToken: null },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log('logout successfully')
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      localStorage.removeItem("token");
+      navigate("/", { replace: true });
+    }
+  };
 
   useEffect(()=>{
     console.log('calling use effect in dashboard admin')
@@ -776,13 +794,14 @@ const MasterLayout = () => {
                       </li>
                       
                       <li>
-                        <Link
-                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3'
-                          to='#'
+                        <button
+                          type="button"
+                          className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3 border-0 bg-transparent w-100 text-start'
+                          onClick={handleLogout}
                         >
                           <Icon icon='lucide:power' className='icon text-xl' />{" "}
                           Log Out
-                        </Link>
+                        </button>
                       </li>
                     </ul>
                   </div>

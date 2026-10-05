@@ -341,11 +341,8 @@ const LoginPage = () => {
                           isValid={touched.academicYear && !errors.academicYear}
                         >
                           <option value="">Select academic year</option>
-                          <option value="2025-2026">2025-2026</option>
-                          <option value="2024-2025">2024-2025</option>
-                          <option value="2023-2024">2023-2024</option>
-                          <option value="2022-2023">2022-2023</option>
-                          <option value="2021-2022">2021-2022</option>
+                          <option value="2025-2026">2026-2027</option>
+                          
                         </Field>
                         <ErrorMessage
                           name="academicYear"
