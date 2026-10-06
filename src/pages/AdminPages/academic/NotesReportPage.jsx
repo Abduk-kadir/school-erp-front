@@ -30,7 +30,10 @@ const NotesReportPage = () => {
  ]
   return (
     <div>
-      <AllTypeNotficationDataTable url={`${baseURL}/api/notes`} columns={notesColumns} />
+      <AllTypeNotficationDataTable url={`${baseURL}/api/notes`} columns={notesColumns}
+       pdfUrl={`${baseURL}/api/notes/pdf`}
+       excelUrl={`${baseURL}/api/notes/excel`}
+       />
     </div>
   )
 }

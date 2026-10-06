@@ -34,6 +34,7 @@ const InAndOutDetailReportPage = () => {
       url={`${baseURL}/api/in-out-attendance/reports/detail`} 
       columns={feeReportColumns}
       pdfUrl={`${baseURL}/api/in-out-attendance/reports/detail/pdf`}
+      excelUrl={`${baseURL}/api/in-out-attendance/reports/detail/excel`}
        />
     </div>
   );

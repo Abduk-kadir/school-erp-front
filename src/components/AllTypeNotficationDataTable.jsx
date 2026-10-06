@@ -14,7 +14,7 @@ const buildFileUrl = (path) => {
   return path.startsWith("http") ? path : `${baseURL}${path}`;
 };
 
-const AllTypeNotficationDataTable = ({ url, columns }) => {
+const AllTypeNotficationDataTable = ({ url, columns, pdfUrl, excelUrl }) => {
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
   const [classes, setClasses] = useState([]);
@@ -93,6 +93,34 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
     if (datatableRef.current) {
       datatableRef.current.draw();
     }
+  };
+
+  // Let the browser download natively so the server's filename is used;
+  // fetching via XHR can hang when a download manager intercepts it.
+  const handleExportDownload = (format) => {
+    const exportUrl = format === "excel" ? excelUrl : pdfUrl;
+    if (!exportUrl) return;
+
+    const filters = {
+      className: classFilterRef.current.trim(),
+      fromDate: fromDateRef.current.trim(),
+      toDate: toDateRef.current.trim(),
+      batchId: String(batchFilterRef.current).trim(),
+      divisionId: String(divisionFilterRef.current).trim(),
+    };
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== "") params.set(`filter[${key}]`, value);
+    });
+    params.set("_", String(Date.now()));
+
+    const a = document.createElement("a");
+    a.href = `${exportUrl}?${params.toString()}`;
+    a.rel = "noopener";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   useEffect(() => {
@@ -299,7 +327,7 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
         className="card fee-report-card fee-report-table-card basic-data-table border-0 mb-0"
         aria-label="Notification report data"
       >
-        <div className="card-header border-0 bg-dark py-3 px-4">
+        <div className="card-header border-0 bg-dark py-3 px-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
           <div className="d-flex align-items-center gap-3 min-w-0">
             <span className="fee-report-icon-wrap bg-white bg-opacity-10 text-white border border-white border-opacity-25">
               <Icon icon="solar:document-text-bold-duotone" className="fs-4" />
@@ -310,6 +338,32 @@ const AllTypeNotficationDataTable = ({ url, columns }) => {
               </h6>
             </div>
           </div>
+          {(excelUrl || pdfUrl) && (
+            <div className="fee-report-export-group d-flex flex-wrap align-items-center gap-1">
+              {excelUrl && (
+                <button
+                  type="button"
+                  className="btn btn-sm rounded-pill btn-outline-light d-inline-flex align-items-center gap-1 px-3 text-white border-white border-opacity-25"
+                  onClick={() => handleExportDownload("excel")}
+                  title="Download Excel"
+                >
+                  <Icon icon="vscode-icons:file-type-excel" className="fs-5" />
+                  Excel
+                </button>
+              )}
+              {pdfUrl && (
+                <button
+                  type="button"
+                  className="btn btn-sm rounded-pill btn-outline-light d-inline-flex align-items-center gap-1 px-3 text-white border-white border-opacity-25"
+                  onClick={() => handleExportDownload("pdf")}
+                  title="Download PDF"
+                >
+                  <Icon icon="vscode-icons:file-type-pdf2" className="fs-5" />
+                  PDF
+                </button>
+              )}
+            </div>
+          )}
         </div>
         <div className="card-body px-3 px-md-4 pb-4">
           <div

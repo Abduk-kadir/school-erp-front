@@ -18,6 +18,8 @@ const InAndOutSummaryDataTable = ({
   loadingFun,
   exportBaseUrl,
   pdfUrl,
+  excelUrl,
+
 }) => {
   const dispatch=useDispatch()
   const navigate=useNavigate()
@@ -41,8 +43,7 @@ const InAndOutSummaryDataTable = ({
    */
   const getExportUrl = (format) => {
     if (exportBaseUrl) return exportBaseUrl;
-    if (format === "excel") return `${baseURL}/api/fees/excel`;
-    if (format === "csv") return `${baseURL}/api/fees/csv`;
+    if (format === "excel") return excelUrl || `${baseURL}/api/fees/excel`;
     if (format === "pdf") return pdfUrl;
     return `${String(url).replace(/\/$/, "")}/export`;
   };
@@ -125,8 +126,7 @@ const InAndOutSummaryDataTable = ({
   };
 
   const handleExportDownload = async (format) => {
-    const ext =
-      format === "excel" ? "xlsx" : format === "csv" ? "csv" : "pdf";
+    const ext = format === "excel" ? "xlsx" : "pdf";
     const filename = `fee-report-${format}-${Date.now()}.${ext}`;
     try {
       setExportingFormat(format);
@@ -134,7 +134,7 @@ const InAndOutSummaryDataTable = ({
       const filters = getReportFiltersForExport();
       const dedicated =
         !exportBaseUrl &&
-        (format === "excel" || format === "csv" || format === "pdf");
+        (format === "excel" || format === "pdf");
       const params = new URLSearchParams();
       if (!dedicated) params.set("format", format);
       Object.entries(filters).forEach(([key, value]) => {
@@ -143,6 +143,26 @@ const InAndOutSummaryDataTable = ({
       });
       const qs = params.toString();
       const exportUrl = getExportUrl(format);
+
+      // Let the browser download natively so the server's filename is used;
+      // fetching via XHR can also hang when a download manager intercepts it.
+      if (format === "pdf" || (format === "excel" && excelUrl)) {
+        const downloadParams = new URLSearchParams();
+        Object.entries(filters).forEach(([key, value]) => {
+          const v = value == null ? "" : String(value).trim();
+          if (v !== "") downloadParams.set(`filter[${key}]`, v);
+        });
+        downloadParams.set("_", String(Date.now()));
+        const a = document.createElement("a");
+        a.href = `${exportUrl}?${downloadParams.toString()}`;
+        a.rel = "noopener";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      }
+
       const { data } = await axios.get(qs ? `${exportUrl}?${qs}` : exportUrl, {
         responseType: "blob",
       });
@@ -352,20 +372,6 @@ const InAndOutSummaryDataTable = ({
                   <Icon icon="vscode-icons:file-type-excel" width="18" />
                 )}
                 Excel
-              </button>
-              <button
-                type="button"
-                className="export-btn"
-                disabled={!!exportingFormat}
-                onClick={() => handleExportDownload("csv")}
-                title="Download CSV"
-              >
-                {exportingFormat === "csv" ? (
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-                ) : (
-                  <Icon icon="vscode-icons:file-type-csv" width="18" />
-                )}
-                CSV
               </button>
               <button
                 type="button"

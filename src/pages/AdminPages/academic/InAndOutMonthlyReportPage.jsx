@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import $ from "jquery";
 import "datatables.net-dt";
 import axios from "axios";
@@ -7,155 +7,250 @@ import baseURL from "../../../utils/baseUrl";
 import "../../../assets/css/academicOfflineFeeReport.css";
 
 const REPORT_URL = `${baseURL}/api/in-out-attendance/reports/monthly`;
+const MAX_RANGE_DAYS = 31;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const MONTH_NAMES = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
 
-const formatDayHeader = (dateStr) => {
-  const d = new Date(`${dateStr}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+const pad2 = (n) => String(n).padStart(2, "0");
+
+const toDateKey = (d) =>
+  `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+const parseDateKey = (dateStr) => {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null;
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const d = new Date(year, month - 1, day);
+  return Number.isNaN(d.getTime()) ? null : d;
 };
 
-const getDaysInMonth = (yearMonth) => {
-  if (!yearMonth || !/^\d{4}-\d{2}$/.test(yearMonth)) return [];
-  const [year, month] = yearMonth.split("-").map(Number);
-  const daysInMonth = new Date(year, month, 0).getDate();
-  return Array.from({ length: daysInMonth }, (_, i) => {
-    const day = String(i + 1).padStart(2, "0");
-    const m = String(month).padStart(2, "0");
-    return `${year}-${m}-${day}`;
-  });
+const getDayDifference = (fromDate, toDate) =>
+  Math.round((parseDateKey(toDate) - parseDateKey(fromDate)) / DAY_MS);
+
+const getDateRange = (fromDate, toDate) => {
+  const start = parseDateKey(fromDate);
+  const end = parseDateKey(toDate);
+  if (!start || !end || start > end) return [];
+
+  const dates = [];
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    dates.push({
+      key: toDateKey(cursor),
+      month: cursor.getMonth() + 1,
+      day: cursor.getDate(),
+      label: `${cursor.getDate()} ${MONTH_NAMES[cursor.getMonth()]}`,
+    });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return dates;
 };
 
-const flattenMonthlyRow = (row, monthDates) => {
-  const statusByDate = {};
-  (row.daily || []).forEach(({ date, status }) => {
-    if (date) statusByDate[date] = status ?? "";
-  });
-
-  const flat = {
-    srno: row.srno ?? row.sr_no ?? "",
-    reg_no: row.reg_no ?? "",
-    name: row.name ?? "",
-    class: row.class ?? "",
-    div: row.div ?? row.division ?? "",
-    roll_no: row.roll_no ?? "",
-    total_present: row.total_present ?? "",
-    total_absent: row.total_absent ?? "",
-    total_working_days: row.total_working_days ?? "",
-    present_percent:
-      row.present_percent != null ? `${row.present_percent}%` : "",
-  };
-
-  monthDates.forEach((date) => {
-    flat[`day_${date}`] = statusByDate[date] ?? "";
-  });
-
-  return flat;
+const getStatusType = (value) => {
+  if (typeof value !== "string") return null;
+  const code = value.trim().charAt(0).toUpperCase();
+  if (code === "P") return "present";
+  if (code === "A") return "absent";
+  return null;
 };
 
-const defaultMonth = () => {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-};
-
-const InAndOutMonthlyReportPage = () => {
-  const tableRef = useRef(null);
-  const datatableRef = useRef(null);
-
-  const [classes, setClasses] = useState([]);
-  const [divisions, setDivisions] = useState([]);
-  const [batches, setBatches] = useState([]);
-
-  const [monthFilter, setMonthFilter] = useState(defaultMonth);
-  const [classFilter, setClassFilter] = useState("");
-  const [batchFilter, setBatchFilter] = useState("");
-  const [divisionFilter, setDivisionFilter] = useState("");
-  const [exportingFormat, setExportingFormat] = useState(null);
-
-  const monthFilterRef = useRef(monthFilter);
-  const classFilterRef = useRef("");
-  const batchFilterRef = useRef("");
-  const divisionFilterRef = useRef("");
-  const monthDatesRef = useRef([]);
-
-  useEffect(() => {
-    monthFilterRef.current = monthFilter;
-  }, [monthFilter]);
-
-  useEffect(() => {
-    classFilterRef.current = classFilter;
-  }, [classFilter]);
-
-  useEffect(() => {
-    batchFilterRef.current = batchFilter;
-  }, [batchFilter]);
-
-  useEffect(() => {
-    divisionFilterRef.current = divisionFilter;
-  }, [divisionFilter]);
-
-  const monthDates = useMemo(() => getDaysInMonth(monthFilter), [monthFilter]);
-
-  useEffect(() => {
-    monthDatesRef.current = monthDates;
-  }, [monthDates]);
-
-  useEffect(() => {
-    const fetchFilters = async () => {
-      try {
-        const [classRes, divisionRes] = await Promise.all([
-          axios.get(`${baseURL}/api/classes`),
-          axios.get(`${baseURL}/api/divisions`),
-        ]);
-        setClasses(classRes?.data?.data || classRes?.data || []);
-        setDivisions(divisionRes?.data?.data || divisionRes?.data || []);
-      } catch (err) {
-        console.error("Failed to load filter options", err);
-      }
+// Each API row holds one month of a student's attendance, keyed by day "1".."31".
+const flattenRows = (rows, rangeDates) =>
+  rows.map((row) => {
+    const rowMonth = Number(row.month_number);
+    const flat = {
+      reg_no: row.reg_no ?? "",
+      name: row.name ?? "",
+      class: row.class ?? "",
+      div: row.div ?? row.division ?? "",
+      roll_no: row.roll_no ?? "",
     };
-    fetchFilters();
-  }, []);
 
-  const buildColumns = useCallback(() => {
-    const cols = [
-      { data: "srno", title: "Sr No", defaultContent: "" },
-      { data: "reg_no", title: "Reg No", defaultContent: "" },
-      { data: "name", title: "Name", defaultContent: "" },
-      { data: "class", title: "Class", defaultContent: "" },
-      { data: "div", title: "Division", defaultContent: "" },
-      { data: "roll_no", title: "Roll No", defaultContent: "" },
-    ];
+    let present = 0;
+    let absent = 0;
 
-    monthDates.forEach((date) => {
-      cols.push({
-        data: `day_${date}`,
-        title: formatDayHeader(date),
-        defaultContent: "",
-        className: "monthly-day-col text-nowrap",
-      });
+    rangeDates.forEach(({ key, month, day }) => {
+      const value = month === rowMonth ? row[day] ?? "" : "";
+      flat[`day_${key}`] = value;
+      const status = getStatusType(value);
+      if (status === "present") present += 1;
+      if (status === "absent") absent += 1;
     });
 
-    cols.push(
-      { data: "total_present", title: "Present", defaultContent: "" },
-      { data: "total_absent", title: "Absent", defaultContent: "" },
-      { data: "total_working_days", title: "Working Days", defaultContent: "" },
-      { data: "present_percent", title: "Present %", defaultContent: "" }
+    const workingDays = present + absent;
+    flat.total_present = present;
+    flat.total_absent = absent;
+    flat.total_working_days = workingDays;
+    flat.present_percent = `${
+      workingDays ? Math.round((present / workingDays) * 100) : 0
+    }%`;
+
+    return flat;
+  });
+
+const buildColumns = (rangeDates) => {
+  const cols = [
+    {
+      data: null,
+      title: "Sr No",
+      orderable: false,
+      render: (_data, _type, _row, meta) =>
+        meta.settings._iDisplayStart + meta.row + 1,
+    },
+    { data: "reg_no", title: "Reg No", defaultContent: "" },
+    { data: "name", title: "Name", defaultContent: "" },
+    { data: "class", title: "Class", defaultContent: "" },
+    { data: "div", title: "Division", defaultContent: "" },
+    { data: "roll_no", title: "Roll No", defaultContent: "" },
+  ];
+
+  rangeDates.forEach(({ key, label }) => {
+    cols.push({
+      data: `day_${key}`,
+      title: label,
+      defaultContent: "",
+      orderable: false,
+      className: "monthly-day-col text-nowrap",
+      createdCell: (td, cellData) => {
+        const status = getStatusType(cellData);
+        if (status) td.classList.add(`status-${status}`);
+      },
+    });
+  });
+
+  cols.push(
+    { data: "total_present", title: "Present", defaultContent: "", orderable: false },
+    { data: "total_absent", title: "Absent", defaultContent: "", orderable: false },
+    {
+      data: "total_working_days",
+      title: "Working Days",
+      defaultContent: "",
+      orderable: false,
+    },
+    { data: "present_percent", title: "Present %", defaultContent: "", orderable: false }
+  );
+
+  return cols;
+};
+
+const defaultFromDate = () => {
+  const now = new Date();
+  return toDateKey(new Date(now.getFullYear(), now.getMonth(), 1));
+};
+
+const defaultToDate = () => toDateKey(new Date());
+
+const InAndOutMonthlyReportPage = () => {
+  const tableContainerRef = useRef(null);
+  const datatableRef = useRef(null);
+
+  const [batches, setBatches] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [divisions, setDivisions] = useState([]);
+  const [batchMasters, setBatchMasters] = useState([]);
+  const [fromDate, setFromDate] = useState(defaultFromDate);
+  const [toDate, setToDate] = useState(defaultToDate);
+  const [batchFilter, setBatchFilter] = useState("");
+  const [classFilter, setClassFilter] = useState("");
+  const [divisionFilter, setDivisionFilter] = useState("");
+  const [dateError, setDateError] = useState("");
+  const [appliedFilters, setAppliedFilters] = useState(null);
+  const [exportingFormat, setExportingFormat] = useState(null);
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const res = await axios.get(`${baseURL}/api/batches`);
+        setBatches(res?.data?.data || res?.data || []);
+      } catch (err) {
+        console.error("Failed to load batches", err);
+      }
+    };
+    fetchBatches();
+  }, []);
+
+  useEffect(() => {
+    setClasses([]);
+    setDivisions([]);
+    setBatchMasters([]);
+    if (!batchFilter) return;
+
+    let cancelled = false;
+    const fetchBatchRelations = async () => {
+      try {
+        const res = await axios.get(
+          `${baseURL}/api/batches/${batchFilter}/relations`
+        );
+        if (cancelled) return;
+        setClasses(res?.data?.class || []);
+        setDivisions(res?.data?.division || []);
+        setBatchMasters(
+          res?.data?.batchmasters || res?.data?.batchMasters || []
+        );
+      } catch (err) {
+        console.error("Failed to load batch relations", err);
+      }
+    };
+    fetchBatchRelations();
+    return () => {
+      cancelled = true;
+    };
+  }, [batchFilter]);
+
+  const classDivisions = useMemo(() => {
+    if (!classFilter) return [];
+    if (!batchMasters.length) return divisions;
+    const divisionIds = new Set(
+      batchMasters
+        .filter((bm) => String(bm.classId) === String(classFilter))
+        .map((bm) => String(bm.divisionId ?? bm.divId))
     );
+    return divisions.filter((d) => divisionIds.has(String(d.id)));
+  }, [classFilter, divisions, batchMasters]);
 
-    return cols;
-  }, [monthDates]);
-
-  const handleFilter = () => {
-    if (datatableRef.current) {
-      datatableRef.current.draw();
-    }
+  const handleBatchChange = (value) => {
+    setBatchFilter(value);
+    setClassFilter("");
+    setDivisionFilter("");
   };
 
-  const getReportFiltersForExport = () => ({
-    month: monthFilterRef.current.trim(),
-    className: classFilterRef.current.trim(),
-    batchId: batchFilterRef.current.trim(),
-    divisionId: divisionFilterRef.current.trim(),
-  });
+  const handleClassChange = (value) => {
+    setClassFilter(value);
+    setDivisionFilter("");
+  };
+
+  const validateDates = () => {
+    if (!parseDateKey(fromDate) || !parseDateKey(toDate)) {
+      return "Please select both From Date and To Date.";
+    }
+    const diff = getDayDifference(fromDate, toDate);
+    if (diff < 0) {
+      return "From Date cannot be after To Date.";
+    }
+    if (diff > MAX_RANGE_DAYS) {
+      return `Please select a correct date range. It should not be more than ${MAX_RANGE_DAYS} days.`;
+    }
+    return "";
+  };
+
+  const handleFilter = () => {
+    const error = validateDates();
+    setDateError(error);
+    if (error) {
+      setAppliedFilters(null);
+      return;
+    }
+
+    setAppliedFilters({
+      fromDate,
+      toDate,
+      batchId: String(batchFilter).trim(),
+      className: String(classFilter).trim(),
+      divisionId: String(divisionFilter).trim(),
+    });
+  };
 
   const triggerFileDownload = (blob, filename) => {
     const href = window.URL.createObjectURL(blob);
@@ -169,21 +264,21 @@ const InAndOutMonthlyReportPage = () => {
   };
 
   const handleExportDownload = async (format) => {
+    if (!appliedFilters) return;
     const ext =
       format === "excel" ? "xlsx" : format === "csv" ? "csv" : "pdf";
     const filename = `in-out-monthly-${format}-${Date.now()}.${ext}`;
     try {
       setExportingFormat(format);
       const params = new URLSearchParams({ format });
-      Object.entries(getReportFiltersForExport()).forEach(([key, value]) => {
+      Object.entries(appliedFilters).forEach(([key, value]) => {
         const v = value == null ? "" : String(value).trim();
         if (v !== "") params.set(key, v);
       });
-      const qs = params.toString();
-      const exportUrl = `${REPORT_URL}/export`;
-      const { data } = await axios.get(qs ? `${exportUrl}?${qs}` : exportUrl, {
-        responseType: "blob",
-      });
+      const { data } = await axios.get(
+        `${REPORT_URL}/export?${params.toString()}`,
+        { responseType: "blob" }
+      );
       triggerFileDownload(data, filename);
     } catch (err) {
       console.error("Export failed:", err);
@@ -193,40 +288,38 @@ const InAndOutMonthlyReportPage = () => {
   };
 
   useEffect(() => {
-    if (!tableRef.current) return;
+    const container = tableContainerRef.current;
+    if (!appliedFilters || !container) return;
 
-    if (datatableRef.current) {
-      datatableRef.current.destroy(true);
-      datatableRef.current = null;
-    }
+    const rangeDates = getDateRange(appliedFilters.fromDate, appliedFilters.toDate);
 
-    const columns = buildColumns();
+    // DataTables owns this element; React only renders the empty container.
+    const table = document.createElement("table");
+    table.className = "table report-table mb-0";
+    table.id = "inOutMonthlyDataTable";
+    container.appendChild(table);
 
-    datatableRef.current = $(tableRef.current).DataTable({
+    datatableRef.current = $(table).DataTable({
       pageLength: 10,
       processing: true,
       serverSide: true,
-      destroy: true,
       scrollX: true,
-      order: [[0, "asc"]],
+      order: [],
       ajax: {
         url: REPORT_URL,
         type: "GET",
         data: (d) => {
-          d.filter = {
-            month: monthFilterRef.current.trim(),
-            className: classFilterRef.current.trim(),
-            batchId: batchFilterRef.current.trim(),
-            divisionId: divisionFilterRef.current.trim(),
-          };
+          d.filter = { ...appliedFilters };
         },
         dataSrc: (json) => {
-          const rows = json?.data ?? [];
-          const dates = monthDatesRef.current;
-          return rows.map((row) => flattenMonthlyRow(row, dates));
+          if (json) {
+            json.recordsTotal = json.recordsTotal ?? json.count ?? 0;
+            json.recordsFiltered = json.recordsFiltered ?? json.count ?? 0;
+          }
+          return flattenRows(json?.data ?? [], rangeDates);
         },
       },
-      columns,
+      columns: buildColumns(rangeDates),
       columnDefs: [{ targets: "_all", className: "align-middle" }],
     });
 
@@ -235,8 +328,9 @@ const InAndOutMonthlyReportPage = () => {
         datatableRef.current.destroy(true);
         datatableRef.current = null;
       }
+      container.innerHTML = "";
     };
-  }, [buildColumns, monthDates.length, monthFilter]);
+  }, [appliedFilters]);
 
   return (
     <div className="chfi-wrapper d-flex flex-column gap-3 pb-2 in-out-monthly-report">
@@ -257,17 +351,43 @@ const InAndOutMonthlyReportPage = () => {
             <div className="report-filter-field">
               <label className="form-label">
                 <span className="label-dot" />
-                Month
+                From Date
               </label>
               <div className="icon-field">
                 <span className="icon">
                   <Icon icon="solar:calendar-bold-duotone" width="18" />
                 </span>
                 <input
-                  className="form-control"
-                  type="month"
-                  value={monthFilter}
-                  onChange={(e) => setMonthFilter(e.target.value)}
+                  className={`form-control${dateError ? " is-invalid" : ""}`}
+                  type="date"
+                  value={fromDate}
+                  max={toDate || undefined}
+                  onChange={(e) => {
+                    setFromDate(e.target.value);
+                    setDateError("");
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="report-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                To Date
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:calendar-bold-duotone" width="18" />
+                </span>
+                <input
+                  className={`form-control${dateError ? " is-invalid" : ""}`}
+                  type="date"
+                  value={toDate}
+                  min={fromDate || undefined}
+                  onChange={(e) => {
+                    setToDate(e.target.value);
+                    setDateError("");
+                  }}
                 />
               </div>
             </div>
@@ -284,12 +404,12 @@ const InAndOutMonthlyReportPage = () => {
                 <select
                   className="form-select"
                   value={batchFilter}
-                  onChange={(e) => setBatchFilter(e.target.value)}
+                  onChange={(e) => handleBatchChange(e.target.value)}
                 >
                   <option value="">Select Batch</option>
                   {batches.map((b) => (
                     <option key={b.id} value={b.id}>
-                      {b.academic_year}
+                      {b.batch_name}
                     </option>
                   ))}
                 </select>
@@ -308,7 +428,8 @@ const InAndOutMonthlyReportPage = () => {
                 <select
                   className="form-select"
                   value={classFilter}
-                  onChange={(e) => setClassFilter(e.target.value)}
+                  disabled={!batchFilter}
+                  onChange={(e) => handleClassChange(e.target.value)}
                 >
                   <option value="">Select Class</option>
                   {classes.map((elem, index) => (
@@ -332,10 +453,11 @@ const InAndOutMonthlyReportPage = () => {
                 <select
                   className="form-select"
                   value={divisionFilter}
+                  disabled={!classFilter}
                   onChange={(e) => setDivisionFilter(e.target.value)}
                 >
                   <option value="">Select Division</option>
-                  {divisions.map((d) => (
+                  {classDivisions.map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.division_name}
                     </option>
@@ -355,6 +477,12 @@ const InAndOutMonthlyReportPage = () => {
               </button>
             </div>
           </div>
+
+          {dateError && (
+            <div className="text-danger small mt-2" role="alert">
+              {dateError}
+            </div>
+          )}
         </div>
       </section>
 
@@ -376,7 +504,7 @@ const InAndOutMonthlyReportPage = () => {
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat}
+                disabled={!!exportingFormat || !appliedFilters}
                 onClick={() => handleExportDownload("excel")}
                 title="Download Excel"
               >
@@ -394,7 +522,7 @@ const InAndOutMonthlyReportPage = () => {
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat}
+                disabled={!!exportingFormat || !appliedFilters}
                 onClick={() => handleExportDownload("csv")}
                 title="Download CSV"
               >
@@ -412,7 +540,7 @@ const InAndOutMonthlyReportPage = () => {
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat}
+                disabled={!!exportingFormat || !appliedFilters}
                 onClick={() => handleExportDownload("pdf")}
                 title="Download PDF"
               >
@@ -431,13 +559,16 @@ const InAndOutMonthlyReportPage = () => {
           </div>
         </div>
         <div className="card-body">
-          <div className="report-table-wrap monthly-report-table-wrap">
-            <table
-              className="table report-table mb-0"
-              id="inOutMonthlyDataTable"
-              ref={tableRef}
-            />
-          </div>
+          {!appliedFilters && (
+            <div className="text-center text-muted py-4">
+              Select a date range and click <strong>Apply Filters</strong> to
+              view the report.
+            </div>
+          )}
+          <div
+            className="report-table-wrap monthly-report-table-wrap"
+            ref={tableContainerRef}
+          />
         </div>
       </section>
 
@@ -451,7 +582,16 @@ const InAndOutMonthlyReportPage = () => {
           font-size: 0.78rem;
           white-space: nowrap;
         }
-        .in-out-monthly-report .dataTables_wrapper {
+        .in-out-monthly-report td.status-present {
+          color: #198754;
+          font-weight: 600;
+        }
+        .in-out-monthly-report td.status-absent {
+          color: #dc3545;
+          font-weight: 600;
+        }
+        .in-out-monthly-report .dataTables_wrapper,
+        .in-out-monthly-report .dt-container {
           width: 100%;
         }
       `}</style>

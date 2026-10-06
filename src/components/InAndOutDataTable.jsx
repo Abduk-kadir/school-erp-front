@@ -17,6 +17,7 @@ const InAndOutDataTable = ({
   url,
   columns,
  pdfUrl,
+ excelUrl,
   loadingFun,
   exportBaseUrl,
   
@@ -47,8 +48,7 @@ const InAndOutDataTable = ({
    */
   const getExportUrl = (format) => {
     if (exportBaseUrl) return exportBaseUrl;
-    if (format === "excel") return `${baseURL}/api/fees/excel`;
-    if (format === "csv") return `${baseURL}/api/fees/csv`;
+    if (format === "excel") return excelUrl || `${baseURL}/api/fees/excel`;
     if (format === "pdf") return pdfUrl;
     return `${String(url).replace(/\/$/, "")}/export`;
   };
@@ -132,20 +132,27 @@ const InAndOutDataTable = ({
     divisionId: divisionFilterRef.current.trim(),
   });
 
+  const getFilenameFromHeaders = (headers, fallback) => {
+    const disposition = headers?.["content-disposition"] || "";
+    const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
+    return match ? decodeURIComponent(match[1]) : fallback;
+  };
+
   const triggerFileDownload = (blob, filename) => {
     const href = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = href;
     a.download = filename;
+    a.style.display = "none";
     document.body.appendChild(a);
     a.click();
     a.remove();
-    window.URL.revokeObjectURL(href);
+    // Revoking immediately can cancel the download before the browser starts it.
+    setTimeout(() => window.URL.revokeObjectURL(href), 60000);
   };
 
   const handleExportDownload = async (format) => {
-    const ext =
-      format === "excel" ? "xlsx" : format === "csv" ? "csv" : "pdf";
+    const ext = format === "excel" ? "xlsx" : "pdf";
     const filename = `fee-report-${format}-${Date.now()}.${ext}`;
     try {
       setExportingFormat(format);
@@ -153,7 +160,7 @@ const InAndOutDataTable = ({
       const filters = getReportFiltersForExport();
       const dedicated =
         !exportBaseUrl &&
-        (format === "excel" || format === "csv" || format === "pdf");
+        (format === "excel" || format === "pdf");
       const params = new URLSearchParams();
       if (!dedicated) params.set("format", format);
       Object.entries(filters).forEach(([key, value]) => {
@@ -162,12 +169,41 @@ const InAndOutDataTable = ({
       });
       const qs = params.toString();
       const exportUrl = getExportUrl(format);
-      const { data } = await axios.get(qs ? `${exportUrl}?${qs}` : exportUrl, {
-        responseType: "blob",
-      });
-      triggerFileDownload(data, filename);
+
+      // Let the browser download natively; fetching via XHR can hang
+      // when a download manager intercepts the attachment response.
+      if (format === "pdf" || (format === "excel" && excelUrl)) {
+        const downloadParams = new URLSearchParams();
+        Object.entries(filters).forEach(([key, value]) => {
+          const v = value == null ? "" : String(value).trim();
+          if (v !== "") downloadParams.set(`filter[${key}]`, v);
+        });
+        downloadParams.set("_", String(Date.now()));
+        const a = document.createElement("a");
+        a.href = `${exportUrl}?${downloadParams.toString()}`;
+        a.download = filename;
+        a.rel = "noopener";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      }
+
+      const { data, headers } = await axios.get(
+        qs ? `${exportUrl}?${qs}` : exportUrl,
+        { responseType: "blob" }
+      );
+
+      if (data?.type?.includes("application/json")) {
+        const json = JSON.parse(await data.text());
+        throw new Error(json?.message || "Export failed");
+      }
+
+      triggerFileDownload(data, getFilenameFromHeaders(headers, filename));
     } catch (err) {
       console.error("Export failed:", err);
+      alert(err?.message || "Export failed. Please try again.");
     } finally {
       setExportingFormat(null);
       if (typeof loadingFun === "function") loadingFun(false);
@@ -368,20 +404,6 @@ const InAndOutDataTable = ({
                   <Icon icon="vscode-icons:file-type-excel" width="18" />
                 )}
                 Excel
-              </button>
-              <button
-                type="button"
-                className="export-btn"
-                disabled={!!exportingFormat}
-                onClick={() => handleExportDownload("csv")}
-                title="Download CSV"
-              >
-                {exportingFormat === "csv" ? (
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-                ) : (
-                  <Icon icon="vscode-icons:file-type-csv" width="18" />
-                )}
-                CSV
               </button>
               <button
                 type="button"

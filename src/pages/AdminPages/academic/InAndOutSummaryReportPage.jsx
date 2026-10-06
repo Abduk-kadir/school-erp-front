@@ -43,6 +43,7 @@ const InAndOutSummaryReportPage = () => {
       url={`${baseURL}/api/in-out-attendance/reports/summary`}
        columns={feeReportColumns} 
        pdfUrl={`${baseURL}/api/in-out-attendance/reports/summary/pdf`}
+       excelUrl={`${baseURL}/api/in-out-attendance/reports/summary/excel`}
        />
     </div>
   );
