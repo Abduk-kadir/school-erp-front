@@ -157,8 +157,6 @@ const InAndOutMonthlyReportPage = () => {
   const [divisionFilter, setDivisionFilter] = useState("");
   const [dateError, setDateError] = useState("");
   const [appliedFilters, setAppliedFilters] = useState(null);
-  const [exportingFormat, setExportingFormat] = useState(null);
-
   useEffect(() => {
     const fetchBatches = async () => {
       try {
@@ -252,39 +250,24 @@ const InAndOutMonthlyReportPage = () => {
     });
   };
 
-  const triggerFileDownload = (blob, filename) => {
-    const href = window.URL.createObjectURL(blob);
+  // Let the browser download natively so the server's filename is used;
+  // fetching via XHR can hang when a download manager intercepts it.
+  const handleExportDownload = (format) => {
+    if (!appliedFilters) return;
+    const params = new URLSearchParams();
+    Object.entries(appliedFilters).forEach(([key, value]) => {
+      const v = value == null ? "" : String(value).trim();
+      if (v !== "") params.set(`filter[${key}]`, v);
+    });
+    params.set("_", String(Date.now()));
+
     const a = document.createElement("a");
-    a.href = href;
-    a.download = filename;
+    a.href = `${REPORT_URL}/${format}?${params.toString()}`;
+    a.rel = "noopener";
+    a.style.display = "none";
     document.body.appendChild(a);
     a.click();
     a.remove();
-    window.URL.revokeObjectURL(href);
-  };
-
-  const handleExportDownload = async (format) => {
-    if (!appliedFilters) return;
-    const ext =
-      format === "excel" ? "xlsx" : format === "csv" ? "csv" : "pdf";
-    const filename = `in-out-monthly-${format}-${Date.now()}.${ext}`;
-    try {
-      setExportingFormat(format);
-      const params = new URLSearchParams({ format });
-      Object.entries(appliedFilters).forEach(([key, value]) => {
-        const v = value == null ? "" : String(value).trim();
-        if (v !== "") params.set(key, v);
-      });
-      const { data } = await axios.get(
-        `${REPORT_URL}/export?${params.toString()}`,
-        { responseType: "blob" }
-      );
-      triggerFileDownload(data, filename);
-    } catch (err) {
-      console.error("Export failed:", err);
-    } finally {
-      setExportingFormat(null);
-    }
   };
 
   useEffect(() => {
@@ -504,55 +487,21 @@ const InAndOutMonthlyReportPage = () => {
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat || !appliedFilters}
+                disabled={!appliedFilters}
                 onClick={() => handleExportDownload("excel")}
                 title="Download Excel"
               >
-                {exportingFormat === "excel" ? (
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Icon icon="vscode-icons:file-type-excel" width="18" />
-                )}
+                <Icon icon="vscode-icons:file-type-excel" width="18" />
                 Excel
               </button>
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat || !appliedFilters}
-                onClick={() => handleExportDownload("csv")}
-                title="Download CSV"
-              >
-                {exportingFormat === "csv" ? (
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Icon icon="vscode-icons:file-type-csv" width="18" />
-                )}
-                CSV
-              </button>
-              <button
-                type="button"
-                className="export-btn"
-                disabled={!!exportingFormat || !appliedFilters}
+                disabled={!appliedFilters}
                 onClick={() => handleExportDownload("pdf")}
                 title="Download PDF"
               >
-                {exportingFormat === "pdf" ? (
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Icon icon="vscode-icons:file-type-pdf2" width="18" />
-                )}
+                <Icon icon="vscode-icons:file-type-pdf2" width="18" />
                 PDF
               </button>
             </div>

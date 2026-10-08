@@ -28,12 +28,11 @@ const DiaryReportPage = () => {
   ]
   return (
     <div>
-      <AllTypeNotficationDataTable url={`${baseURL}/api/diaries`} 
-      columns={notesColumns}
-      pdfUrl={`${baseURL}/api/diaries/pdf`}
-      excelUrl={`${baseURL}/api/diaries/excel`}
-      
-      />
+      <AllTypeNotficationDataTable
+       url={`${baseURL}/api/diaries`} columns={notesColumns}
+       pdfUrl={`${baseURL}/api/diaries/pdf`}
+       excelUrl={`${baseURL}/api/diaries/excel`}
+       />
     </div>
   )
 }
