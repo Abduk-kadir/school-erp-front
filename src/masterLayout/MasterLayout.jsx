@@ -558,17 +558,14 @@ const MasterLayout = () => {
       title: "Examination",
       icon: "solar:clipboard-list-outline",
       children: [
-       
-        { title: "Exam Schedule", path: "/dashboard/examination/exam-schedule" },
-        { title: "Exam Result", path: "/dashboard/examination/exam-result" },
-        { title: "Exam Report", path: "/dashboard/examination/exam-report" },
-        { title: "Exam Paper", path: "/dashboard/examination/exam-paper" },
-        { title: "Exam Paper Set", path: "/dashboard/examination/exam-paper-set" },
-        { title: "Exam Paper Set Question", path: "/dashboard/examination/exam-paper-set-question" },
-        { title: "Exam Paper Set Question Answer", path: "/dashboard/examination/exam-paper-set-question-answer" },
-        { title: "Exam Paper Set Question Answer Option", path: "/dashboard/examination/exam-paper-set-question-answer-option" },
+        { title: "Grade Scale", path: "/dashboard/examination/grade-scale" },
+        { title: "Head&Subhead", path: "/dashboard/examination/component" },
+        { title: "Term", path: "/dashboard/examination/term" },
+        { title: "Exam Name", path: "/dashboard/examination/exam-name" },
+        { title: "Exam Scheme", path: "/dashboard/examination/exam" },
+        { title: "Exam Subject", path: "/dashboard/examination/exam-subject" },
 
-
+      
       ]
     },
     {

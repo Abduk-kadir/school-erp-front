@@ -1,0 +1,390 @@
+/* =====================================================================
+ * Examination master pages
+ * Works together with mastercom.css (chfi-* card / form classes)
+ * and editdelete.css (table action buttons).
+ * ===================================================================== */
+
+.exam-page .chfi-card + .chfi-card {
+  margin-top: 16px;
+}
+
+.exam-page .exam-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px 18px;
+}
+
+.exam-page .exam-form-grid .field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+.exam-page .exam-form-grid .form-label {
+  margin: 0;
+}
+
+.exam-page .exam-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.exam-page .exam-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 10px;
+}
+
+.exam-page .exam-table {
+  width: 100%;
+  margin: 0;
+  font-size: 0.85rem;
+  border-collapse: collapse;
+}
+
+.exam-page .exam-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.exam-page .exam-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  vertical-align: middle;
+}
+
+.exam-page .exam-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.exam-page .exam-table tr.is-selected {
+  background: #eff6ff;
+}
+
+.exam-page .exam-table .form-control {
+  height: 32px;
+  padding: 2px 8px;
+  font-size: 0.82rem;
+  min-width: 70px;
+}
+
+.exam-page .exam-table .input-xs {
+  width: 80px;
+}
+
+.exam-page .exam-empty {
+  text-align: center;
+  color: #94a3b8;
+  padding: 22px 10px !important;
+}
+
+.exam-page .exam-hint {
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+/* ---------- Badges ---------- */
+.exam-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.exam-badge-active { background: #d1fae5; color: #065f46; }
+.exam-badge-inactive { background: #fee2e2; color: #991b1b; }
+.exam-badge-type { background: #ede9fe; color: #5b21b6; }
+
+/* ---------- Buttons ---------- */
+.exam-page .exam-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.exam-page .exam-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.exam-page .exam-btn-primary { background: #2563eb; color: #fff; }
+.exam-page .exam-btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.exam-page .exam-btn-light { background: #fff; color: #334155; border-color: #cbd5e1; }
+.exam-page .exam-btn-light:hover:not(:disabled) { background: #f1f5f9; }
+
+.exam-page .exam-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+}
+
+.exam-page .exam-icon-btn:hover:not(:disabled) { background: #f1f5f9; }
+.exam-page .exam-icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.exam-page .exam-icon-btn.danger { color: #dc2626; border-color: #fecaca; }
+.exam-page .exam-icon-btn.danger:hover:not(:disabled) { background: #fef2f2; border-color: #fca5a5; }
+
+/* =====================================================================
+ * Grade scale page polish
+ * ===================================================================== */
+
+/* ---------- Header mode pill ---------- */
+.exam-page .exam-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+/* ---------- Primary button ---------- */
+.exam-page .exam-btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  box-shadow: 0 6px 14px -8px rgba(37, 99, 235, 0.8);
+}
+
+.exam-page .exam-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  transform: translateY(-1px);
+}
+
+.exam-page .exam-btn-light {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.exam-page .exam-btn-light:hover:not(:disabled) {
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+/* ---------- Tables ---------- */
+.exam-page .exam-table-wrap {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.exam-page .exam-table th {
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #475569;
+}
+
+.exam-page .exam-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.exam-page .exam-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.exam-page .exam-table tr.is-selected {
+  background: #eff6ff;
+  box-shadow: inset 3px 0 0 #2563eb;
+}
+
+.exam-page .exam-table .form-control:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ---------- Scale list ---------- */
+.exam-page .exam-scale-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exam-page .exam-scale-avatar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+  box-shadow: 0 6px 12px -8px rgba(37, 99, 235, 0.9);
+}
+
+.exam-page .exam-scale-avatar.is-descriptor {
+  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  box-shadow: 0 6px 12px -8px rgba(124, 58, 237, 0.9);
+}
+
+.exam-page .exam-scale-name {
+  font-weight: 600;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exam-badge {
+  text-transform: capitalize;
+}
+
+.exam-badge-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* ---------- Empty state ---------- */
+.exam-page .exam-empty {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.exam-page .exam-empty .exam-empty-icon {
+  color: #93c5fd;
+  margin-bottom: 6px;
+}
+
+/* ---------- Form fields panel ---------- */
+.exam-page .exam-form-grid {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  align-items: end;
+}
+
+.exam-page .exam-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--chfi-control-h, 38px);
+  margin: 0;
+}
+
+.exam-page .exam-switch .form-check-input {
+  width: 2.4em;
+  height: 1.25em;
+  margin-top: 0;
+  cursor: pointer;
+}
+
+.exam-page .exam-switch .form-check-input:checked {
+  background-color: #16a34a;
+  border-color: #16a34a;
+}
+
+.exam-page .exam-switch .form-check-label {
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+}
+
+/* ---------- Grade ranges table ---------- */
+.exam-page .exam-ranges-wrap {
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.exam-page .exam-ranges-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.exam-page .exam-ranges-table tbody tr:nth-child(even) {
+  background: #fbfdff;
+}
+
+.exam-page .exam-ranges-table tbody tr.is-fail {
+  background: #fef2f2;
+  box-shadow: inset 3px 0 0 #ef4444;
+}
+
+.exam-page .exam-ranges-table tbody tr.is-fail:hover {
+  background: #fee2e2;
+}
+
+.exam-page .exam-row-no {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  background: #dbeafe;
+  flex-shrink: 0;
+}
+
+.exam-page .exam-ranges-table tr.is-fail .exam-row-no {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.exam-page .exam-grade-input {
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  color: #1e3a8a;
+}
+
+.exam-page .exam-ranges-table tr.is-fail .exam-grade-input {
+  color: #b91c1c;
+}
+
+.exam-page .exam-ranges-table .form-check-input {
+  width: 1.15em;
+  height: 1.15em;
+  cursor: pointer;
+}
+
+.exam-page .exam-ranges-table .form-check-input:checked {
+  background-color: #ef4444;
+  border-color: #ef4444;
+}
+
+/* ---------- Footer ---------- */
+.exam-page .exam-form-footer {
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.45);
+}
