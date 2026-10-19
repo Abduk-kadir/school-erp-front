@@ -101,6 +101,7 @@ const TakeSubjectwiseAttendancePage=lazy(() =>import("./pages/AdminPages/academi
 const InAndOutDetailReportPage = lazy(() =>
   import("./pages/AdminPages/academic/InAndOutDetailReportPage")
 );
+const StaffInAndOutPage = lazy(() =>import("./pages/AdminPages/staff/StaffInAndOutPage"))
 const InAndOutSummaryReportPage = lazy(() =>import("./pages/AdminPages/academic/InAndOutSummaryReportPage"))
 const InAndOutMonthlyReportPage = lazy(() =>import("./pages/AdminPages/academic/InAndOutMonthlyReportPage"))
 
@@ -563,6 +564,9 @@ function App() {
               </Route>
               <Route path="class-wise-school" element={<ClasswiseSchoolPage />} />
               <Route path="staff-master" element={<AllStaffPage />} />
+              <Route path="staff-in-and-out">
+                <Route path="detail-report" element={<StaffInAndOutPage />} />
+              </Route>
               <Route path="accounts">
                 <Route path="fee-master">
                   <Route path="payment-setting" element={<PaymentSettingPage />} />

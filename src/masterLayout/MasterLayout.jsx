@@ -319,6 +319,10 @@ const MasterLayout = () => {
       icon: "solar:users-group-rounded-outline",
       children: [
         { title: "Staff Master", path: "/dashboard/staff-master" },
+        { title: "In & Out Attendance",children: [
+          { title: "Detail Report", path:"/dashboard/staff-in-and-out/detail-report" },
+         
+        ] },
        
 
 

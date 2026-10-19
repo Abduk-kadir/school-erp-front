@@ -1,0 +1,349 @@
+import { useEffect, useRef, useState } from "react";
+import $ from "jquery";
+import "datatables.net-dt";
+import axios from "axios";
+import baseURL from "../utils/baseUrl";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import "../assets/css/academicOfflineFeeReport.css";
+
+const normalizeList = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  return [];
+};
+
+const StaffInAndOutDataTable = ({
+  url,
+  columns,
+  pdfUrl,
+  excelUrl,
+  loadingFun,
+  exportBaseUrl,
+}) => {
+  const tableRef = useRef(null);
+  const datatableRef = useRef(null);
+  const [departments, setDepartments] = useState([]);
+  const [designations, setDesignations] = useState([]);
+
+  const [dateFilter, setDateFilter] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
+  const [designationFilter, setDesignationFilter] = useState("");
+
+  const [exportingFormat, setExportingFormat] = useState(null);
+
+  /**
+   * Base path only (no query string). Params are added in handleExportDownload via
+   * getReportFiltersForExport → URLSearchParams → axios.get(`${exportUrl}?${qs}`).
+   */
+  const getExportUrl = (format) => {
+    if (exportBaseUrl) return exportBaseUrl;
+    if (format === "excel") return excelUrl || `${baseURL}/api/fees/excel`;
+    if (format === "pdf") return pdfUrl;
+    return `${String(url).replace(/\/$/, "")}/export`;
+  };
+
+  // Refs to hold current filter values for DataTable ajax
+  const dateFilterRef = useRef("");
+  const departmentFilterRef = useRef("");
+  const designationFilterRef = useRef("");
+
+  useEffect(() => {
+    dateFilterRef.current = dateFilter;
+  }, [dateFilter]);
+
+  useEffect(() => {
+    departmentFilterRef.current = departmentFilter;
+  }, [departmentFilter]);
+
+  useEffect(() => {
+    designationFilterRef.current = designationFilter;
+  }, [designationFilter]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [deptRes, desRes] = await Promise.all([
+          axios.get(`${baseURL}/api/departments`),
+          axios.get(`${baseURL}/api/designations`),
+        ]);
+        setDepartments(normalizeList(deptRes?.data));
+        setDesignations(normalizeList(desRes?.data));
+      } catch (err) {
+        console.error("Failed to load filter options", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleFilter = () => {
+    if (datatableRef.current) {
+      datatableRef.current.draw();
+    }
+  };
+
+  const getReportFiltersForExport = () => ({
+    date: dateFilterRef.current.trim(),
+    departmentId: String(departmentFilterRef.current).trim(),
+    designationId: String(designationFilterRef.current).trim(),
+  });
+
+  const getFilenameFromHeaders = (headers, fallback) => {
+    const disposition = headers?.["content-disposition"] || "";
+    const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
+    return match ? decodeURIComponent(match[1]) : fallback;
+  };
+
+  const triggerFileDownload = (blob, filename) => {
+    const href = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // Revoking immediately can cancel the download before the browser starts it.
+    setTimeout(() => window.URL.revokeObjectURL(href), 60000);
+  };
+
+  const handleExportDownload = async (format) => {
+    const ext = format === "excel" ? "xlsx" : "pdf";
+    const filename = `staff-in-out-report-${format}-${Date.now()}.${ext}`;
+    try {
+      setExportingFormat(format);
+      if (typeof loadingFun === "function") loadingFun(true);
+      const filters = getReportFiltersForExport();
+      const dedicated =
+        !exportBaseUrl &&
+        (format === "excel" || format === "pdf");
+      const params = new URLSearchParams();
+      if (!dedicated) params.set("format", format);
+      Object.entries(filters).forEach(([key, value]) => {
+        const v = value == null ? "" : String(value).trim();
+        if (v !== "") params.set(key, v);
+      });
+      const qs = params.toString();
+      const exportUrl = getExportUrl(format);
+
+      // Let the browser download natively; fetching via XHR can hang
+      // when a download manager intercepts the attachment response.
+      if (format === "pdf" || (format === "excel" && excelUrl)) {
+        const downloadParams = new URLSearchParams();
+        Object.entries(filters).forEach(([key, value]) => {
+          const v = value == null ? "" : String(value).trim();
+          if (v !== "") downloadParams.set(`filter[${key}]`, v);
+        });
+        downloadParams.set("_", String(Date.now()));
+        const a = document.createElement("a");
+        a.href = `${exportUrl}?${downloadParams.toString()}`;
+        a.download = filename;
+        a.rel = "noopener";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      }
+
+      const { data, headers } = await axios.get(
+        qs ? `${exportUrl}?${qs}` : exportUrl,
+        { responseType: "blob" }
+      );
+
+      if (data?.type?.includes("application/json")) {
+        const json = JSON.parse(await data.text());
+        throw new Error(json?.message || "Export failed");
+      }
+
+      triggerFileDownload(data, getFilenameFromHeaders(headers, filename));
+    } catch (err) {
+      console.error("Export failed:", err);
+      alert(err?.message || "Export failed. Please try again.");
+    } finally {
+      setExportingFormat(null);
+      if (typeof loadingFun === "function") loadingFun(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!tableRef.current) return;
+
+    datatableRef.current = $(tableRef.current).DataTable({
+      pageLength: 10,
+      processing: true,
+      serverSide: true,
+      destroy: true,
+
+      ajax: {
+        url,
+        type: "GET",
+        data: (d) => {
+          d.filter = getReportFiltersForExport();
+        },
+      },
+      columns,
+    });
+
+    return () => {
+      if (datatableRef.current) {
+        datatableRef.current.destroy(true);
+      }
+    };
+  }, [url, columns]); // Important: do NOT put filter state here — refs are used for ajax
+
+  return (
+    <div className="chfi-wrapper d-flex flex-column gap-3 pb-2">
+      {/* ---------- Filter card ---------- */}
+      <section className="chfi-card" aria-label="Report filters">
+        <div className="card-header">
+          <div className="header-row">
+            <span className="header-icon">
+              <Icon icon="solar:filter-bold-duotone" width="22" />
+            </span>
+            <div>
+              <h5 className="card-title">Filter</h5>
+            </div>
+          </div>
+        </div>
+
+        <div className="card-body">
+          <div className="report-filter-grid">
+            <div className="report-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Date
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:calendar-bold-duotone" width="18" />
+                </span>
+                <input
+                  className="form-control"
+                  type="date"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="report-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Department
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:buildings-2-bold-duotone" width="18" />
+                </span>
+                <select
+                  className="form-select"
+                  value={departmentFilter}
+                  onChange={(e) => setDepartmentFilter(e.target.value)}
+                >
+                  <option value="">Select Department</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.department_name ?? d.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="report-filter-field">
+              <label className="form-label">
+                <span className="label-dot" />
+                Designation
+              </label>
+              <div className="icon-field">
+                <span className="icon">
+                  <Icon icon="solar:user-id-bold-duotone" width="18" />
+                </span>
+                <select
+                  className="form-select"
+                  value={designationFilter}
+                  onChange={(e) => setDesignationFilter(e.target.value)}
+                >
+                  <option value="">Select Designation</option>
+                  {designations.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.designation_name ?? d.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="report-filter-field report-filter-action">
+              <button
+                type="button"
+                className="btn-submit chfi-root"
+                onClick={handleFilter}
+              >
+                <Icon icon="solar:magnifer-bold-duotone" width="18" />
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Table card ---------- */}
+      <section className="chfi-card report-table-card" aria-label="Report data">
+        <div className="card-header">
+          <div className="header-row report-header-row">
+            <div className="header-row" style={{ gap: 8, minWidth: 0 }}>
+              <span className="header-icon">
+                <Icon icon="solar:document-text-bold-duotone" width="22" />
+              </span>
+              <div className="min-w-0">
+                <h5 className="card-title">Staff In / Out Detail Report</h5>
+              </div>
+            </div>
+            <div className="report-export-group">
+              <button
+                type="button"
+                className="export-btn"
+                disabled={!!exportingFormat}
+                onClick={() => handleExportDownload("excel")}
+                title="Download Excel"
+              >
+                {exportingFormat === "excel" ? (
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                ) : (
+                  <Icon icon="vscode-icons:file-type-excel" width="18" />
+                )}
+                Excel
+              </button>
+              <button
+                type="button"
+                className="export-btn"
+                disabled={!!exportingFormat}
+                onClick={() => handleExportDownload("pdf")}
+                title="Download PDF"
+              >
+                {exportingFormat === "pdf" ? (
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                ) : (
+                  <Icon icon="vscode-icons:file-type-pdf2" width="18" />
+                )}
+                PDF
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="card-body">
+          <div className="report-table-wrap">
+            <table
+              className="table report-table mb-0"
+              id="dataTable"
+              ref={tableRef}
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default StaffInAndOutDataTable;
