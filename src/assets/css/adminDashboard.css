@@ -257,6 +257,82 @@
   background: #f8fbff;
 }
 
+/* ---------- Table pagination ---------- */
+.adm-dash .adm-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 4px 0;
+}
+
+.adm-dash .adm-pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.adm-dash .adm-page-size {
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--adm-border);
+  background: #ffffff;
+  color: #1e3a8a;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0 6px;
+  cursor: pointer;
+}
+
+.adm-dash .adm-page-size:focus {
+  outline: none;
+  border-color: var(--adm-blue);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.adm-dash .adm-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.adm-dash .adm-page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 7px;
+  border: 1px solid var(--adm-border);
+  background: #ffffff;
+  color: #1e3a8a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.adm-dash .adm-page-btn:hover:not(:disabled):not(.active) {
+  background: #eff6ff;
+  border-color: rgba(37, 99, 235, 0.4);
+}
+
+.adm-dash .adm-page-btn.active {
+  background: linear-gradient(135deg, var(--adm-navy) 0%, var(--adm-blue) 100%);
+  border-color: var(--adm-blue);
+  color: #ffffff;
+}
+
+.adm-dash .adm-page-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .adm-dash .adm-badge {
   display: inline-flex;
   align-items: center;

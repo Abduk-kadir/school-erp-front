@@ -63,11 +63,13 @@ function SidebarMenuItem({ item, level = 0, forceOpen = false }) {
 
   useEffect(() => {
     if (hasChildren) {
-      const isActiveSomewhere = item.children.some((child) => {
-        if (child.path === location.pathname) return true;
-        return child.children?.some((gc) => gc.path === location.pathname);
-      });
-      if (isActiveSomewhere) setOpen(true);
+      const containsPath = (children) =>
+        children.some(
+          (child) =>
+            child.path === location.pathname ||
+            (child.children?.length && containsPath(child.children))
+        );
+      if (containsPath(item.children)) setOpen(true);
     }
   }, [location.pathname]);
 
@@ -435,8 +437,8 @@ const MasterLayout = () => {
           title: "Other Fee",
           icon: "solar:dollar-outline",
           children: [
-            { title: "Collect Other Fee", path: "/dashboard/academic/student" },
-            { title: "Report-Other Fee", path: "/dashboard/academic/student" },
+            { title: "Collect Other Fee", path: "/dashboard/other-fee/collect-other-fee" },
+            { title: "Report-Other Fee", path: "/dashboard/other-fee/other-fee-report" },
            
           ]
         },
@@ -560,10 +562,12 @@ const MasterLayout = () => {
       children: [
         { title: "Grade Scale", path: "/dashboard/examination/grade-scale" },
         { title: "Head&Subhead", path: "/dashboard/examination/component" },
+        { title:"Assessment Type", path: "/dashboard/examination/assessment-type" },
         { title: "Term", path: "/dashboard/examination/term" },
         { title: "Exam Name", path: "/dashboard/examination/exam-name" },
         { title: "Exam Scheme", path: "/dashboard/examination/exam" },
         { title: "Exam Subject", path: "/dashboard/examination/exam-subject" },
+        {title:"Exam configuration",path:"/dashboard/examination/exam-configuration"}
 
       
       ]

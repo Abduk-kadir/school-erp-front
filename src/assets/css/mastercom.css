@@ -649,6 +649,10 @@
   color: #5b21b6;
 }
 
+.assign-subject-form .as-subject-icon {
+  color: #d97706;
+}
+
 .assign-subject-form .as-field-with-actions {
   display: flex;
   align-items: center;

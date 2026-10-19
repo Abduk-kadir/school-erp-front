@@ -306,10 +306,12 @@ const PreodicMarksEntryPage=lazy(() => import("./pages/AdminPages/preodic/Preodi
 //examination module importing here
 const GradeScalePage = lazy(() => import("./pages/examination/GradeScalePage"))
 const ComponentPage = lazy(() => import("./pages/examination/ComponentPage"))
+const AssesmentTypePage = lazy(() => import("./pages/examination/AssesmentType"))
 const TermPage = lazy(() => import("./pages/examination/TermPage"))
 const ExamPage = lazy(() => import("./pages/examination/ExamPage"))
 const ExamSubjectPage = lazy(() => import("./pages/examination/ExamSubjectPage"))
 const ExamnamePage = lazy(() => import("./pages/examination/ExamnamePage"))
+const ExamconfigurationPage = lazy(() => import("./pages/examination/Examconfiguration"))
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
     <div className="spinner-border text-primary" role="status">
@@ -582,10 +584,12 @@ function App() {
               <Route path="examination">
                 <Route path="grade-scale" element={<GradeScalePage />} />
                 <Route path="component" element={<ComponentPage />} />
+                <Route path="assessment-type" element={<AssesmentTypePage />} />
                 <Route path="term" element={<TermPage />} />
                 <Route path="exam-name" element={<ExamnamePage />} />
                 <Route path="exam" element={<ExamPage />} />
                 <Route path="exam-subject" element={<ExamSubjectPage />} />
+                <Route path="exam-configuration" element={<ExamconfigurationPage />} />
               </Route>
               <Route path="access-permission">
                 <Route path="module-list" element={<ModuleMaster />} />

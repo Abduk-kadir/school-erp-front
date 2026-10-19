@@ -19,6 +19,7 @@ const ExamSubjectPage = () => {
   const classSubjectsRequestRef = useRef(0);
   const [sequenceOptions] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   const [components, setComponents] = useState([]);
+  const [assessmentGroups, setAssessmentGroups] = useState([]);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [submittingKey, setSubmittingKey] = useState(null);
@@ -49,6 +50,7 @@ const ExamSubjectPage = () => {
     id: null,
     subject_id: String(subjectId),
     component_id: "",
+    group_id: "",
     marks: "",
     sequence: "",
     sub_components: [],
@@ -60,6 +62,7 @@ const ExamSubjectPage = () => {
     code: assessment.code ?? null,
     subject_id: toFieldValue(assessment.subject_id),
     component_id: toFieldValue(assessment.component_id),
+    group_id: toFieldValue(assessment.group_id),
     marks: toFieldValue(assessment.max_marks),
     sequence: toFieldValue(assessment.sequence),
     sub_components: (assessment.assesmentcomponent || []).map((sub) => ({
@@ -77,11 +80,17 @@ const ExamSubjectPage = () => {
           params: { start: 0, length: 1000 },
         });
         await axios.get(`${baseURL}/api/elective-baskets`);
-        const componentsRes = await axios.get(`${baseURL}/api/components`, {
-          params: { start: 0, length: 1000 },
-        });
+        const [componentsRes, assessmentGroupsRes] = await Promise.all([
+          axios.get(`${baseURL}/api/components`, {
+            params: { start: 0, length: 1000 },
+          }),
+          axios.get(`${baseURL}/api/assessment-groups`, {
+            params: { start: 0, length: 1000 },
+          }),
+        ]);
         setExams(data?.data || []);
         setComponents(componentsRes?.data?.data || []);
+        setAssessmentGroups(assessmentGroupsRes?.data?.data || []);
       } catch (err) {
         console.error("Failed to load exams", err);
       }
@@ -126,6 +135,9 @@ const ExamSubjectPage = () => {
     return Array.from(map.values());
   };
 
+  const headComponents = components.filter((c) => c.type === "Head");
+  const subHeadComponents = components.filter((c) => c.type === "Sub Head");
+
   const classes = uniqueById(examSchemes.map((scheme) => scheme.classInfo));
 
   const getTermsForClass = (classId) =>
@@ -137,7 +149,7 @@ const ExamSubjectPage = () => {
         )
       : [];
 
-  const fetchSchemeAssessments = async (schemeId, setFieldValue) => {
+  const fetchSchemeAssessments = async (schemeId, setFieldValue, subjects) => {
     const requestId = ++assessmentsRequestRef.current;
     setLoadingAssessments(true);
     try {
@@ -145,7 +157,7 @@ const ExamSubjectPage = () => {
       if (requestId !== assessmentsRequestRef.current) return;
       const saved = Array.isArray(data?.data) ? data.data : [];
       const savedGroups = saved.map(mapAssessmentToGroup);
-      const emptyGroups = classSubjects
+      const emptyGroups = subjects
         .filter((sub) => !savedGroups.some((g) => g.subject_id === String(sub.id)))
         .map((sub) => createGroup(sub.id));
       setFieldValue("optional_groups", [...savedGroups, ...emptyGroups]);
@@ -160,7 +172,7 @@ const ExamSubjectPage = () => {
     }
   };
 
-  const fetchExamSchemeId = async (examId, classId, termId, setFieldValue) => {
+  const fetchExamSchemeId = async (examId, classId, termId, setFieldValue, subjects = []) => {
     const requestId = ++examSchemeRequestRef.current;
     ++assessmentsRequestRef.current;
     setLoadingAssessments(false);
@@ -178,7 +190,7 @@ const ExamSubjectPage = () => {
       if (requestId !== examSchemeRequestRef.current) return;
       const schemeId = data?.data?.id;
       setFieldValue("exam_scheme_id", schemeId != null ? String(schemeId) : "");
-      if (schemeId != null) fetchSchemeAssessments(schemeId, setFieldValue);
+      if (schemeId != null) fetchSchemeAssessments(schemeId, setFieldValue, subjects);
     } catch (err) {
       if (requestId === examSchemeRequestRef.current) {
         console.error("Failed to load exam scheme", err);
@@ -196,6 +208,7 @@ const ExamSubjectPage = () => {
       exam_scheme_id: Number(values.exam_scheme_id),
       subject_id: Number(group.subject_id),
       component_id: Number(group.component_id),
+      group_id: Number(group.group_id),
       max_marks: toNumberOrNull(group.marks),
       sequence: toNumberOrNull(group.sequence),
       ...(group.code != null ? { code: group.code } : {}),
@@ -222,6 +235,11 @@ const ExamSubjectPage = () => {
     const missingHead = heads.findIndex(({ group }) => !group.component_id);
     if (missingHead !== -1) {
       setErrorMsg(`Select a head for Head ${missingHead + 1} in ${subject.name}.`);
+      return;
+    }
+    const missingType = heads.findIndex(({ group }) => !group.group_id);
+    if (missingType !== -1) {
+      setErrorMsg(`Select a type for Head ${missingType + 1} in ${subject.name}.`);
       return;
     }
     const missingSubHead = heads.findIndex(({ group }) =>
@@ -282,7 +300,7 @@ const ExamSubjectPage = () => {
     setFieldValue("optional_groups", []);
     if (!classId) {
       setLoadingClassSubjects(false);
-      return;
+      return [];
     }
 
     setLoadingClassSubjects(true);
@@ -290,7 +308,7 @@ const ExamSubjectPage = () => {
       const { data } = await axios.get(`${baseURL}/api/program-subjects`, {
         params: { classId },
       });
-      if (requestId !== classSubjectsRequestRef.current) return;
+      if (requestId !== classSubjectsRequestRef.current) return null;
 
       // The same subject can be mapped to the class more than once (per program/semester).
       const unique = new Map();
@@ -303,10 +321,11 @@ const ExamSubjectPage = () => {
       const subjects = Array.from(unique.values());
       setClassSubjects(subjects);
       setFieldValue("optional_groups", subjects.map((sub) => createGroup(sub.id)));
+      return subjects;
     } catch (err) {
-      if (requestId === classSubjectsRequestRef.current) {
-        console.error("Failed to load class subjects", err);
-      }
+      if (requestId !== classSubjectsRequestRef.current) return null;
+      console.error("Failed to load class subjects", err);
+      return [];
     } finally {
       if (requestId === classSubjectsRequestRef.current) {
         setLoadingClassSubjects(false);
@@ -399,7 +418,7 @@ const ExamSubjectPage = () => {
                           setFieldValue("class_id", classId);
                           setFieldValue("term_id", "");
                           fetchExamSchemeId("", "", "", setFieldValue);
-                          fetchClassSubjects(classId, setFieldValue);
+                          fetchClassSubjects("", setFieldValue);
                         }}
                       >
                         <option value="">Select class</option>
@@ -427,10 +446,16 @@ const ExamSubjectPage = () => {
                         name="term_id"
                         className="form-select"
                         disabled={!values.class_id || loadingExamDetail || loadingClassSubjects}
-                        onChange={(e) => {
+                        onChange={async (e) => {
                           const termId = e.target.value;
                           setFieldValue("term_id", termId);
-                          fetchExamSchemeId(values.exam_id, values.class_id, termId, setFieldValue);
+                          fetchExamSchemeId("", "", "", setFieldValue);
+                          const subjects = await fetchClassSubjects(
+                            termId ? values.class_id : "",
+                            setFieldValue
+                          );
+                          if (subjects === null || !termId) return;
+                          fetchExamSchemeId(values.exam_id, values.class_id, termId, setFieldValue, subjects);
                         }}
                       >
                         <option value="">Select term</option>
@@ -476,8 +501,8 @@ const ExamSubjectPage = () => {
                     <div className="col-md-12">
                       <FieldArray name="optional_groups">
                         {({ push: pushGroup, remove: removeGroup }) => {
-                          if (!values.class_id) {
-                            return <div className="text-muted small">Select a class to load subjects.</div>;
+                          if (!values.class_id || !values.term_id) {
+                            return <div className="text-muted small">Select class and term to load subjects.</div>;
                           }
                           if (loadingClassSubjects) {
                             return <div className="text-muted small">Loading subjects...</div>;
@@ -507,7 +532,7 @@ const ExamSubjectPage = () => {
                               <div key={subject.id} className="as-section as-optional-group">
                                 <div className="as-section-title justify-content-between">
                                   <span className="d-inline-flex align-items-center gap-2">
-                                    <Icon icon="solar:book-2-bold-duotone" width="18" />
+                                    <Icon icon="solar:book-2-bold-duotone" width="18" className="as-subject-icon" />
                                     {subject.name}
                                   </span>
                                   <button
@@ -539,7 +564,7 @@ const ExamSubjectPage = () => {
                                 </div>
 
                                 <div className="row g-3">
-                                  <div className="col-md-4">
+                                  <div className="col-md-3">
                                     <label className="form-label">
                                       <span className="label-dot" />
                                       Head
@@ -554,7 +579,7 @@ const ExamSubjectPage = () => {
                                         className="form-select"
                                       >
                                         <option value="">Select Head</option>
-                                        {components.map((component) => (
+                                        {headComponents.map((component) => (
                                           <option key={component.id} value={component.id}>
                                             {component.component_name}
                                           </option>
@@ -563,7 +588,31 @@ const ExamSubjectPage = () => {
                                     </div>
                                   </div>
 
-                                  <div className="col-md-4">
+                                  <div className="col-md-3">
+                                    <label className="form-label">
+                                      <span className="label-dot" />
+                                      Type
+                                    </label>
+                                    <div className="icon-field">
+                                      <span className="icon">
+                                        <Icon icon="solar:tag-bold-duotone" width="18" />
+                                      </span>
+                                      <Field
+                                        as="select"
+                                        name={`optional_groups.${groupIndex}.group_id`}
+                                        className="form-select"
+                                      >
+                                        <option value="">Select Type</option>
+                                        {assessmentGroups.map((item) => (
+                                          <option key={item.id} value={item.id}>
+                                            {item.group}
+                                          </option>
+                                        ))}
+                                      </Field>
+                                    </div>
+                                  </div>
+
+                                  <div className="col-md-3">
                                     <label className="form-label">
                                       <span className="label-dot" />
                                       Marks
@@ -582,7 +631,7 @@ const ExamSubjectPage = () => {
                                     </div>
                                   </div>
 
-                                  <div className="col-md-4">
+                                  <div className="col-md-3">
                                     <label className="form-label">
                                       <span className="label-dot" />
                                       Order
@@ -629,7 +678,7 @@ const ExamSubjectPage = () => {
                                                     className="form-select"
                                                   >
                                                     <option value="">Select Sub Head</option>
-                                                    {components.map((component) => (
+                                                    {subHeadComponents.map((component) => (
                                                       <option key={component.id} value={component.id}>
                                                         {component.component_name}
                                                       </option>

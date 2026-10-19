@@ -13,7 +13,7 @@ const authHeaders = () => {
 const ComponentPage = () => {
   const [initialValues, setInitialValues] = useState({
     component_name: "",
-    
+    type: "",
   });
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -28,7 +28,18 @@ const ComponentPage = () => {
       placeholder: "e.g. F1/Theory",
       icon: "solar:notebook-bookmark-bold-duotone",
     },
-   
+    {
+      name: "type",
+      label: "Type",
+      type: "select",
+      required: true,
+      placeholder: "Select Type",
+      icon: "solar:tag-bold-duotone",
+      options: [
+        { label: "Head", value: "Head" },
+        { label: "Sub Head", value: "Sub Head" },
+      ],
+    },
   ];
 
   const handleSubmit = async (values) => {
@@ -44,6 +55,7 @@ const ComponentPage = () => {
       setSuccessMsg("Component added successfully!");
       setInitialValues({
         component_name: "",
+        type: "",
       });
       setTableRefreshKey((prev) => prev + 1);
     } catch (error) {
@@ -54,6 +66,7 @@ const ComponentPage = () => {
   const handleReset = () => {
     setInitialValues({
       component_name: "",
+      type: "",
     });
     setTableRefreshKey((prev) => prev + 1);
   };
@@ -99,7 +112,7 @@ const ComponentPage = () => {
         columns={[
           { data: "id", name: "id", title: "ID" },
           { data: "component_name", name: "component_name", title: "Component Name" },
-          
+          { data: "type", name: "type", title: "Type" },
           {
             data: null,
             title: "Actions",
