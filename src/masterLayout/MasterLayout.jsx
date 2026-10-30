@@ -563,17 +563,44 @@ const MasterLayout = () => {
     {
       title: "Examination",
       icon: "solar:clipboard-list-outline",
-      children: [
-        { title: "Grade Scale", path: "/dashboard/examination/grade-scale" },
-        { title: "Head&Subhead", path: "/dashboard/examination/component" },
-        { title:"Assessment Type", path: "/dashboard/examination/assessment-type" },
-        { title: "Term", path: "/dashboard/examination/term" },
-        { title: "Exam Name", path: "/dashboard/examination/exam-name" },
-        { title: "Exam Scheme", path: "/dashboard/examination/exam" },
-        { title: "Exam Subject", path: "/dashboard/examination/exam-subject" },
-        {title:"Exam configuration",path:"/dashboard/examination/exam-configuration"}
+      children:[
+        {title:"exam Setting",children:[
+            { title: "Grade Scale", path: "/dashboard/examination/grade-scale" },
+            { title: "Head&Subhead Master", path: "/dashboard/examination/component" },
+            { title:"Assessment Type", path: "/dashboard/examination/assessment-type" },
+            { title: "Term", path: "/dashboard/examination/term" },
+            { title: "Exam Name", path: "/dashboard/examination/exam-name" },
+            { title: "Exam Master", path: "/dashboard/examination/exam" },
+            { title: "Exam Subject-head-subhead Assignment", path: "/dashboard/examination/exam-subject" },
+            {title:"Exam configuration",path:"/dashboard/examination/exam-configuration"},
+           
+            {title:"Pre Exam",children:[
+              {title:"Pre Exam Setting",path:"/dashboard/examination/pre-exam-setting"},
+              {title:"Pre Exam Report",path:"/dashboard/examination/pre-exam-report"},
+            ]},
+            {title:"After Exam",children:[
+              {title:"After Exam Setting",children:[
+                {title:"Marks Entry & Generate Result",children:[
+                  {title:"Marks Entry",path:"/dashboard/examination/marks-entry"},
+                  {title:"Generate Result",path:"/dashboard/examination/generate-result"},
+                  
 
-      
+                ]},
+                {title:"Attendance",children:[
+                  {title:"Assign Working Days",path:"/dashboard/examination/assign-working-days"},
+                  {title:"Import & Export working days",path:"/dashboard/examination/import-and-export-working-days"},
+                  
+
+                ]},
+                
+              ]},
+             
+            ]}
+            
+    
+          
+          
+        ]}
       ]
     },
     {

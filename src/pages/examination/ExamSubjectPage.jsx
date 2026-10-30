@@ -6,6 +6,7 @@ import baseURL from "../../utils/baseUrl";
 import axios from "axios";
 import "../../assets/css/mastercom.css";
 import "../../assets/css/academicOfflineFeeReport.css";
+import GenericTableDataLayer from "../../components/GenericTable";
 
 const ExamSubjectPage = () => {
   const [exams, setExams] = useState([]);
@@ -26,6 +27,27 @@ const ExamSubjectPage = () => {
   const [loadingAssessments, setLoadingAssessments] = useState(false);
   const assessmentsRequestRef = useRef(0);
   const groupKeyRef = useRef(0);
+  const formikRef = useRef(null);
+  const examAssessmentColumns = [
+    { data: "id", name: "id", title: "ID" },
+    { data: "scheme.examNameInfo.exam_name", name: "scheme.examNameInfo.exam_name", title: "Exam" },
+    { data: "scheme.classInfo.class_name", name: "scheme.classInfo.class_name", title: "Class" },
+    { data: "scheme.termInfo.term_name", name: "scheme.termInfo.term_name", title: "Term" },
+    { data: "subjectInfo.value", name: "subjectInfo.value", title: "Subject Name" },
+    { data: "componentInfo.component_name", name: "componentInfo.component_name", title: "Component Name" },
+    {
+      data: null,
+      title: "Actions",
+      orderable: false,
+      searchable: false,
+      render: (data, type, row) => `
+        <div class="table-action-group">
+          <button type="button" class="table-action-btn table-action-edit" data-id="${row.id}" title="Edit Exam Assessment">Edit</button>
+          <button type="button" class="table-action-btn table-action-delete" data-id="${row.id}" title="Delete Exam Assessment">Delete</button>
+        </div>
+      `,
+    },
+  ];
 
   const initialValues = {
     exam_id: "",
@@ -333,6 +355,43 @@ const ExamSubjectPage = () => {
     }
   };
 
+  const handleDelete = async (id, table) => {
+    const ok = window.confirm("Are you sure you want to delete this record?");
+
+    if (!ok) return;
+    try {
+      await axios.delete(`${baseURL}/api/exam-assessments/${id}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      alert("Exam assessment is deleted successfully");
+      table.ajax.reload();
+    } catch (error) {
+      alert(error.response?.data?.message || error.message);
+    }
+  };
+
+  const handleEdit = async (id, row) => {
+    const setFieldValue = formikRef.current?.setFieldValue;
+    if (!row || !setFieldValue) return;
+
+    const exam_name_id = toFieldValue(row.scheme?.examNameInfo?.id);
+    const class_id = toFieldValue(row.scheme?.class_id);
+    const term_id = toFieldValue(row.scheme?.term_id);
+    if (!exam_name_id || !class_id || !term_id) return;
+
+    setSuccessMsg("");
+    setErrorMsg("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    await handleExamChange(exam_name_id, setFieldValue);
+    setFieldValue("class_id", class_id);
+    setFieldValue("term_id", term_id);
+
+    const subjects = await fetchClassSubjects(class_id, setFieldValue);
+    if (subjects === null) return;
+    fetchExamSchemeId(exam_name_id, class_id, term_id, setFieldValue, subjects);
+  };
+
   return (
     <div className="chfi-wrapper mb-3">
       <div className="chfi-card">
@@ -342,7 +401,7 @@ const ExamSubjectPage = () => {
               <Icon icon="solar:bookmark-square-bold-duotone" width="24" />
             </span>
             <div>
-              <h5 className="card-title">Assign Subject</h5>
+              <h5 className="card-title">Assign Head & Subhead to Subject</h5>
             </div>
           </div>
         </div>
@@ -362,6 +421,7 @@ const ExamSubjectPage = () => {
           )}
 
           <Formik
+            innerRef={formikRef}
             initialValues={initialValues}
             // validationSchema={validationSchema}
             onSubmit={async (values, { resetForm, setSubmitting }) => {
@@ -806,6 +866,14 @@ const ExamSubjectPage = () => {
           </Formik>
         </div>
       </div>
+      <GenericTableDataLayer
+       url={`${baseURL}/api/exam-assessments`} 
+       pageName="Exam Assessment List" 
+       columns={examAssessmentColumns}
+       onDelete={handleDelete}
+       onEdit={handleEdit}
+       />
+      
     </div>
   );
 };

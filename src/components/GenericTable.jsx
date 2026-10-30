@@ -55,7 +55,8 @@ const GenericTableDataLayer = ({
 
     $table.on("click", ".table-action-edit", function () {
       const id = $(this).data("id");
-      callbacksRef.current.onEdit?.(id);
+      const rowData = datatableRef.current?.row($(this).closest("tr")).data();
+      callbacksRef.current.onEdit?.(id, rowData);
     });
 
     $table.on("click", ".table-action-delete", function () {

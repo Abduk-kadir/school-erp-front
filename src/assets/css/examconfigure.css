@@ -1,0 +1,285 @@
+/* =====================================================================
+ * examconfigure.css
+ * Styles for the Exam Configuration subject table. Builds on the
+ * card/header/button look from mastercom.css (.chfi-wrapper, .chfi-card,
+ * .chfi-root .btn-submit).
+ * ===================================================================== */
+
+.ec-config {
+  --ec-navy: #1e3a8a;
+  --ec-blue: #2563eb;
+  --ec-border: rgba(148, 163, 184, 0.35);
+  --ec-formative: #2563eb;
+  --ec-formative-bg: #eff6ff;
+  --ec-summative: #7c3aed;
+  --ec-summative-bg: #f5f3ff;
+  --ec-total: #15803d;
+  --ec-total-bg: #f0fdf4;
+}
+
+/* ---------- Card header extras ---------- */
+.chfi-wrapper .chfi-card.ec-config .card-header .header-row {
+  justify-content: space-between;
+}
+
+.ec-config .ec-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ec-config .ec-count-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ---------- Table shell (small side margins) ---------- */
+.chfi-wrapper .chfi-card.ec-config .card-body {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.ec-config .ec-table-wrap {
+  border: 1px solid var(--ec-border);
+  border-radius: 8px;
+  overflow: auto;
+  background: #ffffff;
+}
+
+.ec-config .ec-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ec-config .ec-table > thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #eff6ff;
+  color: var(--ec-navy);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+  border-right: 1px solid var(--ec-border);
+  white-space: nowrap;
+}
+
+.ec-config .ec-table > thead > tr > th:last-child,
+.ec-config .ec-table > tbody > tr > td:last-child {
+  border-right: 0;
+}
+
+.ec-config .ec-table > thead .ec-required {
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+.ec-config .ec-table > tbody > tr > td {
+  padding: 10px 8px;
+  vertical-align: middle;
+  text-align: center;
+  border-bottom: 1px solid var(--ec-border);
+  border-right: 1px solid var(--ec-border);
+  background: #ffffff;
+  transition: background 0.15s ease;
+}
+
+.ec-config .ec-table > tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+.ec-config .ec-table > tbody > tr:nth-child(even) > td {
+  background: #fbfdff;
+}
+
+.ec-config .ec-table > tbody > tr:hover > td {
+  background: #f5f9ff;
+}
+
+/* ---------- Column widths ---------- */
+.ec-config .ec-col-subject { min-width: 150px; text-align: left !important; }
+.ec-config .ec-col-grade { min-width: 150px; }
+.ec-config .ec-col-yesno { min-width: 110px; }
+.ec-config .ec-col-sequence { min-width: 95px; }
+.ec-config .ec-col-marks { min-width: 460px; }
+
+/* ---------- Subject cell ---------- */
+.ec-config .ec-subject {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.88rem;
+}
+
+.ec-config .ec-subject-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1d4ed8;
+  flex-shrink: 0;
+}
+
+/* ---------- Controls ---------- */
+.ec-config .ec-select,
+.ec-config .ec-input {
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  background-color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ec-config .ec-select {
+  padding: 0 28px 0 10px;
+}
+
+.ec-config .ec-input {
+  width: 100%;
+  min-width: 70px;
+  padding: 0 6px;
+  text-align: center;
+}
+
+.ec-config .ec-select:hover,
+.ec-config .ec-input:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+}
+
+.ec-config .ec-select:focus,
+.ec-config .ec-input:focus {
+  outline: none;
+  border-color: var(--ec-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.ec-config .ec-input[readonly] {
+  background: var(--ec-total-bg);
+  border-color: rgba(22, 163, 74, 0.35);
+  color: var(--ec-total);
+  font-weight: 800;
+  cursor: default;
+}
+
+.ec-config .ec-input[readonly]:focus {
+  box-shadow: none;
+}
+
+.ec-config .ec-input--ratio[readonly] {
+  background: #fffbeb;
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #b45309;
+}
+
+/* Hide number spinners for a cleaner look */
+.ec-config .ec-input::-webkit-outer-spin-button,
+.ec-config .ec-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.ec-config .ec-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ---------- Formative | Summative grid ---------- */
+.ec-config .ec-marks-grid {
+  display: grid;
+  grid-template-columns: 72px 1fr 22px 1fr 22px 1fr;
+  gap: 6px;
+  align-items: center;
+}
+
+.ec-config .ec-marks-head {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 5px 4px;
+  border-radius: 7px;
+}
+
+.ec-config .ec-marks-head--formative {
+  background: var(--ec-formative-bg);
+  color: var(--ec-formative);
+}
+
+.ec-config .ec-marks-head--summative {
+  background: var(--ec-summative-bg);
+  color: var(--ec-summative);
+}
+
+.ec-config .ec-marks-head--total {
+  background: var(--ec-total-bg);
+  color: var(--ec-total);
+}
+
+.ec-config .ec-marks-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  background: #f1f5f9;
+  border-radius: 7px;
+  padding: 7px 6px;
+  text-align: left;
+}
+
+.ec-config .ec-operator {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 800;
+  justify-self: center;
+}
+
+.ec-config .ec-input--formative {
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.ec-config .ec-input--summative {
+  border-color: rgba(124, 58, 237, 0.35);
+}
+
+.ec-config .ec-input--summative:focus {
+  border-color: var(--ec-summative);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+/* ---------- Footer actions ---------- */
+.ec-config .ec-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.ec-config .ec-actions .btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
