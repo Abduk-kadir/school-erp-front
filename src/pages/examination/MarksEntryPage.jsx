@@ -8,6 +8,7 @@ import ExamDataTable from '../../components/ExamDataTable';
 import { useNavigate } from 'react-router-dom';
 import { setResultMarkEntry } from '../../redux/slices/resultMarkEntry';
 import { useDispatch } from 'react-redux';
+import downloadAddMarkExcel from '../../utils/downloadAddMarkExcel';
 
 const authHeaders = () => {
   const token = localStorage.getItem("token");
@@ -61,6 +62,7 @@ const MarksEntryPage = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const dispatch=useDispatch();
+  const [students,setStudents]=useState([]);
 
   const navigate=useNavigate();
   console.log('examschemid:',examschemid)
@@ -200,9 +202,16 @@ const MarksEntryPage = () => {
     
   };
 
-  const handleUploaddownloadExcel = (id,row) => {
-    console.log("Edit term:", id);
-    console.log('row:',row)
+  const handleDownloadExcel = async (id, row) => {
+    setErrorMsg("");
+    try {
+       let {data}=await axios.get(`${baseURL}/api/result-mark-entry-lists/${id}/students`)
+       setStudents(data?.data);
+      await downloadAddMarkExcel(row,data?.data);
+    } catch (err) {
+      console.error("Failed to download marks excel", err);
+      setErrorMsg(err.response?.data?.message || err.message || "Failed to download excel");
+    }
   };
 
   const fields = [
@@ -351,6 +360,7 @@ const MarksEntryPage = () => {
           pageName={"Marks Entry"}
           url={`${baseURL}/api/result-mark-entry-lists`}
           onAddMarks={handleAddMarks}
+          onDownloadExcel={handleDownloadExcel}
           />
         </div>
       </div>

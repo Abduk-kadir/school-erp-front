@@ -719,6 +719,36 @@
   padding: 10px 12px 12px;
 }
 
+.chfi-root .icon-field.as-no-icon .form-control,
+.chfi-root .icon-field.as-no-icon .form-select {
+  padding-left: 12px;
+}
+
+.chfi-root.assign-subject-form .icon-field .form-control.as-ratio-input {
+  background-color: #fffbeb;
+  border-color: #fcd34d;
+  color: #a16207;
+  font-weight: 600;
+  cursor: default;
+}
+
+.chfi-root.assign-subject-form .icon-field .form-control.as-ratio-input:focus {
+  background-color: #fffbeb;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.15);
+}
+
+.chfi-root.assign-subject-form .icon-field .form-control.as-ratio-input::placeholder {
+  color: #ca8a04;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.chfi-root.assign-subject-form .icon-field:has(.as-ratio-input) .icon {
+  background: linear-gradient(135deg, #fcd34d, #fde68a);
+  color: #a16207;
+}
+
 .assign-subject-form .btn.as-head-btn {
   height: 28px;
   padding: 2px 10px;

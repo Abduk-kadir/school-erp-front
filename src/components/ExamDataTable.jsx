@@ -24,11 +24,12 @@ const ExamDataTable = ({
   onAssignClass,
   embedded = false,
   onAddMarks,
+  onDownloadExcel,
 }) => {
   const [viewUrl, setViewUrl] = useState(null);
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
-  const callbacksRef = useRef({ onEdit, onDelete, onAssignClass, onAddMarks });
+  const callbacksRef = useRef({ onEdit, onDelete, onAssignClass, onAddMarks, onDownloadExcel });
 
   const [exam, setExam] = useState([]);
   const [examSchemes, setExamSchemes] = useState([]);
@@ -65,8 +66,8 @@ const ExamDataTable = ({
   }, [divisionFilter]);
 
   useEffect(() => {
-    callbacksRef.current = { onEdit, onDelete, onAssignClass, onAddMarks };
-  }, [onEdit, onDelete, onAssignClass, onAddMarks]);
+    callbacksRef.current = { onEdit, onDelete, onAssignClass, onAddMarks, onDownloadExcel };
+  }, [onEdit, onDelete, onAssignClass, onAddMarks,onDownloadExcel]);
 
   useEffect(() => {
     Promise.allSettled([
@@ -184,6 +185,12 @@ const ExamDataTable = ({
       const id = $(this).data("id");
       const rowData = datatableRef.current?.row($(this).closest("tr")).data();
       callbacksRef.current.onAddMarks?.(id, rowData);
+    });
+
+    $table.on("click.examTable", ".table-action-excel, .table-action-upload-download-excel", function () {
+      const id = $(this).data("id");
+      const rowData = datatableRef.current?.row($(this).closest("tr")).data();
+      callbacksRef.current.onDownloadExcel?.(id, rowData);
     });
 
     return () => {

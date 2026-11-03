@@ -575,7 +575,7 @@ const MasterLayout = () => {
             {title:"Exam configuration",path:"/dashboard/examination/exam-configuration"},
            
             {title:"Pre Exam",children:[
-              {title:"Pre Exam Setting",path:"/dashboard/examination/pre-exam-setting"},
+              {title:"Pre Exam Setting",path:"/dashboard/examination/pre-exam-setting-testing"},
               {title:"Pre Exam Report",path:"/dashboard/examination/pre-exam-report"},
             ]},
             {title:"After Exam",children:[

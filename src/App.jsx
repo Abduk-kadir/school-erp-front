@@ -315,6 +315,7 @@ const ExamnamePage = lazy(() => import("./pages/examination/ExamnamePage"))
 const ExamconfigurationPage = lazy(() => import("./pages/examination/Examconfiguration"))
 const MarksEntryPage = lazy(() => import("./pages/examination/MarksEntryPage"))
 const AddMarksPage = lazy(() => import("./pages/examination/AddMarks"))
+const TestingPage = lazy(() => import("./pages/TestingPage"));
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
     <div className="spinner-border text-primary" role="status">
@@ -598,6 +599,7 @@ function App() {
                 <Route path="exam-configuration" element={<ExamconfigurationPage />} />
                 <Route path="marks-entry" element={<MarksEntryPage />} />
                 <Route path="add-marks-to-student/:markentryid" element={<AddMarksPage />} />
+                <Route path="pre-exam-setting-testing" element={<TestingPage />} />
               </Route>
               <Route path="access-permission">
                 <Route path="module-list" element={<ModuleMaster />} />

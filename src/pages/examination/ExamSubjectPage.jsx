@@ -75,6 +75,7 @@ const ExamSubjectPage = () => {
     group_id: "",
     marks: "",
     sequence: "",
+    is_convert_subhead_to_head: "",
     sub_components: [],
   });
 
@@ -87,6 +88,7 @@ const ExamSubjectPage = () => {
     group_id: toFieldValue(assessment.group_id),
     marks: toFieldValue(assessment.max_marks),
     sequence: toFieldValue(assessment.sequence),
+    is_convert_subhead_to_head: assessment.ratio != null ? "1" : "0",
     sub_components: (assessment.assesmentcomponent || []).map((sub) => ({
       id: sub.id,
       sub_component_id: toFieldValue(sub.component_id),
@@ -226,12 +228,24 @@ const ExamSubjectPage = () => {
 
   const toNumberOrNull = (value) => (value === "" || value == null ? null : Number(value));
 
+  const calcHeadRatio = (group) => {
+    if (group.is_convert_subhead_to_head !== "1") return null;
+    const headMarks = Number(group.marks) || 0;
+    const subTotal = (group.sub_components || []).reduce(
+      (sum, sub) => sum + (Number(sub.marks) || 0),
+      0
+    );
+    if (!subTotal) return null;
+    return Number((headMarks / subTotal).toFixed(2));
+  };
+
   const buildAssessmentPayload = (values, group) => ({
       exam_scheme_id: Number(values.exam_scheme_id),
       subject_id: Number(group.subject_id),
       component_id: Number(group.component_id),
       group_id: Number(group.group_id),
       max_marks: toNumberOrNull(group.marks),
+      ratio: calcHeadRatio(group),
       sequence: toNumberOrNull(group.sequence),
       ...(group.code != null ? { code: group.code } : {}),
       assesmentcomponent: group.sub_components.map((sub) => ({
@@ -242,9 +256,25 @@ const ExamSubjectPage = () => {
       })),
   });
 
-  const handleSubjectSubmit = async (values, subject, heads, setFieldValue) => {
+  const isBlankSubHead = (sub) =>
+    !sub.sub_component_id && toFieldValue(sub.marks) === "" && toFieldValue(sub.sequence) === "";
+
+  const handleSubjectSubmit = async (renderValues, subject, setFieldValue) => {
     setSuccessMsg("");
     setErrorMsg("");
+
+    const values = formikRef.current?.values ?? renderValues;
+    const heads = values.optional_groups
+      .map((group, groupIndex) => ({ group, groupIndex }))
+      .filter(({ group }) => String(group.subject_id) === String(subject.id))
+      .map(({ group, groupIndex }) => {
+        const subs = group.sub_components || [];
+        const filled = subs.filter((sub) => !isBlankSubHead(sub));
+        if (filled.length !== subs.length) {
+          setFieldValue(`optional_groups.${groupIndex}.sub_components`, filled);
+        }
+        return { group: { ...group, sub_components: filled }, groupIndex };
+      });
 
     if (!values.exam_scheme_id) {
       setErrorMsg("Select exam, class and term before submitting.");
@@ -264,12 +294,12 @@ const ExamSubjectPage = () => {
       setErrorMsg(`Select a type for Head ${missingType + 1} in ${subject.name}.`);
       return;
     }
-    const missingSubHead = heads.findIndex(({ group }) =>
-      group.sub_components.some((sub) => !sub.sub_component_id)
-    );
-    if (missingSubHead !== -1) {
-      setErrorMsg(`Select a sub head for every sub head row in Head ${missingSubHead + 1} of ${subject.name}.`);
-      return;
+    for (const [headIndex, { group }] of heads.entries()) {
+      const row = group.sub_components.findIndex((sub) => !sub.sub_component_id);
+      if (row !== -1) {
+        setErrorMsg(`Select a sub head in Head ${headIndex + 1}, Sub Head ${row + 1} of ${subject.name}.`);
+        return;
+      }
     }
 
     const token = localStorage.getItem("token");
@@ -626,7 +656,6 @@ const ExamSubjectPage = () => {
                                 <div className="row g-3">
                                   <div className="col-md-3">
                                     <label className="form-label">
-                                      <span className="label-dot" />
                                       Head
                                     </label>
                                     <div className="icon-field">
@@ -650,7 +679,6 @@ const ExamSubjectPage = () => {
 
                                   <div className="col-md-3">
                                     <label className="form-label">
-                                      <span className="label-dot" />
                                       Type
                                     </label>
                                     <div className="icon-field">
@@ -674,7 +702,6 @@ const ExamSubjectPage = () => {
 
                                   <div className="col-md-3">
                                     <label className="form-label">
-                                      <span className="label-dot" />
                                       Marks
                                     </label>
                                     <div className="icon-field">
@@ -693,7 +720,6 @@ const ExamSubjectPage = () => {
 
                                   <div className="col-md-3">
                                     <label className="form-label">
-                                      <span className="label-dot" />
                                       Order
                                     </label>
                                     <div className="icon-field">
@@ -715,6 +741,44 @@ const ExamSubjectPage = () => {
                                     </div>
                                   </div>
 
+                                  <div className="col-md-3">
+                                    <label className="form-label">
+                                      Is Convert Sub Head to Head
+                                    </label>
+                                    <div className="icon-field">
+                                      <span className="icon">
+                                        <Icon icon="solar:transfer-vertical-bold-duotone" width="18" />
+                                      </span>
+                                      <Field
+                                        as="select"
+                                        name={`optional_groups.${groupIndex}.is_convert_subhead_to_head`}
+                                        className="form-select"
+                                      >
+                                        <option value="">Select</option>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                      </Field>
+                                    </div>
+                                  </div>
+
+                                  <div className="col-md-3">
+                                    <label className="form-label">
+                                      Ratio
+                                    </label>
+                                    <div className="icon-field">
+                                      <span className="icon">
+                                        <Icon icon="solar:calculator-bold-duotone" width="18" />
+                                      </span>
+                                      <input
+                                        type="number"
+                                        className="form-control as-ratio-input"
+                                        value={calcHeadRatio(group) ?? ""}
+                                        placeholder="Auto calculated"
+                                        readOnly
+                                      />
+                                    </div>
+                                  </div>
+
                                   <div className="col-md-12">
                                     <FieldArray
                                       name={`optional_groups.${groupIndex}.sub_components`}
@@ -725,13 +789,9 @@ const ExamSubjectPage = () => {
                                             <div key={index} className="row g-3 align-items-end">
                                               <div className="col-md-4">
                                                 <label className="form-label">
-                                                  <span className="label-dot" />
                                                   Sub Head {index + 1}
                                                 </label>
-                                                <div className="icon-field">
-                                                  <span className="icon">
-                                                    <Icon icon="solar:notebook-bookmark-bold-duotone" width="18" />
-                                                  </span>
+                                                <div className="icon-field as-no-icon">
                                                   <Field
                                                     as="select"
                                                     name={`optional_groups.${groupIndex}.sub_components.${index}.sub_component_id`}
@@ -749,13 +809,9 @@ const ExamSubjectPage = () => {
 
                                               <div className="col-md-3">
                                                 <label className="form-label">
-                                                  <span className="label-dot" />
                                                   Sub Head Marks
                                                 </label>
-                                                <div className="icon-field">
-                                                  <span className="icon">
-                                                    <Icon icon="solar:medal-ribbon-bold-duotone" width="18" />
-                                                  </span>
+                                                <div className="icon-field as-no-icon">
                                                   <Field
                                                     type="number"
                                                     min="0"
@@ -768,13 +824,9 @@ const ExamSubjectPage = () => {
 
                                               <div className="col-md-3">
                                                 <label className="form-label">
-                                                  <span className="label-dot" />
                                                   Sub Head Order
                                                 </label>
-                                                <div className="icon-field">
-                                                  <span className="icon">
-                                                    <Icon icon="solar:hashtag-square-bold-duotone" width="18" />
-                                                  </span>
+                                                <div className="icon-field as-no-icon">
                                                   <Field
                                                     as="select"
                                                     name={`optional_groups.${groupIndex}.sub_components.${index}.sequence`}
@@ -834,7 +886,7 @@ const ExamSubjectPage = () => {
                                       !heads.length ||
                                       submittingKey === String(subject.id)
                                     }
-                                    onClick={() => handleSubjectSubmit(values, subject, heads, setFieldValue)}
+                                    onClick={() => handleSubjectSubmit(values, subject, setFieldValue)}
                                   >
                                     {submittingKey === String(subject.id) ? (
                                       <>
