@@ -1,4 +1,5 @@
-﻿import React,{useState,useEffect}from 'react'
+﻿import React,{useState,useEffect,useRef}from 'react'
+import { Modal } from 'react-bootstrap';
 import { Icon } from "@iconify/react/dist/iconify.js";
 import baseURL from "../../utils/baseUrl";
 import axios from 'axios';
@@ -63,6 +64,10 @@ const MarksEntryPage = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const dispatch=useDispatch();
   const [students,setStudents]=useState([]);
+  const [excelEntry, setExcelEntry] = useState(null);
+  const [excelBusy, setExcelBusy] = useState("");
+  const [excelMsg, setExcelMsg] = useState({ type: "", text: "", errors: [] });
+  const importInputRef = useRef(null);
 
   const navigate=useNavigate();
   console.log('examschemid:',examschemid)
@@ -202,15 +207,71 @@ const MarksEntryPage = () => {
     
   };
 
-  const handleDownloadExcel = async (id, row) => {
-    setErrorMsg("");
+  const handleDownloadExcel = (id, row) => {
+    setExcelMsg({ type: "", text: "", errors: [] });
+    setExcelEntry({ id, row });
+  };
+
+  const closeExcelModal = () => {
+    if (excelBusy) return;
+    setExcelEntry(null);
+    setExcelMsg({ type: "", text: "", errors: [] });
+  };
+
+  const handleDownloadMarksExcel = async () => {
+    if (!excelEntry) return;
+    setExcelMsg({ type: "", text: "", errors: [] });
+    setExcelBusy("download");
     try {
-       let {data}=await axios.get(`${baseURL}/api/result-mark-entry-lists/${id}/students`)
+       let {data}=await axios.get(`${baseURL}/api/result-mark-entry-lists/${excelEntry.id}/students`)
        setStudents(data?.data);
-      await downloadAddMarkExcel(row,data?.data);
+      await downloadAddMarkExcel(excelEntry.row,data?.data);
+      setExcelMsg({ type: "success", text: "Marks entry excel downloaded.", errors: [] });
     } catch (err) {
       console.error("Failed to download marks excel", err);
-      setErrorMsg(err.response?.data?.message || err.message || "Failed to download excel");
+      setExcelMsg({
+        type: "danger",
+        text: err.response?.data?.message || err.message || "Failed to download excel",
+        errors: [],
+      });
+    } finally {
+      setExcelBusy("");
+    }
+  };
+
+  const handleImportMarksExcel = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!/\.xlsx$/i.test(file.name)) {
+      setExcelMsg({ type: "danger", text: "Please choose an .xlsx file.", errors: [] });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setExcelMsg({ type: "", text: "", errors: [] });
+    setExcelBusy("import");
+    try {
+      const { data } = await axios.post(`${baseURL}/api/result-mark-entry-lists/import-marks`, formData, {
+        headers: authHeaders(),
+      });
+      setExcelMsg({
+        type: "success",
+        text: data?.message || "Marks imported successfully.",
+        errors: [],
+      });
+    } catch (err) {
+      console.error("Failed to import marks excel", err);
+      setExcelMsg({
+        type: "danger",
+        text: err.response?.data?.message || err.message || "Failed to import excel",
+        errors: Array.isArray(err.response?.data?.errors) ? err.response.data.errors : [],
+      });
+    } finally {
+      setExcelBusy("");
     }
   };
 
@@ -364,6 +425,142 @@ const MarksEntryPage = () => {
           />
         </div>
       </div>
+
+      <Modal
+        show={!!excelEntry}
+        onHide={closeExcelModal}
+        centered
+        dialogClassName="mx-dialog"
+        contentClassName="mx-content"
+        backdrop={excelBusy ? "static" : true}
+      >
+        <div className="mx-header">
+          <span className="mx-header-icon">
+            <Icon icon="solar:file-text-bold-duotone" width="26" />
+          </span>
+          <div className="mx-header-text">
+            <h5 className="mx-title">Marks Entry Excel</h5>
+            <p className="mx-subtitle">Download the sheet, fill marks and import it back</p>
+          </div>
+          <button
+            type="button"
+            className="mx-close"
+            onClick={closeExcelModal}
+            disabled={!!excelBusy}
+            aria-label="Close"
+          >
+            <Icon icon="solar:close-circle-bold-duotone" width="24" />
+          </button>
+        </div>
+
+        <div className="mx-body">
+          {excelEntry?.row && (
+            <div className="mx-chips">
+              {[
+                ["solar:document-text-bold-duotone", excelEntry.row?.scheme?.examNameInfo?.exam_name],
+                ["solar:square-academic-cap-bold-duotone", excelEntry.row?.scheme?.classInfo?.class_name],
+                ["solar:calendar-bold-duotone", excelEntry.row?.scheme?.termInfo?.term_name],
+                ["solar:users-group-rounded-bold-duotone", excelEntry.row?.divisionInfo?.division_name],
+                ["solar:book-bookmark-bold-duotone", excelEntry.row?.subjectInfo?.value],
+              ]
+                .filter(([, value]) => value)
+                .map(([icon, value]) => (
+                  <span key={icon} className="mx-chip">
+                    <Icon icon={icon} width="14" />
+                    {value}
+                  </span>
+                ))}
+            </div>
+          )}
+
+          {excelMsg.text && (
+            <div className={`mx-alert mx-alert-${excelMsg.type}`} role="alert">
+              <Icon
+                icon={excelMsg.type === "success" ? "solar:check-circle-bold-duotone" : "solar:danger-triangle-bold-duotone"}
+                width="20"
+                className="mx-alert-icon"
+              />
+              <div className="mx-alert-text">
+                <div>{excelMsg.text}</div>
+                {excelMsg.errors.length > 0 && (
+                  <ul className="mx-alert-list">
+                    {excelMsg.errors.map((item, index) => (
+                      <li key={index}>
+                        {item.row ? `Row ${item.row}` : ""}
+                        {item.column ? `, Column ${item.column}` : ""}
+                        {item.row || item.column ? ": " : ""}
+                        {item.message}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="mx-actions">
+            <button
+              type="button"
+              className="mx-action mx-action-download"
+              onClick={handleDownloadMarksExcel}
+              disabled={!!excelBusy}
+            >
+              <span className="mx-action-icon">
+                <Icon
+                  icon={excelBusy === "download" ? "line-md:loading-loop" : "solar:download-minimalistic-bold-duotone"}
+                  width="24"
+                />
+              </span>
+              <span className="mx-action-text">
+                <span className="mx-action-title">
+                  {excelBusy === "download" ? "Downloading..." : "Download Marks Entry Excel"}
+                </span>
+                <span className="mx-action-desc">Sheet with students, heads and formulas</span>
+              </span>
+              <Icon icon="solar:alt-arrow-right-linear" width="18" className="mx-action-arrow" />
+            </button>
+
+            <button
+              type="button"
+              className="mx-action mx-action-import"
+              onClick={() => importInputRef.current?.click()}
+              disabled={!!excelBusy}
+            >
+              <span className="mx-action-icon">
+                <Icon
+                  icon={excelBusy === "import" ? "line-md:loading-loop" : "solar:upload-minimalistic-bold-duotone"}
+                  width="24"
+                />
+              </span>
+              <span className="mx-action-text">
+                <span className="mx-action-title">
+                  {excelBusy === "import" ? "Importing..." : "Import Marks Entry Excel"}
+                </span>
+                <span className="mx-action-desc">Upload the filled .xlsx to save marks</span>
+              </span>
+              <Icon icon="solar:alt-arrow-right-linear" width="18" className="mx-action-arrow" />
+            </button>
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".xlsx"
+              className="d-none"
+              onChange={handleImportMarksExcel}
+            />
+
+            <button type="button" className="mx-action mx-action-pdf" disabled>
+              <span className="mx-action-icon">
+                <Icon icon="solar:document-bold-duotone" width="24" />
+              </span>
+              <span className="mx-action-text">
+                <span className="mx-action-title">Download Mark Writing PDF</span>
+                <span className="mx-action-desc">Printable sheet for writing marks</span>
+              </span>
+              <span className="mx-soon">Soon</span>
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

@@ -322,6 +322,7 @@ export const downloadAddMarkExcel = async (row, students = [], { dataRows = DEFA
     ["exam_scheme_id", row.exam_scheme_id],
     ["subject_id", row.subject_id],
     ["division_id", row.division_id ?? row?.divisionInfo?.id ?? ""],
+    ["term_id", scheme?.term_id ?? row?.scheme?.term_id ?? ""],
     ["data_start_row", HEADER_END + 1],
     ["fixed_columns", JSON.stringify(Object.fromEntries(FIXED_COLUMNS.map((f, i) => [f.key, i + 1])))],
     ["students", JSON.stringify(studentRows)],

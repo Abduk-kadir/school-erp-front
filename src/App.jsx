@@ -316,6 +316,7 @@ const ExamconfigurationPage = lazy(() => import("./pages/examination/Examconfigu
 const MarksEntryPage = lazy(() => import("./pages/examination/MarksEntryPage"))
 const AddMarksPage = lazy(() => import("./pages/examination/AddMarks"))
 const TestingPage = lazy(() => import("./pages/TestingPage"));
+const GenarateResultPage = lazy(() => import("./pages/examination/GenarateResultPage"))
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
     <div className="spinner-border text-primary" role="status">
@@ -589,6 +590,7 @@ function App() {
                 <Route path='marks-entry' element={<PreodicMarksEntryPage />} />
               </Route>
               <Route path="examination">
+
                 <Route path="grade-scale" element={<GradeScalePage />} />
                 <Route path="component" element={<ComponentPage />} />
                 <Route path="assessment-type" element={<AssesmentTypePage />} />
@@ -598,6 +600,7 @@ function App() {
                 <Route path="exam-subject" element={<ExamSubjectPage />} />
                 <Route path="exam-configuration" element={<ExamconfigurationPage />} />
                 <Route path="marks-entry" element={<MarksEntryPage />} />
+                <Route path="generate-result" element={<GenarateResultPage />} />
                 <Route path="add-marks-to-student/:markentryid" element={<AddMarksPage />} />
                 <Route path="pre-exam-setting-testing" element={<TestingPage />} />
               </Route>
