@@ -158,9 +158,8 @@ const Examconfiguration = () => {
   const toFlag = (value) => (value === true || value === 1 || value === "1" ? 1 : 0);
 
   const REQUIRED_FIELDS = [
+    ["subject_id", "Subject"],
     ["grade_scale_id", "Grade"],
-    ["is_separate_passing", "Is Separate Passing"],
-    ["is_included_in_total", "Is Include in Total"],
     ["mark_or_grade", "Mark/Grade"],
     ["sequence", "Sequence"],
   ];
@@ -175,10 +174,15 @@ const Examconfiguration = () => {
       return;
     }
 
+    if (!subjectsComponents.length) {
+      setErrorMsg("No subjects found for the selected exam, class and term.");
+      return;
+    }
+
     for (const row of subjectsComponents) {
       const missing = REQUIRED_FIELDS.find(([field]) => row[field] === "" || row[field] == null);
       if (missing) {
-        setErrorMsg(`Please select ${missing[1]} for ${row.subject}.`);
+        setErrorMsg(`Please select ${missing[1]} for ${row.subject || "every row"}.`);
         return;
       }
     }

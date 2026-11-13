@@ -67,7 +67,9 @@ const ExamSubjectPage = () => {
 
   const toFieldValue = (value) => (value == null ? "" : String(value));
 
-  const createGroup = (subjectId) => ({
+  const toBoolean = (value) => value === true || value === 1 || value === "1" || value === "true";
+
+  const createGroup = (subjectId, isConsiderInExam = true) => ({
     _key: `new-${++groupKeyRef.current}`,
     id: null,
     subject_id: String(subjectId),
@@ -76,6 +78,7 @@ const ExamSubjectPage = () => {
     marks: "",
     sequence: "",
     is_convert_subhead_to_head: "",
+    is_consider_inexam: isConsiderInExam,
     sub_components: [],
   });
 
@@ -89,6 +92,7 @@ const ExamSubjectPage = () => {
     marks: toFieldValue(assessment.max_marks),
     sequence: toFieldValue(assessment.sequence),
     is_convert_subhead_to_head: assessment.ratio != null ? "1" : "0",
+    is_consider_inexam: assessment.is_consider_inexam == null ? true : toBoolean(assessment.is_consider_inexam),
     sub_components: (assessment.assesmentcomponent || []).map((sub) => ({
       id: sub.id,
       sub_component_id: toFieldValue(sub.component_id),
@@ -247,6 +251,7 @@ const ExamSubjectPage = () => {
       max_marks: toNumberOrNull(group.marks),
       ratio: calcHeadRatio(group),
       sequence: toNumberOrNull(group.sequence),
+      is_consider_inexam: Boolean(group.is_consider_inexam),
       ...(group.code != null ? { code: group.code } : {}),
       assesmentcomponent: group.sub_components.map((sub) => ({
         ...(sub.id != null ? { id: sub.id } : {}),
@@ -284,14 +289,14 @@ const ExamSubjectPage = () => {
       setErrorMsg(`Add at least one head for ${subject.name}.`);
       return;
     }
-    const missingHead = heads.findIndex(({ group }) => !group.component_id);
-    if (missingHead !== -1) {
-      setErrorMsg(`Select a head for Head ${missingHead + 1} in ${subject.name}.`);
+    const missingSubject = heads.findIndex(({ group }) => !group.subject_id);
+    if (missingSubject !== -1) {
+      setErrorMsg(`Subject is missing for Head ${missingSubject + 1} in ${subject.name}.`);
       return;
     }
-    const missingType = heads.findIndex(({ group }) => !group.group_id);
-    if (missingType !== -1) {
-      setErrorMsg(`Select a type for Head ${missingType + 1} in ${subject.name}.`);
+    const missingOrder = heads.findIndex(({ group }) => !group.sequence);
+    if (missingOrder !== -1) {
+      setErrorMsg(`Select an order for Head ${missingOrder + 1} in ${subject.name}.`);
       return;
     }
     for (const [headIndex, { group }] of heads.entries()) {
@@ -617,6 +622,10 @@ const ExamSubjectPage = () => {
                               const heads = values.optional_groups
                                 .map((group, groupIndex) => ({ group, groupIndex }))
                                 .filter(({ group }) => String(group.subject_id) === String(subject.id));
+                              const isConsiderInExam = heads.length
+                                ? heads.some(({ group }) => group.is_consider_inexam)
+                                : true;
+                              const considerInputId = `consider-inexam-${subject.id}`;
 
                               return (
                               <div key={subject.id} className="as-section as-optional-group">
@@ -624,11 +633,32 @@ const ExamSubjectPage = () => {
                                   <span className="d-inline-flex align-items-center gap-2">
                                     <Icon icon="solar:book-2-bold-duotone" width="18" className="as-subject-icon" />
                                     {subject.name}
+                                    <label
+                                      htmlFor={considerInputId}
+                                      className={`as-consider${isConsiderInExam ? " is-checked" : ""}${
+                                        !heads.length ? " is-disabled" : ""
+                                      }`}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        id={considerInputId}
+                                        className="as-consider-input"
+                                        checked={isConsiderInExam}
+                                        disabled={!heads.length}
+                                        onChange={(e) =>
+                                          heads.forEach(({ groupIndex }) =>
+                                            setFieldValue(`optional_groups.${groupIndex}.is_consider_inexam`, e.target.checked)
+                                          )
+                                        }
+                                      />
+                                      <span className="as-consider-box" aria-hidden="true" />
+                                      Consider in Exam
+                                    </label>
                                   </span>
                                   <button
                                     type="button"
                                     className="btn btn-submit as-head-btn"
-                                    onClick={() => pushGroup(createGroup(subject.id))}
+                                    onClick={() => pushGroup(createGroup(subject.id, isConsiderInExam))}
                                   >
                                     <Icon icon="solar:add-circle-bold-duotone" width="14" />
                                     Add Head

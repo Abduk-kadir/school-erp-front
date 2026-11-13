@@ -719,6 +719,85 @@
   padding: 10px 12px 12px;
 }
 
+.assign-subject-form .as-consider {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 0 6px;
+  padding: 3px 11px 3px 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.assign-subject-form .as-consider:hover:not(.is-disabled) {
+  border-color: rgba(22, 163, 74, 0.55);
+  box-shadow: 0 4px 10px -6px rgba(22, 163, 74, 0.55);
+}
+
+.assign-subject-form .as-consider.is-checked {
+  background: #ecfdf5;
+  border-color: rgba(22, 163, 74, 0.45);
+  color: #15803d;
+}
+
+.assign-subject-form .as-consider.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.assign-subject-form .as-consider-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.assign-subject-form .as-consider-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 6px;
+  border: 1.5px solid #94a3b8;
+  background: #ffffff;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.assign-subject-form .as-consider-box::after {
+  content: "";
+  width: 4px;
+  height: 8px;
+  margin-top: -2px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.15s ease;
+}
+
+.assign-subject-form .as-consider.is-checked .as-consider-box {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  border-color: #16a34a;
+}
+
+.assign-subject-form .as-consider.is-checked .as-consider-box::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.assign-subject-form .as-consider-input:focus-visible + .as-consider-box {
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25);
+}
+
 .chfi-root .icon-field.as-no-icon .form-control,
 .chfi-root .icon-field.as-no-icon .form-select {
   padding-left: 12px;

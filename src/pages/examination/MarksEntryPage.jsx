@@ -161,7 +161,6 @@ const MarksEntryPage = () => {
 
     const payload = {
       exam_scheme_id: examschemid,
-      exam_name_id: selectedExam,
       class_id: selectedClass,
       term_id: selectedTerm,
       division_id: selectedDivision,
@@ -171,7 +170,25 @@ const MarksEntryPage = () => {
 
     setSubmitting(true);
     try {
-      const { data } = await axios.post(`${baseURL}/api/result-mark-entry-lists`, payload, {
+      const { data: configureRes } = await axios.get(`${baseURL}/api/exam-configures/search`, {
+        params: {
+          exam_scheme_id: examschemid,
+          class_id: selectedClass,
+          term_id: selectedTerm,
+          subject_id: selectedSubject,
+        },
+        headers: authHeaders(),
+      });
+      const configure = configureRes?.data;
+      if (!configureRes?.success || !configure) {
+        setErrorMsg(configureRes?.message || "Exam configure not found for this exam scheme, class, term and subject");
+        return;
+      }
+
+      const isDescriptor = String(configure?.gradeScale?.type || "").toLowerCase() === "descriptor";
+      const endpoint = isDescriptor ? "/api/student-co-scholastic-marks" : "/api/result-mark-entry-lists";
+
+      const { data } = await axios.post(`${baseURL}${endpoint}`, payload, {
         headers: authHeaders(),
       });
       setSuccessMsg(data?.message || "Submitted successfully");
