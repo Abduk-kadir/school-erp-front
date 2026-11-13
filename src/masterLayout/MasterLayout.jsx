@@ -574,32 +574,35 @@ const MasterLayout = () => {
             { title: "Exam Subject-head-subhead Assignment", path: "/dashboard/examination/exam-subject" },
             {title:"Exam configuration",path:"/dashboard/examination/exam-configuration"},
            
-            {title:"Pre Exam",children:[
-              {title:"Pre Exam Setting",path:"/dashboard/examination/pre-exam-setting-testing"},
-              {title:"Pre Exam Report",path:"/dashboard/examination/pre-exam-report"},
-            ]},
-            {title:"After Exam",children:[
-              {title:"After Exam Setting",children:[
-                {title:"Marks Entry & Generate Result",children:[
-                  {title:"Marks Entry",path:"/dashboard/examination/marks-entry"},
-                  {title:"Generate Result",path:"/dashboard/examination/generate-result"},
-                  
+            
+            
 
-                ]},
-                {title:"Attendance",children:[
-                  {title:"Assign Working Days",path:"/dashboard/examination/assign-working-days"},
-                  {title:"Import & Export working days",path:"/dashboard/examination/import-and-export-working-days"},
-                  
-
-                ]},
-                
-              ]},
-             
-            ]}
+           
             
     
           
           
+        ]},
+        {title:"Pre Exam",children:[
+          {title:"Pre Exam Setting",path:"/dashboard/examination/pre-exam-setting-testing"},
+          {title:"Pre Exam Report",path:"/dashboard/examination/pre-exam-report"},
+        ]},
+        {title:"After Exam",children:[
+          {title:"After Exam Setting",children:[
+            {title:"Marks Entry & Generate Result",children:[
+              {title:"Marks Entry",path:"/dashboard/examination/marks-entry"},
+              {title:"Generate Result",path:"/dashboard/examination/generate-result"},
+              
+
+            ]},
+            
+            
+          ]},
+         
+        ]},
+        {title:"After Exam Report",children:[
+          {title:"Report",path:"/dashboard/examination/report"},
+         
         ]}
       ]
     },

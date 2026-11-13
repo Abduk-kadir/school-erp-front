@@ -5,6 +5,7 @@ import registrationNoReducer from "../slices/registrationNo";
 import staffIdReducer from "../slices/dynamicForm/editByStaffSlice";
 import genericEditReducer from "../slices/genericEdit";
 import resultMarkEntryReducer from "../slices/resultMarkEntry";
+import reportEntryReducer from "../slices/reportEntry";
 
 const store=configureStore({
     reducer:{ 
@@ -13,7 +14,8 @@ const store=configureStore({
         registrationNo:registrationNoReducer,
         staff:staffIdReducer,
         genericEdit:genericEditReducer,
-        resultMarkEntry:resultMarkEntryReducer
+        resultMarkEntry:resultMarkEntryReducer,
+        reportEntry:reportEntryReducer
     }
 })
 export default store
