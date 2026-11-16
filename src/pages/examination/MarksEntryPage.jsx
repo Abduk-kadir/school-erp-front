@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { setResultMarkEntry } from '../../redux/slices/resultMarkEntry';
 import { useDispatch } from 'react-redux';
 import downloadAddMarkExcel from '../../utils/downloadAddMarkExcel';
+import downloadCoScholasticExcel from '../../utils/downloadCoScholasticExcel';
 
 const authHeaders = () => {
   const token = localStorage.getItem("token");
@@ -240,10 +241,41 @@ const MarksEntryPage = () => {
     setExcelMsg({ type: "", text: "", errors: [] });
     setExcelBusy("download");
     try {
-       let {data}=await axios.get(`${baseURL}/api/result-mark-entry-lists/${excelEntry.id}/students`)
-       setStudents(data?.data);
-      await downloadAddMarkExcel(excelEntry.row,data?.data);
-      setExcelMsg({ type: "success", text: "Marks entry excel downloaded.", errors: [] });
+      const entryRow = excelEntry.row;
+      const { data: configureRes } = await axios.get(`${baseURL}/api/exam-configures/search`, {
+        params: {
+          exam_scheme_id: entryRow?.exam_scheme_id,
+          class_id: entryRow?.scheme?.class_id ?? entryRow?.scheme?.classInfo?.id,
+          term_id: entryRow?.scheme?.term_id ?? entryRow?.scheme?.termInfo?.id,
+          subject_id: entryRow?.subject_id,
+        },
+        headers: authHeaders(),
+      });
+      const configure = configureRes?.data;
+      if (!configureRes?.success || !configure) {
+        setExcelMsg({
+          type: "danger",
+          text: configureRes?.message || "Exam configure not found for this exam scheme, class, term and subject",
+          errors: [],
+        });
+        return;
+      }
+      const isDescriptor = String(configure?.gradeScale?.type || "").toLowerCase() === "descriptor";
+
+      const studentsUrl = isDescriptor
+        ? `${baseURL}/api/result-mark-entry-lists/${excelEntry.id}/co-scholastic-students`
+        : `${baseURL}/api/result-mark-entry-lists/${excelEntry.id}/students`;
+      const { data } = await axios.get(studentsUrl, { headers: authHeaders() });
+      const studentsForExcel = data?.data || [];
+      setStudents(studentsForExcel);
+
+      if (isDescriptor) {
+        await downloadCoScholasticExcel(entryRow, studentsForExcel, configure);
+        setExcelMsg({ type: "success", text: "Co-scholastic excel downloaded.", errors: [] });
+      } else {
+        await downloadAddMarkExcel(entryRow, studentsForExcel);
+        setExcelMsg({ type: "success", text: "Marks entry excel downloaded.", errors: [] });
+      }
     } catch (err) {
       console.error("Failed to download marks excel", err);
       setExcelMsg({
@@ -259,7 +291,7 @@ const MarksEntryPage = () => {
   const handleImportMarksExcel = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
-    if (!file) return;
+    if (!file || !excelEntry) return;
 
     if (!/\.xlsx$/i.test(file.name)) {
       setExcelMsg({ type: "danger", text: "Please choose an .xlsx file.", errors: [] });
@@ -272,12 +304,37 @@ const MarksEntryPage = () => {
     setExcelMsg({ type: "", text: "", errors: [] });
     setExcelBusy("import");
     try {
-      const { data } = await axios.post(`${baseURL}/api/result-mark-entry-lists/import-marks`, formData, {
+      const entryRow = excelEntry.row;
+      const { data: configureRes } = await axios.get(`${baseURL}/api/exam-configures/search`, {
+        params: {
+          exam_scheme_id: entryRow?.exam_scheme_id,
+          class_id: entryRow?.scheme?.class_id ?? entryRow?.scheme?.classInfo?.id,
+          term_id: entryRow?.scheme?.term_id ?? entryRow?.scheme?.termInfo?.id,
+          subject_id: entryRow?.subject_id,
+        },
+        headers: authHeaders(),
+      });
+      const configure = configureRes?.data;
+      if (!configureRes?.success || !configure) {
+        setExcelMsg({
+          type: "danger",
+          text: configureRes?.message || "Exam configure not found for this exam scheme, class, term and subject",
+          errors: [],
+        });
+        return;
+      }
+
+      const isDescriptor = String(configure?.gradeScale?.type || "").toLowerCase() === "descriptor";
+      const importUrl = isDescriptor
+        ? `${baseURL}/api/student-co-scholastic-marks/import-co-scholastic-marks`
+        : `${baseURL}/api/result-mark-entry-lists/import-marks`;
+
+      const { data } = await axios.post(importUrl, formData, {
         headers: authHeaders(),
       });
       setExcelMsg({
         type: "success",
-        text: data?.message || "Marks imported successfully.",
+        text: data?.message || (isDescriptor ? "Co-scholastic marks imported successfully." : "Marks imported successfully."),
         errors: [],
       });
     } catch (err) {
