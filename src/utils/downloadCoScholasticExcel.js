@@ -49,6 +49,7 @@ const normalizeStudent = (row) => {
     first_name: s.first_name,
     last_name: s.last_name,
     father_name: s.father_name,
+    grade: String(row?.grade ?? s?.grade ?? "").trim(),
   };
 };
 
@@ -177,6 +178,9 @@ export const downloadCoScholasticExcel = async (
     }
 
     const gradeCell = sheet.getCell(r, GRADE_COL);
+    if (student?.grade) {
+      gradeCell.value = student.grade;
+    }
     gradeCell.font = { bold: true };
     gradeCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: GRADE_FILL } };
     gradeCell.protection = { locked: false };
