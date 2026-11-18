@@ -1185,3 +1185,226 @@
     font-size: 0.88rem;
   }
 }
+
+/* =====================================================================
+ * Assign Descriptive Remark page
+ * ===================================================================== */
+
+.adr-page .adr-card .card-subtitle {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.adr-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  font-size: 0.88rem;
+}
+
+.adr-alert-success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.adr-alert-danger {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.adr-result {
+  width: 100%;
+  max-width: none;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.45);
+}
+
+.adr-table-full {
+  width: 100%;
+}
+
+.adr-table-full .adr-remark-cell {
+  white-space: normal;
+  word-break: break-word;
+  max-width: none;
+  line-height: 1.45;
+}
+
+.adr-student {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  margin-bottom: 14px;
+}
+
+.adr-student-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #1d4ed8;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+}
+
+.adr-student-lines {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  margin: 0;
+  padding: 0;
+  padding-left: 0;
+}
+
+.adr-table-card {
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 10px 24px -20px rgba(15, 23, 42, 0.35);
+}
+
+.adr-table-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #f1f5f9;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.adr-selected-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.adr-table-wrap {
+  overflow: auto;
+  max-height: min(55vh, 520px);
+}
+
+.adr-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.84rem;
+}
+
+.adr-table th,
+.adr-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  vertical-align: middle;
+}
+
+.adr-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.adr-col-check {
+  width: 52px;
+  text-align: center;
+}
+
+.adr-col-sr {
+  width: 70px;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+.adr-col-seq {
+  width: 120px;
+}
+
+.adr-col-remark {
+  color: #0f172a;
+}
+
+.adr-seq-select {
+  min-width: 72px;
+  border-radius: 8px;
+  border-color: #cbd5e1;
+}
+
+.adr-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.adr-table tbody tr.is-selected {
+  background: #f0fdf4;
+}
+
+.adr-empty {
+  text-align: center;
+  color: #64748b;
+  padding: 28px 12px !important;
+}
+
+.adr-save-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.adr-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #fff;
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 55%, #22c55e 100%);
+  box-shadow: 0 12px 24px -14px rgba(22, 163, 74, 0.7);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.adr-save-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px -14px rgba(22, 163, 74, 0.75);
+}
+
+.adr-save-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .adr-save-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

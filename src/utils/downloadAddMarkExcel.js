@@ -81,16 +81,28 @@ const thinBorder = {
   right: { style: "thin" },
 };
 
+/** Same key used by Add Marks / live Excel builder for a mark cell. */
+const markInputKey = (assessmentId, assessmentComponentId = null) =>
+  assessmentComponentId != null ? `ac:${assessmentComponentId}` : `a:${assessmentId}`;
+
 /**
  * Build and download an Excel sheet whose header matches the Add Marks page table,
  * with Total / Total Converted / group total / grand total formulas per student row.
  * @param {object} row - Marks entry row (needs exam_scheme_id and subject_id)
  * @param {Array<{ id: number, reg_no?: any, rollnumber?: any, first_name?: string, last_name?: string, father_name?: string }>} students
  *   Students to pre-fill; their mark cells start at 0. Without students a blank sheet of `dataRows` rows is created.
- * @param {{ dataRows?: number }} options
+ * @param {{
+ *   dataRows?: number,
+ *   marksByStudent?: Record<string|number, Record<string, number|string|null|undefined>>,
+ * }} options
+ *   Optional marksByStudent[studentId][markInputKey] pre-fills mark cells (default 0).
  * @returns {Promise<string>} downloaded file name
  */
-export const downloadAddMarkExcel = async (row, students = [], { dataRows = DEFAULT_DATA_ROWS } = {}) => {
+export const downloadAddMarkExcel = async (
+  row,
+  students = [],
+  { dataRows = DEFAULT_DATA_ROWS, marksByStudent = null } = {}
+) => {
   if (!row?.exam_scheme_id || !row?.subject_id) {
     throw new Error("Exam scheme and subject are required to download the marks sheet");
   }
@@ -242,9 +254,29 @@ export const downloadAddMarkExcel = async (row, students = [], { dataRows = DEFA
       FIXED_COLUMNS.forEach((fixed, index) => {
         sheet.getCell(r, index + 1).value = fixedValues[fixed.key];
       });
-      markColSet.forEach((c) => {
-        sheet.getCell(r, c).value = 0;
-      });
+
+      const studentMarks =
+        marksByStudent && typeof marksByStudent === "object"
+          ? marksByStudent[student.id] || marksByStudent[String(student.id)] || {}
+          : null;
+
+      if (studentMarks) {
+        layout.forEach((groupEntry) => {
+          groupEntry.heads.forEach(({ assessmentId, markMeta }) => {
+            markMeta.forEach((markColumn) => {
+              const key = markInputKey(assessmentId, markColumn.assessment_component_id);
+              const raw = studentMarks[key];
+              const num = raw === "" || raw == null ? null : Number(raw);
+              sheet.getCell(r, markColumn.col).value =
+                num != null && Number.isFinite(num) ? num : 0;
+            });
+          });
+        });
+      } else {
+        markColSet.forEach((c) => {
+          sheet.getCell(r, c).value = 0;
+        });
+      }
       studentRows.push({ row: r, student_id: student.id });
     }
 

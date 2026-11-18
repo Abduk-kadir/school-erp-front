@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import baseURL from "../../utils/baseUrl";
 import buildAddMarkExcelFromLiveMarkEntry, { markInputKey } from "../../utils/buildAddMarkExcelFromLiveMarkEntry";
 import buildCoScholasticExcelFromLiveMarkEntry from "../../utils/buildCoScholasticExcelFromLiveMarkEntry";
+import normalizeMarkEntryStudents from "../../utils/normalizeMarkEntryStudents";
 import "../../assets/css/mastercom.css";
 import "../../assets/css/examination.css";
 
@@ -167,11 +168,10 @@ const AddMarks = () => {
 
         if (cancelled) return;
 
-        const loadedStudents = Array.isArray(studentsRes?.data?.data) ? studentsRes.data.data : [];
-        const initialMarks = {};
-        loadedStudents.forEach((student) => {
-          initialMarks[student.id] = {};
-        });
+        // API may return multiple rows per student (one per assessment/component mark)
+        const { students: loadedStudents, marksByStudent: initialMarks } = normalizeMarkEntryStudents(
+          studentsRes?.data?.data
+        );
 
         setScheme(assessmentRes?.data?.data?.scheme || null);
         setAssessments(assessmentRes?.data?.data?.assessments || []);

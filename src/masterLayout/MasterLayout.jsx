@@ -595,6 +595,13 @@ const MasterLayout = () => {
               
 
             ]},
+            {title:"Descriptive Remark",children:[
+              {title:"Descriptive Remark Master",path:"/dashboard/examination/descriptive-remark-master"},
+              {title:"Assign Result Descriptive Remark",path:"/dashboard/examination/assign-result-descriptive-remark"},
+              {title:"Edit Result Descriptive Remark",path:"/dashboard/examination/edit-result-descriptive-remark"},
+              
+
+            ]},
             
             
           ]},

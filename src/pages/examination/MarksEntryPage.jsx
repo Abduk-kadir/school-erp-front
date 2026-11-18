@@ -11,6 +11,7 @@ import { setResultMarkEntry } from '../../redux/slices/resultMarkEntry';
 import { useDispatch } from 'react-redux';
 import downloadAddMarkExcel from '../../utils/downloadAddMarkExcel';
 import downloadCoScholasticExcel from '../../utils/downloadCoScholasticExcel';
+import normalizeMarkEntryStudents from '../../utils/normalizeMarkEntryStudents';
 
 const authHeaders = () => {
   const token = localStorage.getItem("token");
@@ -266,14 +267,17 @@ const MarksEntryPage = () => {
         ? `${baseURL}/api/result-mark-entry-lists/${excelEntry.id}/co-scholastic-students`
         : `${baseURL}/api/result-mark-entry-lists/${excelEntry.id}/students`;
       const { data } = await axios.get(studentsUrl, { headers: authHeaders() });
-      const studentsForExcel = data?.data || [];
-      setStudents(studentsForExcel);
 
       if (isDescriptor) {
+        const studentsForExcel = data?.data || [];
+        setStudents(studentsForExcel);
         await downloadCoScholasticExcel(entryRow, studentsForExcel, configure);
         setExcelMsg({ type: "success", text: "Co-scholastic excel downloaded.", errors: [] });
       } else {
-        await downloadAddMarkExcel(entryRow, studentsForExcel);
+        // Students API returns one row per mark cell; collapse to unique students + marks map
+        const { students: studentsForExcel, marksByStudent } = normalizeMarkEntryStudents(data?.data);
+        setStudents(studentsForExcel);
+        await downloadAddMarkExcel(entryRow, studentsForExcel, { marksByStudent });
         setExcelMsg({ type: "success", text: "Marks entry excel downloaded.", errors: [] });
       }
     } catch (err) {

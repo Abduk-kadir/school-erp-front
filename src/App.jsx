@@ -314,11 +314,14 @@ const ExamSubjectPage = lazy(() => import("./pages/examination/ExamSubjectPage")
 const ExamnamePage = lazy(() => import("./pages/examination/ExamnamePage"))
 const ExamconfigurationPage = lazy(() => import("./pages/examination/Examconfiguration"))
 const MarksEntryPage = lazy(() => import("./pages/examination/MarksEntryPage"))
+const AddDescriptiveRemarkPage = lazy(() => import("./pages/examination/AddDescriptiveRemark"))
+const AssignDescriptiveRemarkPage=lazy(() => import("./pages/examination/AssignDescriptiveRemarkPage"))
 const AddMarksPage = lazy(() => import("./pages/examination/AddMarks"))
 const TestingPage = lazy(() => import("./pages/TestingPage"));
 const GenarateResultPage = lazy(() => import("./pages/examination/GenarateResultPage"))
 const DownloadMarkSheetReport = lazy(() => import("./pages/examination/DownloadMarkSheetReport"))
 const ReportPage = lazy(() => import("./pages/examination/ReportPage"))
+const EditResultDescriptiveRemark = lazy(() => import("./pages/examination/EditResultDescriptiveRemark"))
 const routeFallback = (
   <div className="d-flex justify-content-center align-items-center p-5">
     <div className="spinner-border text-primary" role="status">
@@ -602,6 +605,9 @@ function App() {
                 <Route path="exam-subject" element={<ExamSubjectPage />} />
                 <Route path="exam-configuration" element={<ExamconfigurationPage />} />
                 <Route path="marks-entry" element={<MarksEntryPage />} />
+                <Route path="descriptive-remark-master" element={<AddDescriptiveRemarkPage />} />
+                <Route path="assign-result-descriptive-remark" element={<AssignDescriptiveRemarkPage />} />
+                <Route path="edit-result-descriptive-remark" element={<EditResultDescriptiveRemark />} />
                 <Route path="generate-result" element={<GenarateResultPage />} />
                 <Route path="add-marks-to-student/:markentryid" element={<AddMarksPage />} />
                 <Route path="pre-exam-setting-testing" element={<TestingPage />} />
