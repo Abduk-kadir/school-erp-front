@@ -16,6 +16,13 @@ const MONTH_NAMES = [
 
 const pad2 = (n) => String(n).padStart(2, "0");
 
+/** API keeps YYYY-MM-DD; UI label shows DD/MM/YYYY. */
+const isoToDisplayDMY = (iso) => {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+};
+
 const toDateKey = (d) =>
   `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
@@ -145,6 +152,8 @@ const defaultToDate = () => toDateKey(new Date());
 const InAndOutMonthlyReportPage = () => {
   const tableContainerRef = useRef(null);
   const datatableRef = useRef(null);
+  const nativeFromDateRef = useRef(null);
+  const nativeToDateRef = useRef(null);
 
   const [batches, setBatches] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -336,15 +345,30 @@ const InAndOutMonthlyReportPage = () => {
                 <span className="label-dot" />
                 From Date
               </label>
-              <div className="icon-field">
+              <div className="icon-field report-date-dmy">
                 <span className="icon">
                   <Icon icon="solar:calendar-bold-duotone" width="18" />
                 </span>
                 <input
                   className={`form-control${dateError ? " is-invalid" : ""}`}
+                  type="text"
+                  readOnly
+                  value={fromDate ? isoToDisplayDMY(fromDate) : "Select Date"}
+                  onClick={() => {
+                    const el = nativeFromDateRef.current;
+                    if (!el) return;
+                    if (typeof el.showPicker === "function") el.showPicker();
+                    else el.click();
+                  }}
+                />
+                <input
+                  ref={nativeFromDateRef}
+                  className="report-date-native"
                   type="date"
                   value={fromDate}
                   max={toDate || undefined}
+                  tabIndex={-1}
+                  aria-hidden="true"
                   onChange={(e) => {
                     setFromDate(e.target.value);
                     setDateError("");
@@ -358,15 +382,30 @@ const InAndOutMonthlyReportPage = () => {
                 <span className="label-dot" />
                 To Date
               </label>
-              <div className="icon-field">
+              <div className="icon-field report-date-dmy">
                 <span className="icon">
                   <Icon icon="solar:calendar-bold-duotone" width="18" />
                 </span>
                 <input
                   className={`form-control${dateError ? " is-invalid" : ""}`}
+                  type="text"
+                  readOnly
+                  value={toDate ? isoToDisplayDMY(toDate) : "Select Date"}
+                  onClick={() => {
+                    const el = nativeToDateRef.current;
+                    if (!el) return;
+                    if (typeof el.showPicker === "function") el.showPicker();
+                    else el.click();
+                  }}
+                />
+                <input
+                  ref={nativeToDateRef}
+                  className="report-date-native"
                   type="date"
                   value={toDate}
                   min={fromDate || undefined}
+                  tabIndex={-1}
+                  aria-hidden="true"
                   onChange={(e) => {
                     setToDate(e.target.value);
                     setDateError("");

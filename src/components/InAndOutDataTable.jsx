@@ -12,6 +12,20 @@ import { setRegistrationNo } from "../redux/slices/registrationNo";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import "../assets/css/academicOfflineFeeReport.css";
 
+/** API keeps YYYY-MM-DD; UI label shows DD/MM/YYYY. */
+const isoToDisplayDMY = (iso) => {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+};
+
+const todayDateKey = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 const InAndOutDataTable = ({
   url,
@@ -28,19 +42,30 @@ const InAndOutDataTable = ({
   const [searchParams] = useSearchParams();
   const classId = searchParams.get("class_id");
   const divisionId = searchParams.get("division_id");
+  const dateFromUrl = searchParams.get("date");
+  const openedFromSummary = !!(classId && divisionId);
+  const initialDate =
+    dateFromUrl && /^\d{4}-\d{2}-\d{2}$/.test(dateFromUrl)
+      ? dateFromUrl
+      : todayDateKey();
+
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
-  const [classes, setClasses] = useState([]);
-  const [divisions, setDivisions] = useState([]);
+  const nativeDateRef = useRef(null);
+  const [classes, setClasses] = useState(() =>
+    classId ? [{ id: classId, class_name: classId }] : []
+  );
+  const [divisions, setDivisions] = useState(() =>
+    divisionId ? [{ id: divisionId, division_name: divisionId }] : []
+  );
   const [batches, setBatches] = useState([]);
 
   // Controlled filter values (pre-fill from URL when opened from summary report)
   const [classFilter, setClassFilter] = useState(() => classId || "");
-  const [dateFilter, setDateFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState(initialDate);
   const [batchFilter, setBatchFilter] = useState("");
   const [divisionFilter, setDivisionFilter] = useState(() => divisionId || "");
-  const [dateError, setDateError] = useState("");
-  const [filtersApplied, setFiltersApplied] = useState(false);
+  const [filtersApplied, setFiltersApplied] = useState(openedFromSummary);
 
   const [exportingFormat, setExportingFormat] = useState(null);
 
@@ -57,7 +82,7 @@ const InAndOutDataTable = ({
 
   // Refs to hold current filter values for DataTable ajax
   const classFilterRef = useRef(classId || "");
-  const dateFilterRef = useRef("");
+  const dateFilterRef = useRef(initialDate);
   const batchFilterRef = useRef("");
   const divisionFilterRef = useRef(divisionId || "");
 
@@ -94,33 +119,64 @@ const InAndOutDataTable = ({
   }, []);
 
   useEffect(() => {
+    if (!batchFilter) {
+      // Keep URL-prefilled class/division options when opened from summary
+      if (!openedFromSummary) {
+        setClasses([]);
+        setDivisions([]);
+      }
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const res = await axios.get(`${baseURL}/api/batches/${batchFilter}/relations`);
-        setClasses(res?.data?.class || []);
-        setDivisions(res?.data?.division || []);
-        
+        const nextClasses = res?.data?.class || [];
+        const nextDivisions = res?.data?.division || [];
+
+        // Keep selected summary values visible if API list omits them
+        if (
+          classId &&
+          !nextClasses.some((c) => String(c?.id ?? c?.class_name) === String(classId))
+        ) {
+          nextClasses.unshift({ id: classId, class_name: classId });
+        }
+        if (
+          divisionId &&
+          !nextDivisions.some(
+            (d) =>
+              String(d?.id) === String(divisionId) ||
+              String(d?.division_name) === String(divisionId)
+          )
+        ) {
+          nextDivisions.unshift({ id: divisionId, division_name: divisionId });
+        }
+
+        setClasses(nextClasses);
+        setDivisions(nextDivisions);
       } catch (err) {
         console.error("Failed to load filter options", err);
       }
     };
     fetchData();
-  }, [batchFilter]);
+  }, [batchFilter, openedFromSummary, classId, divisionId]);
 
   useEffect(() => {
-    if (!classId || !divisionId) return;
-    classFilterRef.current = classId;
-    divisionFilterRef.current = divisionId;
-  }, [classId, divisionId]);
+    if (!openedFromSummary) return;
+    const date =
+      dateFromUrl && /^\d{4}-\d{2}-\d{2}$/.test(dateFromUrl)
+        ? dateFromUrl
+        : todayDateKey();
+    setClassFilter(classId || "");
+    setDivisionFilter(divisionId || "");
+    setDateFilter(date);
+    classFilterRef.current = classId || "";
+    divisionFilterRef.current = divisionId || "";
+    dateFilterRef.current = date;
+    setFiltersApplied(true);
+  }, [openedFromSummary, classId, divisionId, dateFromUrl]);
 
   const handleFilter = () => {
-    if (!dateFilter.trim()) {
-      setDateError("Please select date");
-      setFiltersApplied(false);
-      return;
-    }
-
-    setDateError("");
     setFiltersApplied(true);
 
     if (datatableRef.current) {
@@ -228,6 +284,18 @@ const InAndOutDataTable = ({
       divisionFilterRef.current = divisionId;
     }
 
+    // Date column shows the selected filter date (not each row's API date)
+    const resolvedColumns = (columns || []).map((col) => {
+      if (col?.data !== "date") return col;
+      return {
+        ...col,
+        render: (_data, type) => {
+          if (type !== "display" && type !== "filter") return dateFilterRef.current;
+          return isoToDisplayDMY(dateFilterRef.current) || "-";
+        },
+      };
+    });
+
     datatableRef.current = $(tableRef.current).DataTable({
       pageLength: 10,
       processing: true,
@@ -245,7 +313,7 @@ const InAndOutDataTable = ({
           };
         },
       },
-      columns,
+      columns: resolvedColumns,
     });
 
     return () => {
@@ -278,25 +346,32 @@ const InAndOutDataTable = ({
                 <span className="label-dot" />
                 Date <span className="text-danger">*</span>
               </label>
-              <div className="icon-field">
+              <div className="icon-field report-date-dmy">
                 <span className="icon">
                   <Icon icon="solar:calendar-bold-duotone" width="18" />
                 </span>
                 <input
-                  className={`form-control${dateError ? " is-invalid" : ""}`}
-                  type="date"
-                  value={dateFilter}
-                  onChange={(e) => {
-                    setDateFilter(e.target.value);
-                    if (dateError) setDateError("");
+                  className="form-control"
+                  type="text"
+                  readOnly
+                  value={dateFilter ? isoToDisplayDMY(dateFilter) : "Select Date"}
+                  onClick={() => {
+                    const el = nativeDateRef.current;
+                    if (!el) return;
+                    if (typeof el.showPicker === "function") el.showPicker();
+                    else el.click();
                   }}
                 />
+                <input
+                  ref={nativeDateRef}
+                  className="report-date-native"
+                  type="date"
+                  value={dateFilter}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  onChange={(e) => setDateFilter(e.target.value || todayDateKey())}
+                />
               </div>
-              {dateError && (
-                <div className="field-error" role="alert">
-                  {dateError}
-                </div>
-              )}
             </div>
 
             <div className="report-filter-field">

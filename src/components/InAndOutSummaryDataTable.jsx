@@ -12,6 +12,21 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import "../assets/css/academicOfflineFeeReport.css";
 import "../assets/css/editdelete.css";
 
+/** API keeps YYYY-MM-DD; UI label shows DD/MM/YYYY. */
+const isoToDisplayDMY = (iso) => {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y}`;
+};
+
+const todayDateKey = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
 const InAndOutSummaryDataTable = ({
   url,
   columns,
@@ -25,16 +40,16 @@ const InAndOutSummaryDataTable = ({
   const navigate=useNavigate()
   const tableRef = useRef(null);
   const datatableRef = useRef(null);
+  const nativeDateRef = useRef(null);
   const [classes, setClasses] = useState([]);
   const [divisions, setDivisions] = useState([]);
   const [batches, setBatches] = useState([]);
 
   // Controlled filter values
   const [classFilter, setClassFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState(todayDateKey);
   const [batchFilter, setBatchFilter] = useState("");
   const [divisionFilter, setDivisionFilter] = useState("");
-  const [dateError, setDateError] = useState("");
   const [filtersApplied, setFiltersApplied] = useState(false);
 
   const [exportingFormat, setExportingFormat] = useState(null);
@@ -52,7 +67,7 @@ const InAndOutSummaryDataTable = ({
 
   // Refs to hold current filter values for DataTable ajax
   const classFilterRef = useRef("");
-  const dateFilterRef = useRef("");
+  const dateFilterRef = useRef(todayDateKey());
   const batchFilterRef = useRef("");
   const divisionFilterRef = useRef("");
 
@@ -104,13 +119,6 @@ const InAndOutSummaryDataTable = ({
   }, [batchFilter]);
 
   const handleFilter = () => {
-    if (!dateFilter.trim()) {
-      setDateError("Please select date");
-      setFiltersApplied(false);
-      return;
-    }
-
-    setDateError("");
     setFiltersApplied(true);
 
     if (datatableRef.current) {
@@ -216,19 +224,34 @@ const InAndOutSummaryDataTable = ({
       columns,
     });
 
-    $(tableRef.current).on("click", ".table-action-show-students", function () {
-      const classid = $(this).data("class_id");
-      const divisionid = $(this).data("division_id");
+    const $table = $(tableRef.current);
+    $table.on("click", ".table-action-show-students", function () {
+      const row = datatableRef.current?.row($(this).closest("tr")).data() || {};
+      // Prefer ids; fall back to names (same values detail filter can use)
+      const classid =
+        row.class_id ?? row.classId ?? row.classid ?? row.class ?? row.class_name ?? "";
+      const divisionid =
+        row.division_id ??
+        row.divisionId ??
+        row.div_id ??
+        row.divid ??
+        row.div ??
+        row.division ??
+        row.division_name ??
+        "";
+      const date = dateFilterRef.current.trim();
+      const params = new URLSearchParams();
+      params.set("class_id", String(classid ?? ""));
+      params.set("division_id", String(divisionid ?? ""));
+      if (date) params.set("date", date);
       window.open(
-        `/dashboard/academic/in-out-attendance-detail-report?class_id=${classid}&division_id=${divisionid}`,
+        `/dashboard/academic/in-out-attendance-detail-report?${params.toString()}`,
         "_blank"
       );
     });
 
     return () => {
-      if (tableRef.current) {
-        $(tableRef.current).off("click", ".table-action-show-students");
-      }
+      $table.off("click", ".table-action-show-students");
       if (datatableRef.current) {
         datatableRef.current.destroy(true);
         datatableRef.current = null;
@@ -258,25 +281,32 @@ const InAndOutSummaryDataTable = ({
                 <span className="label-dot" />
                 Date <span className="text-danger">*</span>
               </label>
-              <div className="icon-field">
+              <div className="icon-field report-date-dmy">
                 <span className="icon">
                   <Icon icon="solar:calendar-bold-duotone" width="18" />
                 </span>
                 <input
-                  className={`form-control${dateError ? " is-invalid" : ""}`}
-                  type="date"
-                  value={dateFilter}
-                  onChange={(e) => {
-                    setDateFilter(e.target.value);
-                    if (dateError) setDateError("");
+                  className="form-control"
+                  type="text"
+                  readOnly
+                  value={dateFilter ? isoToDisplayDMY(dateFilter) : "Select Date"}
+                  onClick={() => {
+                    const el = nativeDateRef.current;
+                    if (!el) return;
+                    if (typeof el.showPicker === "function") el.showPicker();
+                    else el.click();
                   }}
                 />
+                <input
+                  ref={nativeDateRef}
+                  className="report-date-native"
+                  type="date"
+                  value={dateFilter}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  onChange={(e) => setDateFilter(e.target.value || todayDateKey())}
+                />
               </div>
-              {dateError && (
-                <div className="field-error" role="alert">
-                  {dateError}
-                </div>
-              )}
             </div>
 
             <div className="report-filter-field">

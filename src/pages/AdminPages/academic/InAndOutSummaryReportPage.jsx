@@ -22,8 +22,6 @@ const feeReportColumns = [
           <button
             type="button"
             class="table-action-btn table-action-show-students"
-            data-class_id="${row?.class_id ?? ""}"
-            data-division_id="${row?.division_id ?? ""}"
             title="Show Students"
           >
             Show Students
