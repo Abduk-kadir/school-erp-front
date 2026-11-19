@@ -39,6 +39,8 @@ const InAndOutDataTable = ({
   const [dateFilter, setDateFilter] = useState("");
   const [batchFilter, setBatchFilter] = useState("");
   const [divisionFilter, setDivisionFilter] = useState(() => divisionId || "");
+  const [dateError, setDateError] = useState("");
+  const [filtersApplied, setFiltersApplied] = useState(false);
 
   const [exportingFormat, setExportingFormat] = useState(null);
 
@@ -107,19 +109,20 @@ const InAndOutDataTable = ({
 
   useEffect(() => {
     if (!classId || !divisionId) return;
-
     classFilterRef.current = classId;
     divisionFilterRef.current = divisionId;
-
-    if (datatableRef.current) {
-      datatableRef.current.draw();
-    }
   }, [classId, divisionId]);
 
-
-
-
   const handleFilter = () => {
+    if (!dateFilter.trim()) {
+      setDateError("Please select date");
+      setFiltersApplied(false);
+      return;
+    }
+
+    setDateError("");
+    setFiltersApplied(true);
+
     if (datatableRef.current) {
       datatableRef.current.draw();
     }
@@ -218,9 +221,8 @@ const InAndOutDataTable = ({
 
 
   useEffect(() => {
-    if (!tableRef.current) return;
+    if (!filtersApplied || !tableRef.current) return;
 
-    // Apply URL filters before first ajax (search-params effect may run before table exists)
     if (classId && divisionId) {
       classFilterRef.current = classId;
       divisionFilterRef.current = divisionId;
@@ -231,7 +233,6 @@ const InAndOutDataTable = ({
       processing: true,
       serverSide: true,
       destroy: true,
-
       ajax: {
         url,
         type: "GET",
@@ -245,21 +246,20 @@ const InAndOutDataTable = ({
         },
       },
       columns,
-     
-    
     });
 
     return () => {
       if (datatableRef.current) {
         datatableRef.current.destroy(true);
+        datatableRef.current = null;
       }
     };
-  }, [url, columns]); // Important: do NOT put filter state here — refs are used for ajax
+  }, [filtersApplied, url, columns, classId, divisionId]);
 
   return (
     <div className="chfi-wrapper d-flex flex-column gap-3 pb-2">
       {/* ---------- Filter card ---------- */}
-     {!classId && !divisionId && <section className="chfi-card" aria-label="Report filters">
+      <section className="chfi-card" aria-label="Report filters">
         <div className="card-header">
           <div className="header-row">
             <span className="header-icon">
@@ -276,19 +276,27 @@ const InAndOutDataTable = ({
             <div className="report-filter-field">
               <label className="form-label">
                 <span className="label-dot" />
-                Date
+                Date <span className="text-danger">*</span>
               </label>
               <div className="icon-field">
                 <span className="icon">
                   <Icon icon="solar:calendar-bold-duotone" width="18" />
                 </span>
                 <input
-                  className="form-control"
+                  className={`form-control${dateError ? " is-invalid" : ""}`}
                   type="date"
                   value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
+                  onChange={(e) => {
+                    setDateFilter(e.target.value);
+                    if (dateError) setDateError("");
+                  }}
                 />
               </div>
+              {dateError && (
+                <div className="field-error" role="alert">
+                  {dateError}
+                </div>
+              )}
             </div>
 
             <div className="report-filter-field">
@@ -376,7 +384,6 @@ const InAndOutDataTable = ({
           </div>
         </div>
       </section>
-     }
 
       {/* ---------- Table card ---------- */}
       <section className="chfi-card report-table-card" aria-label="Report data">
@@ -394,7 +401,7 @@ const InAndOutDataTable = ({
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat}
+                disabled={!filtersApplied || !!exportingFormat}
                 onClick={() => handleExportDownload("excel")}
                 title="Download Excel"
               >
@@ -408,7 +415,7 @@ const InAndOutDataTable = ({
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat}
+                disabled={!filtersApplied || !!exportingFormat}
                 onClick={() => handleExportDownload("pdf")}
                 title="Download PDF"
               >
@@ -423,13 +430,19 @@ const InAndOutDataTable = ({
           </div>
         </div>
         <div className="card-body">
-          <div className="report-table-wrap">
-            <table
-              className="table report-table mb-0"
-              id="dataTable"
-              ref={tableRef}
-            />
-          </div>
+          {!filtersApplied ? (
+            <div className="text-center text-muted py-4">
+              Select a date and click <strong>Apply Filters</strong> to view the report.
+            </div>
+          ) : (
+            <div className="report-table-wrap">
+              <table
+                className="table report-table mb-0"
+                id="dataTable"
+                ref={tableRef}
+              />
+            </div>
+          )}
         </div>
       </section>
     </div>

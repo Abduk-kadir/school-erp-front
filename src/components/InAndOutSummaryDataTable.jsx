@@ -34,6 +34,8 @@ const InAndOutSummaryDataTable = ({
   const [dateFilter, setDateFilter] = useState("");
   const [batchFilter, setBatchFilter] = useState("");
   const [divisionFilter, setDivisionFilter] = useState("");
+  const [dateError, setDateError] = useState("");
+  const [filtersApplied, setFiltersApplied] = useState(false);
 
   const [exportingFormat, setExportingFormat] = useState(null);
 
@@ -102,8 +104,17 @@ const InAndOutSummaryDataTable = ({
   }, [batchFilter]);
 
   const handleFilter = () => {
+    if (!dateFilter.trim()) {
+      setDateError("Please select date");
+      setFiltersApplied(false);
+      return;
+    }
+
+    setDateError("");
+    setFiltersApplied(true);
+
     if (datatableRef.current) {
-      datatableRef.current.draw(); // ← this triggers new ajax call
+      datatableRef.current.draw();
     }
   };
 
@@ -183,14 +194,13 @@ const InAndOutSummaryDataTable = ({
 
 
   useEffect(() => {
-    if (!tableRef.current) return;
+    if (!filtersApplied || !tableRef.current) return;
 
     datatableRef.current = $(tableRef.current).DataTable({
       pageLength: 10,
       processing: true,
       serverSide: true,
       destroy: true,
-
       ajax: {
         url,
         type: "GET",
@@ -204,26 +214,27 @@ const InAndOutSummaryDataTable = ({
         },
       },
       columns,
-     
-    
     });
-    $("#dataTable").on("click", ".table-action-show-students", function () {
+
+    $(tableRef.current).on("click", ".table-action-show-students", function () {
       const classid = $(this).data("class_id");
       const divisionid = $(this).data("division_id");
       window.open(
         `/dashboard/academic/in-out-attendance-detail-report?class_id=${classid}&division_id=${divisionid}`,
         "_blank"
       );
-    
     });
-  
 
     return () => {
+      if (tableRef.current) {
+        $(tableRef.current).off("click", ".table-action-show-students");
+      }
       if (datatableRef.current) {
         datatableRef.current.destroy(true);
+        datatableRef.current = null;
       }
     };
-  }, [url, columns]); // Important: do NOT put filter state here — refs are used for ajax
+  }, [filtersApplied, url, columns]);
 
   return (
     <div className="chfi-wrapper d-flex flex-column gap-3 pb-2">
@@ -245,19 +256,27 @@ const InAndOutSummaryDataTable = ({
             <div className="report-filter-field">
               <label className="form-label">
                 <span className="label-dot" />
-                Date
+                Date <span className="text-danger">*</span>
               </label>
               <div className="icon-field">
                 <span className="icon">
                   <Icon icon="solar:calendar-bold-duotone" width="18" />
                 </span>
                 <input
-                  className="form-control"
+                  className={`form-control${dateError ? " is-invalid" : ""}`}
                   type="date"
                   value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
+                  onChange={(e) => {
+                    setDateFilter(e.target.value);
+                    if (dateError) setDateError("");
+                  }}
                 />
               </div>
+              {dateError && (
+                <div className="field-error" role="alert">
+                  {dateError}
+                </div>
+              )}
             </div>
 
             <div className="report-filter-field">
@@ -362,7 +381,7 @@ const InAndOutSummaryDataTable = ({
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat}
+                disabled={!filtersApplied || !!exportingFormat}
                 onClick={() => handleExportDownload("excel")}
                 title="Download Excel"
               >
@@ -376,7 +395,7 @@ const InAndOutSummaryDataTable = ({
               <button
                 type="button"
                 className="export-btn"
-                disabled={!!exportingFormat}
+                disabled={!filtersApplied || !!exportingFormat}
                 onClick={() => handleExportDownload("pdf")}
                 title="Download PDF"
               >
@@ -391,13 +410,19 @@ const InAndOutSummaryDataTable = ({
           </div>
         </div>
         <div className="card-body">
-          <div className="report-table-wrap">
-            <table
-              className="table report-table mb-0"
-              id="dataTable"
-              ref={tableRef}
-            />
-          </div>
+          {!filtersApplied ? (
+            <div className="text-center text-muted py-4">
+              Select a date and click <strong>Apply Filters</strong> to view the report.
+            </div>
+          ) : (
+            <div className="report-table-wrap">
+              <table
+                className="table report-table mb-0"
+                id="dataTable"
+                ref={tableRef}
+              />
+            </div>
+          )}
         </div>
       </section>
     </div>

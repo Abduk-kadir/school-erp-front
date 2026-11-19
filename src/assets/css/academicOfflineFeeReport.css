@@ -92,7 +92,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px 16px;
-  align-items: end;
+  align-items: start;
 }
 
 .chfi-wrapper .report-filter-field {
@@ -176,6 +176,16 @@
 .chfi-wrapper .report-filter-action {
   align-items: stretch;
   justify-content: flex-end;
+  /* Match label + gap so Apply button lines up with inputs */
+  padding-top: calc(0.85rem * 1.2 + 4px);
+}
+
+.chfi-wrapper .report-filter-field .field-error {
+  color: #dc2626;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  margin: 2px 0 0;
+  width: 100%;
 }
 
 .chfi-wrapper .report-filter-action .btn-submit {
