@@ -366,7 +366,6 @@ const InAndOutMonthlyReportPage = () => {
                   className="report-date-native"
                   type="date"
                   value={fromDate}
-                  max={toDate || undefined}
                   tabIndex={-1}
                   aria-hidden="true"
                   onChange={(e) => {
@@ -403,7 +402,6 @@ const InAndOutMonthlyReportPage = () => {
                   className="report-date-native"
                   type="date"
                   value={toDate}
-                  min={fromDate || undefined}
                   tabIndex={-1}
                   aria-hidden="true"
                   onChange={(e) => {
